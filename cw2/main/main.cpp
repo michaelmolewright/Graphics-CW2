@@ -16,10 +16,34 @@
 #include "../vmlib/mat44.hpp"
 
 #include "defaults.hpp"
+//TAKE OUT
+#include "cube.hpp"
+
 
 namespace
 {
 	constexpr char const* kWindowTitle = "COMP3811 - Coursework 2";
+
+	constexpr float kPi_ = 3.1415926f;
+
+	// STATE FROM G3
+	struct State_
+	{
+		ShaderProgram* prog;
+
+		// struct CamCtrl_
+		// {
+		// 	bool cameraActive;
+		// 	bool actionZoomIn, actionZoomOut;
+			
+		// 	float phi, theta;
+		// 	float radius;
+
+		// 	float lastX, lastY;
+		// } camControl;
+	};
+
+
 	
 	void glfw_callback_error_( int, char const* );
 
@@ -86,6 +110,11 @@ int main() try
 	}
 
 	GLFWWindowDeleter windowDeleter{ window };
+	
+	// Set up event handling
+	State_ state{};
+	glfwSetWindowUserPointer( window, &state );
+
 
 	// Set up event handling
 	glfwSetKeyCallback( window, &glfw_callback_key_ );
@@ -113,6 +142,12 @@ int main() try
 	OGL_CHECKPOINT_ALWAYS();
 
 	// TODO: global GL setup goes here
+	glEnable( GL_FRAMEBUFFER_SRGB );
+	glEnable( GL_CULL_FACE );
+	glClearColor( 0.5f, 0.5f, 0.5f, 0.0f );
+
+
+
 
 	OGL_CHECKPOINT_ALWAYS();
 
@@ -125,12 +160,75 @@ int main() try
 
 	glViewport( 0, 0, iwidth, iheight );
 
+
 	// Other initialization & loading
-	OGL_CHECKPOINT_ALWAYS();
-	
-	// TODO: 
+	// TODO: load shaders
+	ShaderProgram prog( {
+		{ GL_VERTEX_SHADER, "assets/default.vert" },
+		{ GL_FRAGMENT_SHADER, "assets/default.frag" }
+	} );
+
+	state.prog = &prog;
+	// state.camControl.radius = 10.f;
 
 	OGL_CHECKPOINT_ALWAYS();
+
+	//animation state
+	//take out later
+	auto last = Clock::now();
+	float angle = 0.f;
+
+
+
+	
+	// TODO: VBO AND VAO setup
+	//CUBE
+	GLuint positionVBO = 0;
+	glGenBuffers( 1, &positionVBO );
+	glBindBuffer( GL_ARRAY_BUFFER, positionVBO );
+	glBufferData( GL_ARRAY_BUFFER, sizeof(kCubePositions), kCubePositions, GL_STATIC_DRAW );
+
+	GLuint colorVBO = 0;
+	glGenBuffers( 1, &colorVBO );
+	glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
+	glBufferData( GL_ARRAY_BUFFER, sizeof(kCubeColors), kCubeColors, GL_STATIC_DRAW );
+
+	GLuint cubeVAO = 0;
+	glGenVertexArrays( 1, &cubeVAO );
+	glBindVertexArray ( cubeVAO );
+
+	glBindBuffer( GL_ARRAY_BUFFER, positionVBO );
+	glVertexAttribPointer(
+		0,
+		3, GL_FLOAT, GL_FALSE,
+		0,
+		0
+	);
+	glEnableVertexAttribArray( 0 );
+
+	glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
+	glVertexAttribPointer(
+		1,
+		3, GL_FLOAT, GL_FALSE,
+		0,
+		0
+	);
+	glEnableVertexAttribArray( 1 );
+
+	// reset and delete buffers
+	glBindVertexArray( 0 );
+	glBindBuffer( GL_ARRAY_BUFFER, 0 );
+	glDeleteBuffers( 1, &positionVBO );
+	glDeleteBuffers( 1, &colorVBO );
+
+
+
+
+	OGL_CHECKPOINT_ALWAYS();
+
+
+
+
 
 	// Main loop
 	while( !glfwWindowShouldClose( window ) )
@@ -162,13 +260,52 @@ int main() try
 		}
 
 		// Update state
+		auto const now = Clock::now();
+		float dt = std::chrono::duration_cast<Secondsf>(now-last).count();
+		last = now;
 
-		//TODO: update state
+		angle += dt * kPi_ * 0.3f;
+		if( angle >= 2.f*kPi_ )
+			angle -= 2.f*kPi_;
+
+
+		//TODO: update state (camera)
+
+
+		// Update: compute matrices
+		//TODO: define and compute projCameraWorld matrix
+		Mat44f model2world = make_rotation_y( angle );
+		Mat44f world2camera = make_translation( { 0.f, 0.f, -10.f } ); 
+		Mat44f projection = make_perspective_projection( 
+			60.f * 3.1415926f / 180.f, // Yes, a proper π would be useful. ( C++20: mathematical constants) 
+			fbwidth/float(fbheight), 
+			0.1f, 100.0f 
+		);
+		Mat44f scale =  make_scaling(5.f, 10.f, 1.f);
+		Mat44f projCameraWorld = projection * world2camera * scale*  model2world; 
 	
+
 		// Draw scene
 		OGL_CHECKPOINT_DEBUG();
 
 		//TODO: draw frame
+		glClear( GL_COLOR_BUFFER_BIT );
+		glUseProgram( prog.programId() );
+
+		glBindVertexArray( cubeVAO );
+
+		// pass in matrix as uniform data
+		glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld.v );
+
+		// 6 sides * 2 triangles * 3 vertices
+		glDrawArrays( GL_TRIANGLES, 0, 6*2*3);
+
+		// reset
+		glBindVertexArray( 0 );
+		glUseProgram( 0 );
+
+
+
 
 		OGL_CHECKPOINT_DEBUG();
 
@@ -177,6 +314,7 @@ int main() try
 	}
 
 	// Cleanup.
+	state.prog = nullptr;
 	//TODO: additional cleanup
 	
 	return 0;

@@ -140,12 +140,12 @@ Mat44f make_translation( Vec3f aTranslation ) noexcept
 inline
 Mat44f make_scaling( float aSX, float aSY, float aSZ ) noexcept
 {
-	//TODO: your implementation goes here
-	//TODO: remove the following when you start your implementation
-	(void)aSX;  // Avoid warnings about unused arguments until the function
-	(void)aSY;  // is properly implemented.
-	(void)aSZ;
-	return kIdentity44f;
+	return Mat44f{
+		aSX, 0, 0, 0,
+		0, aSY, 0, 0,
+		0, 0, aSZ, 0,
+		0, 0, 0, 1
+	};
 }
 
 
