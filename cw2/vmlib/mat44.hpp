@@ -59,21 +59,35 @@ constexpr Mat44f kIdentity44f = { {
 constexpr
 Mat44f operator*( Mat44f const& aLeft, Mat44f const& aRight ) noexcept
 {
-	//TODO: your implementation goes here
-	//TODO: remove the following when you start your implementation
-	(void)aLeft;   // Avoid warnings about unused arguments until the function
-	(void)aRight;  // is properly implemented.
-	return kIdentity44f;
+	Mat44f res = {
+		0.f, 0.f, 0.f, 0.f,
+		0.f, 0.f, 0.f, 0.f,
+		0.f, 0.f, 0.f, 0.f,
+		0.f, 0.f, 0.f, 0.f
+	};
+
+	for (int i = 0; i < 4; i++) 
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			for (int k = 0; k < 4; k++)
+			{
+				res(i, j) += aLeft(i, k) * aRight(k, j);
+			}
+		}
+	}
+	return res;
 }
 
 constexpr
 Vec4f operator*( Mat44f const& aLeft, Vec4f const& aRight ) noexcept
 {
-	//TODO: your implementation goes here
-	//TODO: remove the following when you start your implementation
-	(void)aLeft;   // Avoid warnings about unused arguments until the function
-	(void)aRight;  // is properly implemented.
-	return { 0.f, 0.f, 0.f, 0.f };
+	return Vec4f{
+		aRight.x*aLeft(0,0) + aRight.y*aLeft(0,1) +aRight.z*aLeft(0,2) +aRight.w*aLeft(0,3) ,
+		aRight.x*aLeft(1,0) + aRight.y*aLeft(1,1) +aRight.z*aLeft(1,2) +aRight.w*aLeft(1,3) ,
+		aRight.x*aLeft(2,0) + aRight.y*aLeft(2,1) +aRight.z*aLeft(2,2) +aRight.w*aLeft(2,3) ,
+		aRight.x*aLeft(3,0) + aRight.y*aLeft(3,1) +aRight.z*aLeft(3,2) +aRight.w*aLeft(3,3) ,
+	};
 }
 
 // Functions:
@@ -81,42 +95,46 @@ Vec4f operator*( Mat44f const& aLeft, Vec4f const& aRight ) noexcept
 inline
 Mat44f make_rotation_x( float aAngle ) noexcept
 {
-	//TODO: your implementation goes here
-	//TODO: remove the following when you start your implementation
-	(void)aAngle; // Avoid warnings about unused arguments until the function
-	              // is properly implemented.
-	return kIdentity44f;
+	return Mat44f{
+		1, 0, 0, 0,
+		0, std::cos(aAngle), -std::sin(aAngle), 0,
+		0, std::sin(aAngle), std::cos(aAngle), 0,
+		0, 0, 0, 1
+	};
 }
 
 
 inline
 Mat44f make_rotation_y( float aAngle ) noexcept
 {
-	//TODO: your implementation goes here
-	//TODO: remove the following when you start your implementation
-	(void)aAngle; // Avoid warnings about unused arguments until the function
-	              // is properly implemented.
-	return kIdentity44f;
+	return Mat44f{
+		std::cos(aAngle), 0, std::sin(aAngle), 0,
+		0, 1, 0, 0,
+		-std::sin(aAngle), 0, std::cos(aAngle), 0,
+		0, 0, 0, 1
+	};
 }
 
 inline
 Mat44f make_rotation_z( float aAngle ) noexcept
 {
-	//TODO: your implementation goes here
-	//TODO: remove the following when you start your implementation
-	(void)aAngle; // Avoid warnings about unused arguments until the function
-	              // is properly implemented.
-	return kIdentity44f;
+	return Mat44f{
+		std::cos(aAngle), -std::sin(aAngle), 0, 0,
+		-std::sin(aAngle), std::cos(aAngle), 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1
+	};
 }
 
 inline
 Mat44f make_translation( Vec3f aTranslation ) noexcept
 {
-	//TODO: your implementation goes here
-	//TODO: remove the following when you start your implementation
-	(void)aTranslation; // Avoid warnings about unused arguments until the function
-	                    // is properly implemented.
-	return kIdentity44f;
+	return Mat44f{
+		1, 0, 0, aTranslation.x,
+		0, 1, 0, aTranslation.y,
+		0, 0, 1, aTranslation.z,
+		0, 0, 0, 1
+	};
 }
 
 inline
@@ -134,13 +152,18 @@ Mat44f make_scaling( float aSX, float aSY, float aSZ ) noexcept
 inline
 Mat44f make_perspective_projection( float aFovInRadians, float aAspect, float aNear, float aFar ) noexcept
 {
-	//TODO: your implementation goes here
-	//TODO: remove the following when you start your implementation
-	(void)aFovInRadians; // Avoid warnings about unused arguments until the function
-	(void)aAspect;       // is properly implemented.
-	(void)aNear;
-	(void)aFar;
-	return kIdentity44f;
+	float s = 1 / std::tan( aFovInRadians/2 );
+	float sx = s / aAspect;
+
+	float a = - ( aFar + aNear ) / ( aFar - aNear );
+	float b = -2 * ( aFar * aNear ) / ( aFar - aNear );
+
+	return Mat44f{
+		sx, 0, 0, 0,
+		0, s, 0, 0,
+		0, 0, a, b,
+		0, 0, -1, 1
+	};
 }
 
 
