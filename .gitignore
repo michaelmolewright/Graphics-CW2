@@ -1,0 +1,7 @@
+_build_
+bin
+.vscode
+lib
+Makefile
+**/Makefile
+*.make
