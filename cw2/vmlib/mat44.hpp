@@ -165,6 +165,28 @@ Mat44f make_perspective_projection( float aFovInRadians, float aAspect, float aN
 		0, 0, -1, 1
 	};
 }
+inline
+Mat44f lookAt(Vec3f position, Vec3f target, Vec3f U)
+{
+
+	Vec3f D = normalize(position - target);
+	Vec3f R = normalize(cross_product(U, D));
+
+	Mat44f aRight = {
+		1.f, 0.f, 0.f, -position.x,
+		0.f, 1.f, 0.f, -position.y,
+		0.f, 0.f, 1.f, -position.z,
+		0.f, 0.f, 0.f, 1.f
+	};
+
+	Mat44f aLeft = {
+		R.x, R.y, R.z, 0.f,
+		U.x, U.y, U.z, 0.f,
+		D.x, D.y, D.z, 0.f,
+		0.f, 0.f, 0.f, 1.f
+	};
+	return aLeft * aRight;
+}
 
 
 

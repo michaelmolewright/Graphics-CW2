@@ -136,4 +136,25 @@ float length( Vec3f aVec ) noexcept
 	return std::sqrt( dot( aVec, aVec ) );
 }
 
+inline
+Vec3f cross_product(Vec3f aLeft, Vec3f aRight)
+{
+	Vec3f result = {0.f,0.f,0.f};
+
+	result.x = (aLeft.y * aRight.z) - (aLeft.z * aRight.y);
+	result.y = (aLeft.z * aRight.x) - (aLeft.x * aRight.z);
+	result.z = (aLeft.x * aRight.y) - (aLeft.y * aRight.x);
+
+
+	return result;
+}
+
+inline
+Vec3f normalize(Vec3f vector)
+{
+	float len = length(vector);
+	
+	return {(vector.x / len), (vector.y / len), (vector.z / len)};
+}
+
 #endif // VEC3_HPP_5710DADF_17EF_453C_A9C8_4A73DC66B1CD

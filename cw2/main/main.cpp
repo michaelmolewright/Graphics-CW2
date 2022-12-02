@@ -18,6 +18,7 @@
 #include "defaults.hpp"
 //TAKE OUT
 #include "cube.hpp"
+#include "../extra/camera.hpp"
 
 
 namespace
@@ -145,9 +146,6 @@ int main() try
 	glEnable( GL_FRAMEBUFFER_SRGB );
 	glEnable( GL_CULL_FACE );
 	glClearColor( 0.5f, 0.5f, 0.5f, 0.0f );
-
-
-
 
 	OGL_CHECKPOINT_ALWAYS();
 
@@ -282,7 +280,14 @@ int main() try
 			0.1f, 100.0f 
 		);
 		Mat44f scale =  make_scaling(5.f, 10.f, 1.f);
-		Mat44f projCameraWorld = projection * world2camera * scale*  model2world; 
+
+		const float radius = 15.0f;
+		float camX = sinf(glfwGetTime()) * radius;
+		float camZ = cosf(glfwGetTime()) * radius;
+		Mat44f view;
+		view = lookAt({camX, 2.f, camZ}, {1.f, 1.f, 1.f}, {0.f, 1.f, 0.f});
+
+		Mat44f projCameraWorld = projection * view;
 	
 
 		// Draw scene

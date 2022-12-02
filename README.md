@@ -21,4 +21,3 @@ git pull
 git checkout "branch name"
 
 git pull
-
