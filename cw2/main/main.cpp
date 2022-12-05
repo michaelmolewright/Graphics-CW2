@@ -32,23 +32,16 @@ namespace
 	{
 		ShaderProgram* prog;
 
-		// struct CamCtrl_
-		// {
-		// 	bool cameraActive;
-		// 	bool actionZoomIn, actionZoomOut;
-			
-		// 	float phi, theta;
-		// 	float radius;
-
-		// 	float lastX, lastY;
-		// } camControl;
+		camera c;
 	};
 
-
+	float dt = 0.0f;
 	
 	void glfw_callback_error_( int, char const* );
 
 	void glfw_callback_key_( GLFWwindow*, int, int, int, int );
+
+	void movement( GLFWwindow *aWindow, camera c );
 
 	struct GLFWCleanupHelper
 	{
@@ -232,8 +225,8 @@ int main() try
 	while( !glfwWindowShouldClose( window ) )
 	{
 		// Let GLFW process events
-		glfwPollEvents();
-		
+		//glfwPollEvents();
+	
 		// Check if window was resized.
 		float fbwidth, fbheight;
 		{
@@ -259,7 +252,7 @@ int main() try
 
 		// Update state
 		auto const now = Clock::now();
-		float dt = std::chrono::duration_cast<Secondsf>(now-last).count();
+		dt = std::chrono::duration_cast<Secondsf>(now-last).count();
 		last = now;
 
 		angle += dt * kPi_ * 0.3f;
@@ -268,7 +261,6 @@ int main() try
 
 
 		//TODO: update state (camera)
-
 
 		// Update: compute matrices
 		//TODO: define and compute projCameraWorld matrix
@@ -285,7 +277,8 @@ int main() try
 		float camX = sinf(glfwGetTime()) * radius;
 		float camZ = cosf(glfwGetTime()) * radius;
 		Mat44f view;
-		view = lookAt({camX, 2.f, camZ}, {1.f, 1.f, 1.f}, {0.f, 1.f, 0.f});
+		//view = lookAt({camX, 2.f, camZ}, {1.f, 1.f, 1.f}, {0.f, 1.f, 0.f});
+		view = lookAt(state.c.cameraPosition, state.c.cameraPosition + state.c.cameraFront, state.c.cameraUp);
 
 		Mat44f projCameraWorld = projection * view;
 	
@@ -309,13 +302,11 @@ int main() try
 		glBindVertexArray( 0 );
 		glUseProgram( 0 );
 
-
-
-
 		OGL_CHECKPOINT_DEBUG();
 
 		// Display results
 		glfwSwapBuffers( window );
+		glfwPollEvents();
 	}
 
 	// Cleanup.
@@ -342,12 +333,45 @@ namespace
 
 	void glfw_callback_key_( GLFWwindow* aWindow, int aKey, int, int aAction, int )
 	{
+		auto* state = static_cast<State_*>(glfwGetWindowUserPointer( aWindow ));
+
+		state->c.cameraSpeed = static_cast<float>(2.5 * dt);
+		
+
 		if( GLFW_KEY_ESCAPE == aKey && GLFW_PRESS == aAction )
 		{
 			glfwSetWindowShouldClose( aWindow, GLFW_TRUE );
 			return;
 		}
+		else if (glfwGetKey(aWindow, GLFW_KEY_W) == GLFW_PRESS){
+        	state->c.cameraPosition += state->c.cameraSpeed * state->c.cameraFront;
+			return;
+		}
+    	else if (glfwGetKey(aWindow, GLFW_KEY_S) == GLFW_PRESS){
+			state->c.cameraPosition -= state->c.cameraSpeed * state->c.cameraFront;
+			return;
+		}
+		else if (glfwGetKey(aWindow, GLFW_KEY_A) == GLFW_PRESS){
+			state->c.cameraPosition -= normalize(cross_product(state->c.cameraFront, state->c.cameraUp)) * state->c.cameraSpeed;
+			return;
+		}
+		else if (glfwGetKey(aWindow, GLFW_KEY_D) == GLFW_PRESS){
+			state->c.cameraPosition += normalize(cross_product(state->c.cameraFront, state->c.cameraUp)) * state->c.cameraSpeed;
+			return;
+		}
 	}
+
+	/*void movement(GLFWwindow *aWindow, camera c)
+	{
+		if (glfwGetKey(aWindow, GLFW_KEY_W) == GLFW_PRESS)
+			c.cameraPosition += c.cameraSpeed * c.cameraFront;
+		if (glfwGetKey(aWindow, GLFW_KEY_S) == GLFW_PRESS)
+			c.cameraPosition -= c.cameraSpeed * c.cameraFront;
+		if (glfwGetKey(aWindow, GLFW_KEY_A) == GLFW_PRESS)
+			c.cameraPosition -= normalize(cross_product(c.cameraFront, c.cameraUp)) * c.cameraSpeed;
+		if (glfwGetKey(aWindow, GLFW_KEY_D) == GLFW_PRESS)
+			c.cameraPosition += normalize(cross_product(c.cameraFront, c.cameraUp)) * c.cameraSpeed;
+	}*/
 }
 
 namespace
@@ -363,4 +387,3 @@ namespace
 			glfwDestroyWindow( window );
 	}
 }
-
