@@ -38,6 +38,7 @@ namespace
 	float dt = 0.0f;
 	float startX = 640, startY = 360;
 	float yaw = -90.f, pitch = 0.f;
+	bool start = true;
 	
 	void glfw_callback_error_( int, char const* );
 
@@ -251,7 +252,7 @@ int main() try
 				} while( 0 == nwidth || 0 == nheight );
 			}
 
-			glViewport( 0, 0, iwidth, iheight );
+			glViewport( 0, 0, nwidth, nheight );
 		}
 
 		// Update state
@@ -271,7 +272,7 @@ int main() try
 		Mat44f model2world = make_rotation_y( angle );
 		Mat44f world2camera = make_translation( { 0.f, 0.f, -10.f } ); 
 		Mat44f projection = make_perspective_projection( 
-			60.f * 3.1415926f / 180.f, // Yes, a proper π would be useful. ( C++20: mathematical constants) 
+			45.f * 3.1415926f / 180.f, // Yes, a proper π would be useful. ( C++20: mathematical constants) 
 			fbwidth/float(fbheight), 
 			0.1f, 100.0f 
 		);
@@ -284,7 +285,7 @@ int main() try
 		//view = lookAt({camX, 2.f, camZ}, {1.f, 1.f, 1.f}, {0.f, 1.f, 0.f});
 		view = lookAt(state.c.cameraPosition, state.c.cameraPosition + state.c.cameraFront, state.c.cameraUp);
 
-		Mat44f projCameraWorld = projection * view;
+		Mat44f projCameraWorld = projection * view * world2camera;
 	
 
 		// Draw scene
@@ -377,6 +378,7 @@ namespace
 	{
 		auto* state = static_cast<State_*>(glfwGetWindowUserPointer( aWindow ));
 
+
 		float xoffset = xP - startX;
 		float yoffset = startY - yP;
 		startX = xP;
@@ -401,7 +403,6 @@ namespace
 		dir.z = sinf(toRadians(yaw)) * cosf(toRadians(pitch));
 
 		state->c.cameraFront = normalize(dir);
-		
 	}
 }
 
