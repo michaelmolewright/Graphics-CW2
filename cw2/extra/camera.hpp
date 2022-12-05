@@ -2,7 +2,7 @@
 #include "../vmlib/vec4.hpp"
 #include "../vmlib/mat44.hpp"
 
-
+const float PIconv = 0.01745329251; 
 struct camera {
     Vec3f cameraPosition = {0.f, 0.f, 3.f};
     Vec3f cameraFront = {0.f,0.f,-1.f};
@@ -10,14 +10,7 @@ struct camera {
     float cameraSpeed = 0.05f;
 };
 
-void updatePosition(GLFWwindow *aWindow, camera c)
+float toRadians(float degs)
 {
-    if (glfwGetKey(aWindow, GLFW_KEY_W) == GLFW_PRESS)
-        c.cameraPosition += c.cameraSpeed * c.cameraFront;
-    if (glfwGetKey(aWindow, GLFW_KEY_S) == GLFW_PRESS)
-        c.cameraPosition -= c.cameraSpeed * c.cameraFront;
-    if (glfwGetKey(aWindow, GLFW_KEY_A) == GLFW_PRESS)
-        c.cameraPosition -= normalize(cross_product(c.cameraFront, c.cameraUp)) * c.cameraSpeed;
-    if (glfwGetKey(aWindow, GLFW_KEY_D) == GLFW_PRESS)
-        c.cameraPosition += normalize(cross_product(c.cameraFront, c.cameraUp)) * c.cameraSpeed;
+    return degs * PIconv;
 };

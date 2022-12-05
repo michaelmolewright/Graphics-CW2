@@ -36,12 +36,14 @@ namespace
 	};
 
 	float dt = 0.0f;
+	float startX = 640, startY = 360;
+	float yaw = -90.f, pitch = 0.f;
 	
 	void glfw_callback_error_( int, char const* );
 
 	void glfw_callback_key_( GLFWwindow*, int, int, int, int );
 
-	void movement( GLFWwindow *aWindow, camera c );
+	void mouse_movement(GLFWwindow*, double, double );
 
 	struct GLFWCleanupHelper
 	{
@@ -108,10 +110,12 @@ int main() try
 	// Set up event handling
 	State_ state{};
 	glfwSetWindowUserPointer( window, &state );
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
 
 
 	// Set up event handling
 	glfwSetKeyCallback( window, &glfw_callback_key_ );
+	glfwSetCursorPosCallback(window, &mouse_movement);
 
 	// Set up drawing stuff
 	glfwMakeContextCurrent( window );
@@ -359,19 +363,46 @@ namespace
 			state->c.cameraPosition += normalize(cross_product(state->c.cameraFront, state->c.cameraUp)) * state->c.cameraSpeed;
 			return;
 		}
+		else if (glfwGetKey(aWindow, GLFW_KEY_Q) == GLFW_PRESS){
+			state->c.cameraPosition += normalize(cross_product(cross_product(state->c.cameraFront, state->c.cameraUp), state->c.cameraFront)) * state->c.cameraSpeed;
+			return;
+		}
+		else if (glfwGetKey(aWindow, GLFW_KEY_E) == GLFW_PRESS){
+			state->c.cameraPosition -= normalize(cross_product(cross_product(state->c.cameraFront, state->c.cameraUp), state->c.cameraFront)) * state->c.cameraSpeed;
+			return;
+		}
 	}
 
-	/*void movement(GLFWwindow *aWindow, camera c)
+	void mouse_movement(GLFWwindow* aWindow, double xP, double yP)
 	{
-		if (glfwGetKey(aWindow, GLFW_KEY_W) == GLFW_PRESS)
-			c.cameraPosition += c.cameraSpeed * c.cameraFront;
-		if (glfwGetKey(aWindow, GLFW_KEY_S) == GLFW_PRESS)
-			c.cameraPosition -= c.cameraSpeed * c.cameraFront;
-		if (glfwGetKey(aWindow, GLFW_KEY_A) == GLFW_PRESS)
-			c.cameraPosition -= normalize(cross_product(c.cameraFront, c.cameraUp)) * c.cameraSpeed;
-		if (glfwGetKey(aWindow, GLFW_KEY_D) == GLFW_PRESS)
-			c.cameraPosition += normalize(cross_product(c.cameraFront, c.cameraUp)) * c.cameraSpeed;
-	}*/
+		auto* state = static_cast<State_*>(glfwGetWindowUserPointer( aWindow ));
+
+		float xoffset = xP - startX;
+		float yoffset = startY - yP;
+		startX = xP;
+		startY = yP;
+
+
+		float sensitivity = 0.1f;
+		xoffset *= sensitivity;
+		yoffset *= sensitivity;
+
+		yaw += xoffset;
+		pitch += yoffset;
+
+		if(pitch > 89.0f)
+			pitch = 89.0f;
+		if(pitch < -89.0f)
+			pitch = -89.0f;
+
+		Vec3f dir;
+		dir.x = cosf(toRadians(yaw)) * cosf(toRadians(pitch));
+		dir.y = sinf(toRadians(pitch));
+		dir.z = sinf(toRadians(yaw)) * cosf(toRadians(pitch));
+
+		state->c.cameraFront = normalize(dir);
+		
+	}
 }
 
 namespace
