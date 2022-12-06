@@ -18,6 +18,7 @@
 #include "defaults.hpp"
 // TAKE OUT
 #include "cube.hpp"
+#include "../extra/camera.hpp"
 
 namespace
 {
@@ -30,6 +31,7 @@ namespace
 	{
 		ShaderProgram *prog;
 
+<<<<<<< HEAD
 		// struct CamCtrl_
 		// {
 		// 	bool cameraActive;
@@ -45,6 +47,20 @@ namespace
 	void glfw_callback_error_(int, char const *);
 
 	void glfw_callback_key_(GLFWwindow *, int, int, int, int);
+=======
+		camera c;
+	};
+
+	float dt = 0.0f;
+	float startX = 640, startY = 360;
+	float yaw = -90.f, pitch = 0.f;
+	
+	void glfw_callback_error_( int, char const* );
+
+	void glfw_callback_key_( GLFWwindow*, int, int, int, int );
+>>>>>>> camera
+
+	void mouse_movement(GLFWwindow*, double, double );
 
 	struct GLFWCleanupHelper
 	{
@@ -110,10 +126,20 @@ try
 
 	// Set up event handling
 	State_ state{};
+<<<<<<< HEAD
 	glfwSetWindowUserPointer(window, &state);
 
 	// Set up event handling
 	glfwSetKeyCallback(window, &glfw_callback_key_);
+=======
+	glfwSetWindowUserPointer( window, &state );
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
+
+
+	// Set up event handling
+	glfwSetKeyCallback( window, &glfw_callback_key_ );
+	glfwSetCursorPosCallback(window, &mouse_movement);
+>>>>>>> camera
 
 	// Set up drawing stuff
 	glfwMakeContextCurrent(window);
@@ -138,9 +164,16 @@ try
 	OGL_CHECKPOINT_ALWAYS();
 
 	// TODO: global GL setup goes here
+<<<<<<< HEAD
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glEnable(GL_CULL_FACE);
 	glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
+=======
+	glEnable( GL_FRAMEBUFFER_SRGB );
+	glEnable( GL_CULL_FACE );
+	glClearColor( 0.5f, 0.5f, 0.5f, 0.0f );
+	glEnable(GL_DEPTH_TEST);
+>>>>>>> camera
 
 	OGL_CHECKPOINT_ALWAYS();
 
@@ -212,8 +245,8 @@ try
 	while (!glfwWindowShouldClose(window))
 	{
 		// Let GLFW process events
-		glfwPollEvents();
-
+		//glfwPollEvents();
+	
 		// Check if window was resized.
 		float fbwidth, fbheight;
 		{
@@ -234,38 +267,39 @@ try
 				} while (0 == nwidth || 0 == nheight);
 			}
 
-			// update viewport to new framebuffer size
-			glViewport(0, 0, nwidth, nheight);
+			glViewport( 0, 0, nwidth, nheight );
 		}
 
 		// Update state
 		auto const now = Clock::now();
-		float dt = std::chrono::duration_cast<Secondsf>(now - last).count();
+		dt = std::chrono::duration_cast<Secondsf>(now-last).count();
 		last = now;
 
 		angle += dt * kPi_ * 0.3f;
 		if (angle >= 2.f * kPi_)
 			angle -= 2.f * kPi_;
 
-		// TODO: update state (camera)
-
 		// Update: compute matrices
-		// TODO: define and compute projCameraWorld matrix
-		Mat44f model2world = make_rotation_y(angle);
-		Mat44f world2camera = make_translation({0.f, 0.f, -10.f});
-		Mat44f projection = make_perspective_projection(
-			60.f * 3.1415926f / 180.f, // Yes, a proper π would be useful. ( C++20: mathematical constants)
-			fbwidth / float(fbheight),
-			0.1f, 100.0f);
-		Mat44f scale = make_scaling(5.f, 10.f, 1.f);
-		Mat44f projCameraWorld = projection * world2camera * scale * model2world;
+		//TODO: define and compute projCameraWorld matrix
+		Mat44f world2camera = make_translation( { 0.f, 0.f, -10.f } );
+		Mat44f world2camera2 = make_translation( { 5.f, 0.f, -10.f } );
+		Mat44f projection = make_perspective_projection( 
+			45.f * 3.1415926f / 180.f, // Yes, a proper π would be useful. ( C++20: mathematical constants) 
+			fbwidth/float(fbheight), 
+			0.1f, 100.0f 
+		);
+		Mat44f view = lookAt(state.c.cameraPosition, state.c.cameraPosition + state.c.cameraFront, state.c.cameraUp);
+
+		Mat44f projCameraWorld = projection * view * world2camera;
+		Mat44f projCameraWorld2 = projection * view * world2camera2;
+	
 
 		// Draw scene
 		OGL_CHECKPOINT_DEBUG();
 
-		// TODO: draw frame
-		glClear(GL_COLOR_BUFFER_BIT);
-		glUseProgram(prog.programId());
+		//TODO: draw frame
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		glUseProgram( prog.programId() );
 
 		glBindVertexArray(cubeVAO);
 
@@ -275,14 +309,20 @@ try
 		// 6 sides * 2 triangles * 3 vertices
 		glDrawArrays(GL_TRIANGLES, 0, 6 * 2 * 3);
 
+		glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld2.v );
+
+		// 6 sides * 2 triangles * 3 vertices
+		glDrawArrays( GL_TRIANGLES, 0, 6*2*3);
+
 		// reset
-		glBindVertexArray(0);
-		glUseProgram(0);
+		glBindVertexArray( 0 );
+		glUseProgram( 0 );
 
 		OGL_CHECKPOINT_DEBUG();
 
 		// Display results
-		glfwSwapBuffers(window);
+		glfwSwapBuffers( window );
+		glfwPollEvents();
 	}
 
 	// Cleanup.
@@ -308,11 +348,48 @@ namespace
 
 	void glfw_callback_key_(GLFWwindow *aWindow, int aKey, int, int aAction, int)
 	{
-		if (GLFW_KEY_ESCAPE == aKey && GLFW_PRESS == aAction)
+		auto* state = static_cast<State_*>(glfwGetWindowUserPointer( aWindow ));
+
+		
+
+		if( GLFW_KEY_ESCAPE == aKey && GLFW_PRESS == aAction )
 		{
 			glfwSetWindowShouldClose(aWindow, GLFW_TRUE);
 			return;
 		}
+		move(aWindow, state);
+
+	}
+
+	void mouse_movement(GLFWwindow* aWindow, double xP, double yP)
+	{
+		auto* state = static_cast<State_*>(glfwGetWindowUserPointer( aWindow ));
+
+
+		float xoffset = xP - startX;
+		float yoffset = startY - yP;
+		startX = xP;
+		startY = yP;
+
+
+		float sensitivity = 0.07f;
+		xoffset *= sensitivity;
+		yoffset *= sensitivity;
+
+		yaw += xoffset;
+		pitch += yoffset;
+
+		if(pitch > 89.0f)
+			pitch = 89.0f;
+		if(pitch < -89.0f)
+			pitch = -89.0f;
+
+		Vec3f dir;
+		dir.x = cosf(toRadians(yaw)) * cosf(toRadians(pitch));
+		dir.y = sinf(toRadians(pitch));
+		dir.z = sinf(toRadians(yaw)) * cosf(toRadians(pitch));
+
+		state->c.cameraFront = normalize(dir);
 	}
 }
 
