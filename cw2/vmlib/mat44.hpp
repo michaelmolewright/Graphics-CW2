@@ -166,11 +166,11 @@ Mat44f make_perspective_projection( float aFovInRadians, float aAspect, float aN
 	};
 }
 inline
-Mat44f camMat(Vec3f position, Vec3f target, Vec3f U)
+Mat44f camMat(Vec3f position, Vec3f target, Vec3f up)
 {
 	//Have to calculate all 3 new vectors for this
 	Vec3f D = normalize(position - target);
-	Vec3f R = normalize(cross_product(U, D));
+	Vec3f R = normalize(cross_product(up, D));
 	Vec3f P = cross_product(D, R); //Have the calculate a new up vector instead of one passed through - P for Pitch
 
 	Mat44f aRight = {
