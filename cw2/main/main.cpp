@@ -237,9 +237,7 @@ int main() try {
             45.f * 3.1415926f / 180.f,   // Yes, a proper π would be useful. (
                                          // C++20: mathematical constants)
             fbwidth / float( fbheight ), 0.1f, 100.0f );
-        Mat44f view = camMat( state.c.cameraPosition,
-                              state.c.cameraPosition + state.c.cameraFront,
-                              state.c.cameraUp );
+        Mat44f view = camMat( state.c.cameraPosition, state.c.cameraPosition + state.c.cameraFront, state.c.cameraUp );
 
         Mat44f projCameraWorld = projection * view * world2camera;
         Mat44f projCameraWorld2 = projection * view * world2camera2;
