@@ -78,7 +78,7 @@ main() try {
 
     glfwWindowHint( GLFW_DEPTH_BITS, 24 );
 
-#if !defined( NDEBUG ) s
+#if !defined( NDEBUG )
     // When building in debug mode, request an OpenGL debug context. This
     // enables additional debugging features. However, this can carry extra
     // overheads. We therefore do not do this for release builds.
