@@ -31,23 +31,6 @@ namespace
 	{
 		ShaderProgram *prog;
 
-<<<<<<< HEAD
-		// struct CamCtrl_
-		// {
-		// 	bool cameraActive;
-		// 	bool actionZoomIn, actionZoomOut;
-
-		// 	float phi, theta;
-		// 	float radius;
-
-		// 	float lastX, lastY;
-		// } camControl;
-	};
-
-	void glfw_callback_error_(int, char const *);
-
-	void glfw_callback_key_(GLFWwindow *, int, int, int, int);
-=======
 		camera c;
 	};
 
@@ -58,7 +41,6 @@ namespace
 	void glfw_callback_error_( int, char const* );
 
 	void glfw_callback_key_( GLFWwindow*, int, int, int, int );
->>>>>>> camera
 
 	void mouse_movement(GLFWwindow*, double, double );
 
@@ -126,12 +108,6 @@ try
 
 	// Set up event handling
 	State_ state{};
-<<<<<<< HEAD
-	glfwSetWindowUserPointer(window, &state);
-
-	// Set up event handling
-	glfwSetKeyCallback(window, &glfw_callback_key_);
-=======
 	glfwSetWindowUserPointer( window, &state );
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
 
@@ -139,7 +115,6 @@ try
 	// Set up event handling
 	glfwSetKeyCallback( window, &glfw_callback_key_ );
 	glfwSetCursorPosCallback(window, &mouse_movement);
->>>>>>> camera
 
 	// Set up drawing stuff
 	glfwMakeContextCurrent(window);
@@ -164,16 +139,10 @@ try
 	OGL_CHECKPOINT_ALWAYS();
 
 	// TODO: global GL setup goes here
-<<<<<<< HEAD
-	glEnable(GL_FRAMEBUFFER_SRGB);
-	glEnable(GL_CULL_FACE);
-	glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
-=======
 	glEnable( GL_FRAMEBUFFER_SRGB );
 	glEnable( GL_CULL_FACE );
 	glClearColor( 0.5f, 0.5f, 0.5f, 0.0f );
 	glEnable(GL_DEPTH_TEST);
->>>>>>> camera
 
 	OGL_CHECKPOINT_ALWAYS();
 
