@@ -78,7 +78,7 @@ main() try {
 
     glfwWindowHint( GLFW_DEPTH_BITS, 24 );
 
-#if !defined( NDEBUG ) s
+#if !defined( NDEBUG )
     // When building in debug mode, request an OpenGL debug context. This
     // enables additional debugging features. However, this can carry extra
     // overheads. We therefore do not do this for release builds.
@@ -238,7 +238,7 @@ main() try {
             45.f * 3.1415926f / 180.f,   // Yes, a proper π would be useful. (
                                          // C++20: mathematical constants)
             fbwidth / float( fbheight ), 0.1f, 100.0f );
-        Mat44f view = lookAt( state.c.cameraPosition,
+        Mat44f view = camMat( state.c.cameraPosition,
                               state.c.cameraPosition + state.c.cameraFront,
                               state.c.cameraUp );
 

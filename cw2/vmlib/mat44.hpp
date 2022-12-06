@@ -166,7 +166,7 @@ Mat44f make_perspective_projection( float aFovInRadians, float aAspect, float aN
 	};
 }
 inline
-Mat44f lookAt(Vec3f position, Vec3f target, Vec3f U)
+Mat44f camMat(Vec3f position, Vec3f target, Vec3f U)
 {
 	//Have to calculate all 3 new vectors for this
 	Vec3f D = normalize(position - target);
