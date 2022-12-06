@@ -340,7 +340,6 @@ namespace
 	{
 		auto* state = static_cast<State_*>(glfwGetWindowUserPointer( aWindow ));
 
-		state->c.cameraSpeed = static_cast<float>(2.5 * dt);
 		
 
 		if( GLFW_KEY_ESCAPE == aKey && GLFW_PRESS == aAction )
@@ -348,30 +347,9 @@ namespace
 			glfwSetWindowShouldClose( aWindow, GLFW_TRUE );
 			return;
 		}
-		else if (glfwGetKey(aWindow, GLFW_KEY_W) == GLFW_PRESS){
-        	state->c.cameraPosition += state->c.cameraSpeed * state->c.cameraFront;
-			return;
-		}
-    	else if (glfwGetKey(aWindow, GLFW_KEY_S) == GLFW_PRESS){
-			state->c.cameraPosition -= state->c.cameraSpeed * state->c.cameraFront;
-			return;
-		}
-		else if (glfwGetKey(aWindow, GLFW_KEY_A) == GLFW_PRESS){
-			state->c.cameraPosition -= normalize(cross_product(state->c.cameraFront, state->c.cameraUp)) * state->c.cameraSpeed;
-			return;
-		}
-		else if (glfwGetKey(aWindow, GLFW_KEY_D) == GLFW_PRESS){
-			state->c.cameraPosition += normalize(cross_product(state->c.cameraFront, state->c.cameraUp)) * state->c.cameraSpeed;
-			return;
-		}
-		else if (glfwGetKey(aWindow, GLFW_KEY_Q) == GLFW_PRESS){
-			state->c.cameraPosition += normalize(cross_product(cross_product(state->c.cameraFront, state->c.cameraUp), state->c.cameraFront)) * state->c.cameraSpeed;
-			return;
-		}
-		else if (glfwGetKey(aWindow, GLFW_KEY_E) == GLFW_PRESS){
-			state->c.cameraPosition -= normalize(cross_product(cross_product(state->c.cameraFront, state->c.cameraUp), state->c.cameraFront)) * state->c.cameraSpeed;
-			return;
-		}
+		move(aWindow, state);
+		//GLFW_KEY_LEFT_SHIFT 
+		//
 	}
 
 	void mouse_movement(GLFWwindow* aWindow, double xP, double yP)
@@ -385,7 +363,7 @@ namespace
 		startY = yP;
 
 
-		float sensitivity = 0.1f;
+		float sensitivity = 0.07f;
 		xoffset *= sensitivity;
 		yoffset *= sensitivity;
 
