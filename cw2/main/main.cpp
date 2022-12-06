@@ -18,6 +18,7 @@
 #include "defaults.hpp"
 // TAKE OUT
 #include "cube.hpp"
+#include "test_cube.hpp"
 #include "../extra/camera.hpp"
 
 namespace {
@@ -28,6 +29,8 @@ constexpr float kPi_ = 3.1415926f;
 // STATE FROM G3
 struct State_ {
     ShaderProgram *prog;
+
+	ShaderProgram *lighting;
 
     camera c;
 };
@@ -78,7 +81,7 @@ main() try {
 
     glfwWindowHint( GLFW_DEPTH_BITS, 24 );
 
-#if !defined( NDEBUG ) s
+#if !defined( NDEBUG )
     // When building in debug mode, request an OpenGL debug context. This
     // enables additional debugging features. However, this can carry extra
     // overheads. We therefore do not do this for release builds.
@@ -150,8 +153,12 @@ main() try {
     // TODO: load shaders
     ShaderProgram prog( { { GL_VERTEX_SHADER, "assets/default.vert" },
                           { GL_FRAGMENT_SHADER, "assets/default.frag" } } );
+	// lighting shader
+	ShaderProgram lighting( { { GL_VERTEX_SHADER, "assets/light.vert" },
+                          { GL_FRAGMENT_SHADER, "assets/light.frag" } } );
 
     state.prog = &prog;
+	state.lighting = &lighting;
     // state.camControl.radius = 10.f;
 
     OGL_CHECKPOINT_ALWAYS();
