@@ -51,8 +51,7 @@ struct GLFWWindowDeleter {
 };
 }   // namespace
 
-int
-main() try {
+int main() try {
     // Initialize GLFW
     if ( GLFW_TRUE != glfwInit() ) {
         char const *msg = nullptr;
@@ -290,13 +289,12 @@ main() try {
 }
 
 namespace {
-void
-glfw_callback_error_( int aErrNum, char const *aErrDesc ) {
+void glfw_callback_error_( int aErrNum, char const *aErrDesc ) {
     std::fprintf( stderr, "GLFW error: %s (%d)\n", aErrDesc, aErrNum );
 }
 
-void
-glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction, int ) {
+void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction,
+                         int ) {
     auto *state = static_cast<State_ *>( glfwGetWindowUserPointer( aWindow ) );
 
     if ( GLFW_KEY_ESCAPE == aKey && GLFW_PRESS == aAction ) {
@@ -306,8 +304,7 @@ glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction, int ) {
     move( aWindow, state );
 }
 
-void
-mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
+void mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
     auto *state = static_cast<State_ *>( glfwGetWindowUserPointer( aWindow ) );
 
     float xoffset = xP - startX;
