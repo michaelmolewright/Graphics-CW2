@@ -19,6 +19,7 @@
 // TAKE OUT
 #include "cube.hpp"
 #include "../extra/camera.hpp"
+#include "../extra/textures.hpp"
 
 namespace {
 constexpr char const *kWindowTitle = "COMP3811 - Coursework 2";
@@ -162,35 +163,9 @@ int main() try {
 
     // TODO: VBO AND VAO setup
     // CUBE
-    GLuint positionVBO = 0;
-    glGenBuffers( 1, &positionVBO );
-    glBindBuffer( GL_ARRAY_BUFFER, positionVBO );
-    glBufferData( GL_ARRAY_BUFFER, sizeof( kCubePositions ), kCubePositions,
-                  GL_STATIC_DRAW );
-
-    GLuint colorVBO = 0;
-    glGenBuffers( 1, &colorVBO );
-    glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
-    glBufferData( GL_ARRAY_BUFFER, sizeof( kCubeColors ), kCubeColors,
-                  GL_STATIC_DRAW );
-
-    GLuint cubeVAO = 0;
-    glGenVertexArrays( 1, &cubeVAO );
-    glBindVertexArray( cubeVAO );
-
-    glBindBuffer( GL_ARRAY_BUFFER, positionVBO );
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
-    glEnableVertexAttribArray( 0 );
-
-    glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
-    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, 0 );
-    glEnableVertexAttribArray( 1 );
-
-    // reset and delete buffers
-    glBindVertexArray( 0 );
-    glBindBuffer( GL_ARRAY_BUFFER, 0 );
-    glDeleteBuffers( 1, &positionVBO );
-    glDeleteBuffers( 1, &colorVBO );
+    GLuint cubeVAO = createCubeVBO();
+    GLuint textureID = createTexture();
+    glActiveTexture( GL_TEXTURE0 );
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -248,6 +223,8 @@ int main() try {
         // TODO: draw frame
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram( prog.programId() );
+
+        glBindTexture(GL_TEXTURE_2D, textureID);
 
         glBindVertexArray( cubeVAO );
 
