@@ -2,6 +2,7 @@
 #include "../vmlib/vec4.hpp"
 #include "../vmlib/mat44.hpp"
 
+
 const float PIconv = 0.01745329251; 
 const float shiftMult = 4.f;
 const float ctrlMult = 0.5;
@@ -19,7 +20,7 @@ float toRadians(float degs)
 };
 
 void move(GLFWwindow* aWindow, auto* state)
-{
+{   
     //implement keys + shift multiplyer
     if (glfwGetKey(aWindow, GLFW_KEY_W) == GLFW_PRESS && glfwGetKey(aWindow, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS){
         state->c.cameraPosition += state->c.cameraSpeed * state->c.cameraFront * shiftMult;

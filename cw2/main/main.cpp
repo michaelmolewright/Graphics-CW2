@@ -38,7 +38,6 @@ namespace
 	float dt = 0.0f;
 	float startX = 640, startY = 360;
 	float yaw = -90.f, pitch = 0.f;
-	bool start = true;
 	
 	void glfw_callback_error_( int, char const* );
 
@@ -144,6 +143,7 @@ int main() try
 	glEnable( GL_FRAMEBUFFER_SRGB );
 	glEnable( GL_CULL_FACE );
 	glClearColor( 0.5f, 0.5f, 0.5f, 0.0f );
+	glEnable(GL_DEPTH_TEST);
 
 	OGL_CHECKPOINT_ALWAYS();
 
@@ -269,36 +269,35 @@ int main() try
 
 		// Update: compute matrices
 		//TODO: define and compute projCameraWorld matrix
-		Mat44f model2world = make_rotation_y( angle );
-		Mat44f world2camera = make_translation( { 0.f, 0.f, -10.f } ); 
+		Mat44f world2camera = make_translation( { 0.f, 0.f, -10.f } );
+		Mat44f world2camera2 = make_translation( { 5.f, 0.f, -10.f } );
 		Mat44f projection = make_perspective_projection( 
 			45.f * 3.1415926f / 180.f, // Yes, a proper π would be useful. ( C++20: mathematical constants) 
 			fbwidth/float(fbheight), 
 			0.1f, 100.0f 
 		);
-		Mat44f scale =  make_scaling(5.f, 10.f, 1.f);
-
-		const float radius = 15.0f;
-		float camX = sinf(glfwGetTime()) * radius;
-		float camZ = cosf(glfwGetTime()) * radius;
-		Mat44f view;
-		//view = lookAt({camX, 2.f, camZ}, {1.f, 1.f, 1.f}, {0.f, 1.f, 0.f});
-		view = lookAt(state.c.cameraPosition, state.c.cameraPosition + state.c.cameraFront, state.c.cameraUp);
+		Mat44f view = lookAt(state.c.cameraPosition, state.c.cameraPosition + state.c.cameraFront, state.c.cameraUp);
 
 		Mat44f projCameraWorld = projection * view * world2camera;
+		Mat44f projCameraWorld2 = projection * view * world2camera2;
 	
 
 		// Draw scene
 		OGL_CHECKPOINT_DEBUG();
 
 		//TODO: draw frame
-		glClear( GL_COLOR_BUFFER_BIT );
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		glUseProgram( prog.programId() );
 
 		glBindVertexArray( cubeVAO );
 
 		// pass in matrix as uniform data
 		glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld.v );
+
+		// 6 sides * 2 triangles * 3 vertices
+		glDrawArrays( GL_TRIANGLES, 0, 6*2*3);
+
+		glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld2.v );
 
 		// 6 sides * 2 triangles * 3 vertices
 		glDrawArrays( GL_TRIANGLES, 0, 6*2*3);
@@ -348,8 +347,7 @@ namespace
 			return;
 		}
 		move(aWindow, state);
-		//GLFW_KEY_LEFT_SHIFT 
-		//
+
 	}
 
 	void mouse_movement(GLFWwindow* aWindow, double xP, double yP)
