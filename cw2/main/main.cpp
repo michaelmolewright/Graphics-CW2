@@ -290,6 +290,8 @@ int main() try {
         static float const cameraPos[] = { state.c.cameraPosition.x, state.c.cameraPosition.y, state.c.cameraPosition.z };
         glUniform3fv( 5, 1, cameraPos );
 
+        std::printf( "\n %f %f %f \n", state.c.cameraPosition.x, state.c.cameraPosition.y, state.c.cameraPosition.z);
+
         // 6 sides * 2 triangles * 3 vertices
         glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
