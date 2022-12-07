@@ -276,14 +276,20 @@ int main() try {
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram( prog.programId() );
         glBindVertexArray( cubeVAO );
-        // pass in matrix as uniform data
+
+        //uniform data
         glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld.v );
         // light uniforms
         glUniform3fv( 1, 1, lightColor );
         glUniform3fv( 2, 1, lightPos );
-        glUniformMatrix4fv( 4, 1, GL_TRUE, kIdentity44f.v ); // model matrix - we dont move cube so pass in identity matrix for now
         // uniform colour
         glUniform3fv( 3, 1, uColor );
+        // model matrix - we dont move cube so pass in identity matrix for now
+        glUniformMatrix4fv( 4, 1, GL_TRUE, kIdentity44f.v );
+        // camera position
+        static float const cameraPos[] = { state.c.cameraPosition.x, state.c.cameraPosition.y, state.c.cameraPosition.z };
+        glUniform3fv( 5, 1, cameraPos );
+
         // 6 sides * 2 triangles * 3 vertices
         glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
