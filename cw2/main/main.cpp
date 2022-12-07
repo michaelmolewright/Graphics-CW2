@@ -18,7 +18,6 @@
 #include "defaults.hpp"
 // TAKE OUT
 #include "cube.hpp"
-#include "test_cube.hpp"
 #include "../extra/camera.hpp"
 
 namespace {
@@ -30,7 +29,7 @@ constexpr float kPi_ = 3.1415926f;
 struct State_ {
     ShaderProgram *prog;
 
-	ShaderProgram *lighting;
+    ShaderProgram *lighting;
 
     camera c;
 };
@@ -54,8 +53,7 @@ struct GLFWWindowDeleter {
 };
 }   // namespace
 
-int
-main() try {
+int main() try {
     // Initialize GLFW
     if ( GLFW_TRUE != glfwInit() ) {
         char const *msg = nullptr;
@@ -102,7 +100,7 @@ main() try {
     // Set up event handling
     State_ state{};
     glfwSetWindowUserPointer( window, &state );
-    glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
+    // glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
 
     // Set up event handling
     glfwSetKeyCallback( window, &glfw_callback_key_ );
@@ -134,8 +132,8 @@ main() try {
 
     // TODO: global GL setup goes here
     glEnable( GL_FRAMEBUFFER_SRGB );
-    glEnable( GL_CULL_FACE );
-    glClearColor( 0.5f, 0.5f, 0.5f, 0.0f );
+    //glEnable( GL_CULL_FACE );
+    glClearColor( 0.f, 0.f, 0.f, 0.0f );
     glEnable( GL_DEPTH_TEST );
 
     OGL_CHECKPOINT_ALWAYS();
@@ -153,12 +151,12 @@ main() try {
     // TODO: load shaders
     ShaderProgram prog( { { GL_VERTEX_SHADER, "assets/default.vert" },
                           { GL_FRAGMENT_SHADER, "assets/default.frag" } } );
-	// lighting shader
-	ShaderProgram lighting( { { GL_VERTEX_SHADER, "assets/light.vert" },
-                          { GL_FRAGMENT_SHADER, "assets/light.frag" } } );
+    // lighting shader
+    ShaderProgram lighting( { { GL_VERTEX_SHADER, "assets/light.vert" },
+                              { GL_FRAGMENT_SHADER, "assets/light.frag" } } );
 
     state.prog = &prog;
-	state.lighting = &lighting;
+    state.lighting = &lighting;
     // state.camControl.radius = 10.f;
 
     OGL_CHECKPOINT_ALWAYS();
@@ -169,36 +167,53 @@ main() try {
     float angle = 0.f;
 
     // TODO: VBO AND VAO setup
-    // CUBE
-    GLuint positionVBO = 0;
-    glGenBuffers( 1, &positionVBO );
-    glBindBuffer( GL_ARRAY_BUFFER, positionVBO );
+    // CUBE - now contains positions and normals
+    GLuint cubeVBO = 0;
+    glGenBuffers( 1, &cubeVBO );
+    glBindBuffer( GL_ARRAY_BUFFER, cubeVBO );
     glBufferData( GL_ARRAY_BUFFER, sizeof( kCubePositions ), kCubePositions,
-                  GL_STATIC_DRAW );
-
-    GLuint colorVBO = 0;
-    glGenBuffers( 1, &colorVBO );
-    glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
-    glBufferData( GL_ARRAY_BUFFER, sizeof( kCubeColors ), kCubeColors,
                   GL_STATIC_DRAW );
 
     GLuint cubeVAO = 0;
     glGenVertexArrays( 1, &cubeVAO );
     glBindVertexArray( cubeVAO );
 
-    glBindBuffer( GL_ARRAY_BUFFER, positionVBO );
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+    glBindBuffer( GL_ARRAY_BUFFER, cubeVBO );
+    // positions
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof( float ),
+                           (void *)0 );
     glEnableVertexAttribArray( 0 );
-
-    glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
-    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+    // normals
+    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof( float ),
+                           (void *)( 3 * sizeof( float ) ) );
     glEnableVertexAttribArray( 1 );
+
+    // glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
+    // glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+    // glEnableVertexAttribArray( 1 );
+
+    // LIGHT CUBE
+    GLuint lightVAO = 0;
+    glGenVertexArrays( 1, &lightVAO );
+    glBindVertexArray( lightVAO );
+    glBindBuffer( GL_ARRAY_BUFFER, cubeVBO );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof( float ),
+                           (void *)0 );
+    glEnableVertexAttribArray( 0 );
 
     // reset and delete buffers
     glBindVertexArray( 0 );
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
-    glDeleteBuffers( 1, &positionVBO );
-    glDeleteBuffers( 1, &colorVBO );
+    glDeleteBuffers( 1, &cubeVBO );
+
+    // uniform colour for cube
+    static float const uColor[] = { 1.0f, 0.5f, 0.31f };
+    // lighting uniform data
+    static float const lightColor[] = { 1.f, 1.f, 1.f };
+    static float const lightPos[] = { 5.f, 1.0f, 2.0f };
+    // translation for lighting cube
+    Mat44f lightTranslate = make_translation( { 1.2f, 1.0f, 2.0f } );
+    Mat44f lightScaling = make_scaling( 0.2f, 0.2f, 0.2f );
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -239,8 +254,7 @@ main() try {
 
         // Update: compute matrices
         // TODO: define and compute projCameraWorld matrix
-        Mat44f world2camera = make_translation( { 0.f, 0.f, -10.f } );
-        Mat44f world2camera2 = make_translation( { 5.f, 0.f, -10.f } );
+        Mat44f world2camera = make_translation( { 0.f, 0.f, -5.f } );
         Mat44f projection = make_perspective_projection(
             45.f * 3.1415926f / 180.f,   // Yes, a proper π would be useful. (
                                          // C++20: mathematical constants)
@@ -248,27 +262,36 @@ main() try {
         Mat44f view = lookAt( state.c.cameraPosition,
                               state.c.cameraPosition + state.c.cameraFront,
                               state.c.cameraUp );
-
         Mat44f projCameraWorld = projection * view * world2camera;
-        Mat44f projCameraWorld2 = projection * view * world2camera2;
+
+        // lighting cube matrix
+        Mat44f lightCubeMVP =
+            projection * view * world2camera * lightTranslate * lightScaling;
 
         // Draw scene
         OGL_CHECKPOINT_DEBUG();
 
-        // TODO: draw frame
+        // // TODO: draw frame
+        // CUBE
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram( prog.programId() );
-
         glBindVertexArray( cubeVAO );
-
         // pass in matrix as uniform data
         glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld.v );
-
+        // light uniforms
+        glUniform3fv( 1, 1, lightColor );
+        glUniform3fv( 2, 1, lightPos );
+        glUniformMatrix4fv( 4, 1, GL_TRUE, kIdentity44f.v ); // model matrix - we dont move cube so pass in identity matrix for now
+        // uniform colour
+        glUniform3fv( 3, 1, uColor );
         // 6 sides * 2 triangles * 3 vertices
         glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
-        glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld2.v );
-
+        // change to lighting shader and draw light
+        glUseProgram( lighting.programId() );
+        glBindVertexArray( lightVAO );
+        // lighting matrix
+        glUniformMatrix4fv( 0, 1, GL_TRUE, lightCubeMVP.v );
         // 6 sides * 2 triangles * 3 vertices
         glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
@@ -285,6 +308,7 @@ main() try {
 
     // Cleanup.
     state.prog = nullptr;
+    state.lighting = nullptr;
     // TODO: additional cleanup
 
     return 0;
@@ -297,13 +321,12 @@ main() try {
 }
 
 namespace {
-void
-glfw_callback_error_( int aErrNum, char const *aErrDesc ) {
+void glfw_callback_error_( int aErrNum, char const *aErrDesc ) {
     std::fprintf( stderr, "GLFW error: %s (%d)\n", aErrDesc, aErrNum );
 }
 
-void
-glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction, int ) {
+void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction,
+                         int ) {
     auto *state = static_cast<State_ *>( glfwGetWindowUserPointer( aWindow ) );
 
     if ( GLFW_KEY_ESCAPE == aKey && GLFW_PRESS == aAction ) {
@@ -313,8 +336,7 @@ glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction, int ) {
     move( aWindow, state );
 }
 
-void
-mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
+void mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
     auto *state = static_cast<State_ *>( glfwGetWindowUserPointer( aWindow ) );
 
     float xoffset = xP - startX;
