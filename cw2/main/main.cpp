@@ -100,7 +100,7 @@ int main() try {
     // Set up event handling
     State_ state{};
     glfwSetWindowUserPointer( window, &state );
-    // glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
+    glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
 
     // Set up event handling
     glfwSetKeyCallback( window, &glfw_callback_key_ );
@@ -210,7 +210,7 @@ int main() try {
     static float const uColor[] = { 1.0f, 0.5f, 0.31f };
     // lighting uniform data
     static float const lightColor[] = { 1.f, 1.f, 1.f };
-    static float const lightPos[] = { 5.f, 1.0f, 2.0f };
+    static float const lightPos[] = { 1.2f, 1.0f, 2.0f};
     // translation for lighting cube
     Mat44f lightTranslate = make_translation( { 1.2f, 1.0f, 2.0f } );
     Mat44f lightScaling = make_scaling( 0.2f, 0.2f, 0.2f );
