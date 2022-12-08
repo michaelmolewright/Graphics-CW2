@@ -208,15 +208,17 @@ int main() try {
 
     // uniform colour for cube
     static float const uColor[] = { 1.0f, 0.5f, 0.31f };
-    // lighting uniform data
+    
+    Vec3f lightPositionVector{ 2.f, 2.f, 2.f };
+    // lighting uniform data    
     static float const lightColor[] = { 1.f, 1.f, 1.f };
-    static float const lightPos[] = { 1.2f, 1.0f, 2.0f};
+    static float const lightPos[] = { lightPositionVector.x, lightPositionVector.y, lightPositionVector.z };
     // translation for lighting cube
-    Mat44f lightTranslate = make_translation( { 1.2f, 1.0f, 2.0f } );
+    Mat44f lightTranslate = make_translation( lightPositionVector );
     Mat44f lightScaling = make_scaling( 0.2f, 0.2f, 0.2f );
 
     OGL_CHECKPOINT_ALWAYS();
-
+ 
     // Main loop
     while ( !glfwWindowShouldClose( window ) ) {
         // Let GLFW process events
@@ -269,7 +271,6 @@ int main() try {
         // lighting cube matrix
         Mat44f lightCubeMVP =
             projection * view * lightTranslate * lightScaling;
-            // projection * view * world2camera * lightTranslate * lightScaling;
 
         // Draw scene
         OGL_CHECKPOINT_DEBUG();

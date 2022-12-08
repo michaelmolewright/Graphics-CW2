@@ -13,21 +13,25 @@ layout( location = 5 ) uniform vec3 viewPos;
 
 void main()
 {
-    // ambient
-    float ambientStrengh = 0.1;
+    // ambient lighting
+    float ambientStrengh = 0.2;
     vec3 ambient = ambientStrengh * lightColor;
 
-    // diffuse
+    // diffuse lighting
     vec3 norm = normalize( normal );
     vec3 lightDir = normalize( lightPos - fragPos );  
     float diff = max( dot(norm, lightDir), 0.0 );
     vec3 diffuse = diff * lightColor;
 
-    //specular
-    float specularStrength = .5;
+    //specular lighting
+    float specularStrength = .6;
+    float shininess = 20.0;
+
     vec3 viewDir = normalize( viewPos - fragPos );
-    vec3 reflectDir = reflect( -lightDir, norm );  
-    float spec = pow(max(dot( viewDir, reflectDir ), 0.0), 8);
+    // blinn halfway vector
+    vec3 halfwayDir = normalize( lightDir + viewDir );
+    float clampedDotProduct = max( dot( normal, halfwayDir ), 0.0);
+    float spec = pow( clampedDotProduct, shininess );
     vec3 specular = specularStrength * spec * lightColor;  
     
     vec3 result = ( ambient + diffuse + specular ) * uColor;
