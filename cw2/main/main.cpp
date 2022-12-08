@@ -256,8 +256,6 @@ int main() try {
 
         // Update: compute matrices
         // TODO: define and compute projCameraWorld matrix
-        //Mat44f world2camera = make_translation( { 0.f, 0.f, -3.f } );
-
         // view/projection
         Mat44f projection = make_perspective_projection(
             45.f * 3.1415926f / 180.f,   // Yes, a proper π would be useful. (
@@ -266,7 +264,7 @@ int main() try {
         Mat44f view = lookAt( state.c.cameraPosition,
                               state.c.cameraPosition + state.c.cameraFront,
                               state.c.cameraUp );
-        Mat44f projCameraWorld = projection * view; //* world2camera;
+        Mat44f projCameraWorld = projection * view; 
 
         // lighting cube matrix
         Mat44f lightCubeMVP =
