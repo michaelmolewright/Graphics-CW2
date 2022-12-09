@@ -300,6 +300,8 @@ int main() try {
         glBindVertexArray( lightVAO );
         // lighting matrix
         glUniformMatrix4fv( 0, 1, GL_TRUE, lightCubeMVP.v );
+        // normal matrix
+        
         // 6 sides * 2 triangles * 3 vertices
         glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
