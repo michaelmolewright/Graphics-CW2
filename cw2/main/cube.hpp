@@ -6,6 +6,7 @@
 // vertices and normals
 // from https://learnopengl.com/code_viewer.php?code=lighting/basic_lighting_vertex_data
 constexpr float const kCubePositions[] = {
+	// coords				normals
 	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
      0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
      0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 

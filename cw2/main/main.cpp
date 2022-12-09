@@ -19,6 +19,7 @@
 // TAKE OUT
 #include "cube.hpp"
 #include "../extra/camera.hpp"
+#include "floor.hpp"
 
 namespace {
 constexpr char const *kWindowTitle = "COMP3811 - Coursework 2";
@@ -132,8 +133,8 @@ int main() try {
 
     // TODO: global GL setup goes here
     glEnable( GL_FRAMEBUFFER_SRGB );
-    //glEnable( GL_CULL_FACE );
-    glClearColor( 0.f, 0.f, 0.f, 0.0f );
+    // glEnable( GL_CULL_FACE );
+    glClearColor( 0.6f, 0.6f, 0.6f, 0.0f );
     glEnable( GL_DEPTH_TEST );
 
     OGL_CHECKPOINT_ALWAYS();
@@ -194,13 +195,15 @@ int main() try {
     static float const cubeDiff[] = { 1.f, 0.829f, 0.829f};
     static float const cubeSpec[] = { 0.296648f, 0.296648f, 0.296648f };
     static float const cubeShin = 0.088f * 128;
+    Mat44f cubeTranslate = make_translation( { 0.f, 0.5f, 0.f } );
+
 
     // CUBE 2
     static float const cube2Amb[] = {0.f, 0.f, 0.f};
     static float const cube2Diff[] = {0.01f, 0.01f, 0.01f};
     static float const cube2Spec[] = {0.5f, 0.5f, 0.5f};
     static float const cube2Shin = 20.f;
-    Mat44f cubeTranslate = make_translation( { 2.f, 0.f, 0.f } );
+    Mat44f cube2Translate = make_translation( { 2.f, 0.5f, 0.f } );
 
     // LIGHT CUBE
     GLuint lightVAO = 0;
@@ -211,10 +214,7 @@ int main() try {
                            (void *)0 );
     glEnableVertexAttribArray( 0 );
 
-    // reset and delete buffers
-    glBindVertexArray( 0 );
-    glBindBuffer( GL_ARRAY_BUFFER, 0 );
-    glDeleteBuffers( 1, &cubeVBO );
+
     
     Vec3f lightPositionVector{ 2.f, 2.f, 2.f };
     // lighting uniform data    
@@ -225,6 +225,40 @@ int main() try {
     // translation for lighting cube
     Mat44f lightTranslate = make_translation( lightPositionVector );
     Mat44f lightScaling = make_scaling( 0.2f, 0.2f, 0.2f );
+
+    // light post
+    Mat44f lightPostTranslate = make_translation( { 2.f, 0.5f, 2.f } );
+    Mat44f lightPostScaling = make_scaling( 0.1f, 3.f, 0.1f );
+
+    //floor
+    GLuint floorVBO = 0;
+    glGenBuffers( 1, &floorVBO );
+    glBindBuffer( GL_ARRAY_BUFFER, floorVBO );
+    glBufferData( GL_ARRAY_BUFFER, sizeof( kFloorPositions ), kFloorPositions,
+                  GL_STATIC_DRAW );
+
+    GLuint floorVAO = 0;
+    glGenVertexArrays( 1, &floorVAO );
+    glBindVertexArray( floorVAO );
+
+    glBindBuffer( GL_ARRAY_BUFFER, floorVBO );
+    // positions
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof( float ),
+                           (void *)0 );
+    glEnableVertexAttribArray( 0 );
+    // normals
+    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof( float ),
+                           (void *)( 3 * sizeof( float ) ) );
+    glEnableVertexAttribArray( 1 );
+
+    Mat44f floorScaling = make_scaling( 6.f, 1.f, 6.f  );
+
+    // reset and delete buffers
+    glBindVertexArray( 0 );
+    glBindBuffer( GL_ARRAY_BUFFER, 0 );
+    glDeleteBuffers( 1, &cubeVBO );
+    glDeleteBuffers( 1, &floorVBO );
+
 
     OGL_CHECKPOINT_ALWAYS();
  
@@ -273,28 +307,34 @@ int main() try {
         Mat44f view = lookAt( state.c.cameraPosition,
                               state.c.cameraPosition + state.c.cameraFront,
                               state.c.cameraUp );
-        Mat44f projCameraWorld = projection * view; 
+        Mat44f projCameraWorld = projection * view * floorScaling;
+
+        // cube 1
+        Mat44f cube1MVP =
+            projection * view * cubeTranslate;
 
         // cube 2
         Mat44f cube2MVP =
-            projCameraWorld * cubeTranslate;
+            projection * view  * cube2Translate;
 
         // lighting cube matrix
         Mat44f lightCubeMVP =
-            projCameraWorld * lightTranslate * lightScaling;
+            projection * view  * lightTranslate * lightScaling;
+
+        // light post
+        Mat44f lightPostMVP =
+            projection * view  * lightPostTranslate * lightPostScaling;
 
         // Draw scene
         OGL_CHECKPOINT_DEBUG();
 
         // // TODO: draw frame
-        // CUBE 1
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram( prog.programId() );
-        glBindVertexArray( cubeVAO );
 
         // vert uniform data
         glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld.v );
-        glUniformMatrix4fv( 1, 1, GL_TRUE, kIdentity44f.v ); // model matrix - we dont move cube so pass in identity matrix for now
+        glUniformMatrix4fv( 1, 1, GL_TRUE, floorScaling.v ); // model matrix
 
         static float const cameraPos[] = { state.c.cameraPosition.x, state.c.cameraPosition.y, state.c.cameraPosition.z };
         glUniform3fv( 2, 1, cameraPos ); // camera position
@@ -308,27 +348,41 @@ int main() try {
         glUniform3fv( 8, 1, lightAmb ); //amb
         glUniform3fv( 9, 1, lightDiff ); //diff
         glUniform3fv( 10, 1, lightSpec ); //spec
-        // draw
-        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+        glBindVertexArray( 0 );
+
+        // FLOOR
+        glBindVertexArray( floorVAO );
+        glDrawArrays( GL_TRIANGLES, 0, 6);
+
+        // CUBE
+        glUniformMatrix4fv( 0, 1, GL_TRUE, cube1MVP.v );
+        glUniformMatrix4fv( 1, 1, GL_TRUE, cubeTranslate.v );
+        glBindVertexArray( cubeVAO );
+        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 ); 
 
         // CUBE 2
         glUniformMatrix4fv( 0, 1, GL_TRUE, cube2MVP.v );
-        glUniformMatrix4fv( 1, 1, GL_TRUE, cubeTranslate.v );
+        glUniformMatrix4fv( 1, 1, GL_TRUE, cube2Translate.v );
         // material props
         glUniform3fv( 3, 1, cube2Amb ); //amb
         glUniform3fv( 4, 1, cube2Diff ); //diff
         glUniform3fv( 5, 1, cube2Spec ); //spec
         glUniform1f( 6, cube2Shin ); //shin
-        // draw
         glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
-        // change to lighting shader and draw light
+        // LAMPPOST
+        glUniformMatrix4fv( 0, 1, GL_TRUE, lightPostMVP.v );
+        glUniformMatrix4fv( 1, 1, GL_TRUE, lightPostTranslate.v );
+        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+
+        // reset
+        glBindVertexArray( 0 );
+        glUseProgram( 0 );
+
+        // LIGHT CUBE
         glUseProgram( lighting.programId() );
         glBindVertexArray( lightVAO );
-        // lighting matrix
-        glUniformMatrix4fv( 0, 1, GL_TRUE, lightCubeMVP.v );
-        
-        // 6 sides * 2 triangles * 3 vertices
+        glUniformMatrix4fv( 0, 1, GL_TRUE, lightCubeMVP.v ); // lighting MVP
         glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
         // reset
