@@ -188,9 +188,19 @@ int main() try {
                            (void *)( 3 * sizeof( float ) ) );
     glEnableVertexAttribArray( 1 );
 
-    // glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
-    // glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, 0 );
-    // glEnableVertexAttribArray( 1 );
+    // CUBE 1 material colour data
+    // http://devernay.free.fr/cours/opengl/materials.html
+    static float const cubeAmb[] = { 0.25f, 0.20725f, 0.20725f };
+    static float const cubeDiff[] = { 1.f, 0.829f, 0.829f};
+    static float const cubeSpec[] = { 0.296648f, 0.296648f, 0.296648f };
+    static float const cubeShin = 0.088f * 128;
+
+    // CUBE 2
+    static float const cube2Amb[] = {0.f, 0.f, 0.f};
+    static float const cube2Diff[] = {0.01f, 0.01f, 0.01f};
+    static float const cube2Spec[] = {0.5f, 0.5f, 0.5f};
+    static float const cube2Shin = 20.f;
+    Mat44f cubeTranslate = make_translation( { 2.f, 0.f, 0.f } );
 
     // LIGHT CUBE
     GLuint lightVAO = 0;
@@ -205,14 +215,13 @@ int main() try {
     glBindVertexArray( 0 );
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
     glDeleteBuffers( 1, &cubeVBO );
-
-    // uniform colour for cube
-    static float const uColor[] = { 1.0f, 0.5f, 0.31f };
     
     Vec3f lightPositionVector{ 2.f, 2.f, 2.f };
     // lighting uniform data    
-    static float const lightColor[] = { 1.f, 1.f, 1.f };
     static float const lightPos[] = { lightPositionVector.x, lightPositionVector.y, lightPositionVector.z };
+    static float const lightAmb[] = {0.2f, 0.2f, 0.2f};
+    static float const lightDiff[] = {0.5f, 0.5f, 0.5f};
+    static float const lightSpec[] = {1.0f, 1.0f, 1.0f};
     // translation for lighting cube
     Mat44f lightTranslate = make_translation( lightPositionVector );
     Mat44f lightScaling = make_scaling( 0.2f, 0.2f, 0.2f );
@@ -266,33 +275,51 @@ int main() try {
                               state.c.cameraUp );
         Mat44f projCameraWorld = projection * view; 
 
+        // cube 2
+        Mat44f cube2MVP =
+            projCameraWorld * cubeTranslate;
+
         // lighting cube matrix
         Mat44f lightCubeMVP =
-            projection * view * lightTranslate * lightScaling;
+            projCameraWorld * lightTranslate * lightScaling;
 
         // Draw scene
         OGL_CHECKPOINT_DEBUG();
 
         // // TODO: draw frame
-        // CUBE
+        // CUBE 1
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram( prog.programId() );
         glBindVertexArray( cubeVAO );
 
-        //uniform data
+        // vert uniform data
         glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld.v );
-        // light uniforms
-        glUniform3fv( 1, 1, lightColor );
-        glUniform3fv( 2, 1, lightPos );
-        // uniform colour
-        glUniform3fv( 3, 1, uColor );
-        // model matrix - we dont move cube so pass in identity matrix for now
-        glUniformMatrix4fv( 4, 1, GL_TRUE, kIdentity44f.v );
-        // camera position
-        static float const cameraPos[] = { state.c.cameraPosition.x, state.c.cameraPosition.y, state.c.cameraPosition.z };
-        glUniform3fv( 5, 1, cameraPos );
+        glUniformMatrix4fv( 1, 1, GL_TRUE, kIdentity44f.v ); // model matrix - we dont move cube so pass in identity matrix for now
 
-        // 6 sides * 2 triangles * 3 vertices
+        static float const cameraPos[] = { state.c.cameraPosition.x, state.c.cameraPosition.y, state.c.cameraPosition.z };
+        glUniform3fv( 2, 1, cameraPos ); // camera position
+        // material props
+        glUniform3fv( 3, 1, cubeAmb ); //amb
+        glUniform3fv( 4, 1, cubeDiff ); //diff
+        glUniform3fv( 5, 1, cubeSpec ); //spec
+        glUniform1f( 6, cubeShin ); //shin
+        // light props
+        glUniform3fv( 7, 1, lightPos ); // light pos
+        glUniform3fv( 8, 1, lightAmb ); //amb
+        glUniform3fv( 9, 1, lightDiff ); //diff
+        glUniform3fv( 10, 1, lightSpec ); //spec
+        // draw
+        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+
+        // CUBE 2
+        glUniformMatrix4fv( 0, 1, GL_TRUE, cube2MVP.v );
+        glUniformMatrix4fv( 1, 1, GL_TRUE, cubeTranslate.v );
+        // material props
+        glUniform3fv( 3, 1, cube2Amb ); //amb
+        glUniform3fv( 4, 1, cube2Diff ); //diff
+        glUniform3fv( 5, 1, cube2Spec ); //spec
+        glUniform1f( 6, cube2Shin ); //shin
+        // draw
         glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
         // change to lighting shader and draw light
@@ -300,7 +327,6 @@ int main() try {
         glBindVertexArray( lightVAO );
         // lighting matrix
         glUniformMatrix4fv( 0, 1, GL_TRUE, lightCubeMVP.v );
-        // normal matrix
         
         // 6 sides * 2 triangles * 3 vertices
         glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );

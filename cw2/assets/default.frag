@@ -3,42 +3,41 @@
 in vec3 normal;
 in vec3 fragPos;  
 
-// lighting
 layout( location = 0 ) out vec4 oColor;
 
-layout( location = 1 ) uniform vec3 lightColor;
-layout( location = 2 ) uniform vec3 lightPos;
-layout( location = 3 ) uniform vec3 uColor;
-layout( location = 5 ) uniform vec3 viewPos;
+layout( location = 2 ) uniform vec3 cameraPos;
 
-struct MaterialProps {
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-    float shininess;
-};
-uniform MaterialProps material;
+// material props
+layout( location = 3 ) uniform vec3 materialAmbient;
+layout( location = 4 ) uniform vec3 materialDiffuse;
+layout( location = 5 ) uniform vec3 materialSpecular;
+layout( location = 6 ) uniform float materialShininess;
+
+// light props
+layout( location = 7 ) uniform vec3 lightPos;
+layout( location = 8 ) uniform vec3 lightAmbient;
+layout( location = 9 ) uniform vec3 lightDiffuse;
+layout( location = 10 ) uniform vec3 lightSpecular;
 
 void main()
 {
     // ambient lighting
-    float ambientStrengh = 0.2;
-    vec3 ambient = lightColor * ambientStrengh * material.ambient;
+    vec3 ambient = lightAmbient * materialAmbient;
 
     // diffuse lighting
     vec3 norm = normalize( normal );
     vec3 lightDir = normalize( lightPos - fragPos );  
     float diff = max( dot(norm, lightDir), 0.0 );
-    vec3 diffuse = diff * lightColor * material.diffuse;
+    vec3 diffuse = diff * lightDiffuse * materialDiffuse;
 
     //specular lighting
-    vec3 viewDir = normalize( viewPos - fragPos );
+    vec3 viewDir = normalize( cameraPos - fragPos );
     // blinn halfway vector
     vec3 halfwayDir = normalize( lightDir + viewDir );
     float clampedDotProduct = max( dot( normal, halfwayDir ), 0.0);
-    float spec = pow( clampedDotProduct, material.shininess );
-    vec3 specular = spec * lightColor * material.specular;  
+    float spec = pow( clampedDotProduct, materialShininess );
+    vec3 specular = spec * lightSpecular * materialSpecular;  
     
-    vec3 result = ( ambient + diffuse + specular ) * uColor;
+    vec3 result = ambient + diffuse + specular;
     oColor = vec4( result, 1.0 );
 }
