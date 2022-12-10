@@ -7,17 +7,17 @@ layout( location = 0 ) out vec4 oColor;
 
 layout( location = 2 ) uniform vec3 cameraPos;
 
-// material props
-layout( location = 3 ) uniform vec3 materialAmbient;
-layout( location = 4 ) uniform vec3 materialDiffuse;
-layout( location = 5 ) uniform vec3 materialSpecular;
-layout( location = 6 ) uniform float materialShininess;
-
 // light props
-layout( location = 7 ) uniform vec3 lightPos;
-layout( location = 8 ) uniform vec3 lightAmbient;
-layout( location = 9 ) uniform vec3 lightDiffuse;
-layout( location = 10 ) uniform vec3 lightSpecular;
+layout( location = 3 ) uniform vec3 lightPos;
+layout( location = 4 ) uniform vec3 lightAmbient;
+layout( location = 5 ) uniform vec3 lightDiffuse;
+layout( location = 6 ) uniform vec3 lightSpecular;
+
+// material props
+layout( location = 7 ) uniform vec3 materialAmbient;
+layout( location = 8 ) uniform vec3 materialDiffuse;
+layout( location = 9 ) uniform vec3 materialSpecular;
+layout( location = 10 ) uniform float materialShininess;
 
 void main()
 {

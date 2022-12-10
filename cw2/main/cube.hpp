@@ -50,52 +50,109 @@ constexpr float const kCubePositions[] = {
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 };
 
-constexpr float const kCubeColors[] = {
-	+1.f, +0.f, +0.f,
-	+1.f, +0.f, +0.f,
-	+1.f, +0.f, +0.f,
-	+1.f, +0.f, +0.f,
-	+1.f, +0.f, +0.f,
-	+1.f, +0.f, +0.f,
+// CUBE 1 material colour data
+// http://devernay.free.fr/cours/opengl/materials.html
+static float const cubeAmb[] = { 0.25f, 0.20725f, 0.20725f };
+static float const cubeDiff[] = { 1.f, 0.829f, 0.829f};
+static float const cubeSpec[] = { 0.296648f, 0.296648f, 0.296648f };
+static float const cubeShin = 0.088f * 128;
+Mat44f cube1Translate = make_translation( { 0.f, 0.5f, 0.f } );
 
-	+0.f, +1.f, +0.f,
-	+0.f, +1.f, +0.f,
-	+0.f, +1.f, +0.f,
-	+0.f, +1.f, +0.f,
-	+0.f, +1.f, +0.f,
-	+0.f, +1.f, +0.f,
+// CUBE 2
+static float const cube2Amb[] = {0.f, 0.f, 0.f};
+static float const cube2Diff[] = {0.01f, 0.01f, 0.01f};
+static float const cube2Spec[] = {0.5f, 0.5f, 0.5f};
+static float const cube2Shin = 20.f;
+Mat44f cube2Translate = make_translation( { 2.f, 0.5f, 0.f } );
 
-	+0.f, +0.f, +1.f,
-	+0.f, +0.f, +1.f,
-	+0.f, +0.f, +1.f,
-	+0.f, +0.f, +1.f,
-	+0.f, +0.f, +1.f,
-	+0.f, +0.f, +1.f,
+GLuint create_cube_vao() 
+{
+	// CUBE - now contains positions and normals
+    GLuint cubeVBO = 0;
+    glGenBuffers( 1, &cubeVBO );
+    glBindBuffer( GL_ARRAY_BUFFER, cubeVBO );
+    glBufferData( GL_ARRAY_BUFFER, sizeof( kCubePositions ), kCubePositions,
+                  GL_STATIC_DRAW );
 
-	+1.f, +0.f, +1.f,
-	+1.f, +0.f, +1.f,
-	+1.f, +0.f, +1.f,
-	+1.f, +0.f, +1.f,
-	+1.f, +0.f, +1.f,
-	+1.f, +0.f, +1.f,
+    GLuint cubeVAO = 0;
+    glGenVertexArrays( 1, &cubeVAO );
+    glBindVertexArray( cubeVAO );
 
-	+1.f, +1.f, +0.f,
-	+1.f, +1.f, +0.f,
-	+1.f, +1.f, +0.f,
-	+1.f, +1.f, +0.f,
-	+1.f, +1.f, +0.f,
-	+1.f, +1.f, +0.f,
+    glBindBuffer( GL_ARRAY_BUFFER, cubeVBO );
+    // positions
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof( float ),
+                           (void *)0 );
+    glEnableVertexAttribArray( 0 );
+    // normals
+    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof( float ),
+                           (void *)( 3 * sizeof( float ) ) );
+    glEnableVertexAttribArray( 1 );
 
-	+0.f, +1.f, +1.f,
-	+0.f, +1.f, +1.f,
-	+0.f, +1.f, +1.f,
-	+0.f, +1.f, +1.f,
-	+0.f, +1.f, +1.f,
-	+0.f, +1.f, +1.f
-};
+	// reset and delete buffers
+    glBindVertexArray( 0 );
+    glBindBuffer( GL_ARRAY_BUFFER, 0 );
+    glDeleteBuffers( 1, &cubeVBO );
 
-// static_assert( sizeof(kCubeColors) == sizeof(kCubePositions),
-// 	"Size of cube colors and cube positions do not match. Both are 3D vectors."
-// );
+    return cubeVAO;
+}
+
+GLuint create_light_vao() 
+{
+	// LIGHT CUBE
+	GLuint cubeVBO = 0;
+    glGenBuffers( 1, &cubeVBO );
+    glBindBuffer( GL_ARRAY_BUFFER, cubeVBO );
+    glBufferData( GL_ARRAY_BUFFER, sizeof( kCubePositions ), kCubePositions,
+                  GL_STATIC_DRAW );
+
+    GLuint lightVAO = 0;
+    glGenVertexArrays( 1, &lightVAO );
+    glBindVertexArray( lightVAO );
+    glBindBuffer( GL_ARRAY_BUFFER, cubeVBO );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof( float ),
+                           (void *)0 );
+    glEnableVertexAttribArray( 0 );
+
+	// reset and delete buffers
+    glBindVertexArray( 0 );
+    glBindBuffer( GL_ARRAY_BUFFER, 0 );
+    glDeleteBuffers( 1, &cubeVBO );
+
+	return lightVAO;
+}
+
+void draw_cube1( GLuint vao, Mat44f MVP )
+{
+	glUniformMatrix4fv( 0, 1, GL_TRUE, MVP.v );
+    glUniformMatrix4fv( 1, 1, GL_TRUE, cube1Translate.v ); // model matrix
+
+	//material props
+	glUniform3fv( 7, 1, cubeAmb ); //amb
+	glUniform3fv( 8, 1, cubeDiff ); //diff
+	glUniform3fv( 9, 1, cubeSpec ); //spec
+	glUniform1f( 10, cubeShin ); //shin
+
+    // FLOOR
+    glBindVertexArray( vao );
+    glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 ); 
+}
+
+void draw_cube2( GLuint vao, Mat44f MVP )
+{
+	glUniformMatrix4fv( 0, 1, GL_TRUE, MVP.v );
+    glUniformMatrix4fv( 1, 1, GL_TRUE, cube2Translate.v ); // model matrix
+
+	//material props
+	glUniform3fv( 7, 1, cube2Amb ); //amb
+	glUniform3fv( 8, 1, cube2Diff ); //diff
+	glUniform3fv( 9, 1, cube2Spec ); //spec
+	glUniform1f( 10, cube2Shin ); //shin
+
+    // FLOOR
+    glBindVertexArray( vao );
+    glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 ); 
+}
+
+
 
 #endif // CUBE_HPP_6874B39C_112D_4D34_BD85_AB81A730955B
