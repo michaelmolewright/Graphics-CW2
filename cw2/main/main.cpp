@@ -165,27 +165,23 @@ int main() try {
     GLuint floorVAO = create_floor_vao();
     GLuint lightVAO = create_light_vao();
 
-
     Vec3f lightPositionVector{ 2.f, 2.f, 2.f };
-    // lighting uniform data    
-    static float const lightPos[] = { lightPositionVector.x, lightPositionVector.y, lightPositionVector.z };
-    static float const lightAmb[] = {0.2f, 0.2f, 0.2f};
-    static float const lightDiff[] = {0.5f, 0.5f, 0.5f};
-    static float const lightSpec[] = {1.0f, 1.0f, 1.0f};
+    // lighting uniform data
+    static float const lightPos[] = { lightPositionVector.x,
+                                      lightPositionVector.y,
+                                      lightPositionVector.z };
+    static float const lightAmb[] = { 0.2f, 0.2f, 0.2f };
+    static float const lightDiff[] = { 0.5f, 0.5f, 0.5f };
+    static float const lightSpec[] = { 1.0f, 1.0f, 1.0f };
 
-
-    // translation for lighting cube
-    Mat44f lightTranslate = make_translation( lightPositionVector );
-    Mat44f lightScaling = make_scaling( 0.2f, 0.2f, 0.2f );
-
-    // light post
-    Mat44f lightPostTranslate = make_translation( { 2.f, 0.5f, 2.f } );
-    Mat44f lightPostScaling = make_scaling( 0.1f, 3.f, 0.1f );
-
-    
+    // light/post model matrices
+    Mat44f lightModel = make_translation( lightPositionVector ) *
+                        make_scaling( 0.2f, 0.2f, 0.2f );
+    Mat44f lightPostModel = make_translation( { 2.f, 0.5f, 2.f } ) *
+                            make_scaling( 0.1f, 3.f, 0.1f );
 
     OGL_CHECKPOINT_ALWAYS();
- 
+
     // Main loop
     while ( !glfwWindowShouldClose( window ) ) {
         // Let GLFW process events
@@ -211,9 +207,7 @@ int main() try {
             glViewport( 0, 0, nwidth, nheight );
         }
 
-        // Update: compute matrices
-        // TODO: define and compute projCameraWorld (MVP) matrix
-        // view/projection
+        // compute MVP matrices
         Mat44f projection = make_perspective_projection(
             45.f * 3.1415926f / 180.f,   // Yes, a proper π would be useful. (
                                          // C++20: mathematical constants)
@@ -223,17 +217,13 @@ int main() try {
                               state.c.cameraUp );
         Mat44f floorMVP = projection * view * floorModel;
         // cube 1
-        Mat44f cube1MVP =
-            projection * view * cube1Translate;
+        Mat44f cube1MVP = projection * view * cube1Model;
         // cube 2
-        Mat44f cube2MVP =
-            projection * view  * cube2Translate;
+        Mat44f cube2MVP = projection * view * cube2Model;
         // lighting cube matrix
-        Mat44f lightCubeMVP =
-            projection * view  * lightTranslate * lightScaling;
+        Mat44f lightCubeMVP = projection * view * lightModel;
         // light post
-        Mat44f lightPostMVP =
-            projection * view  * lightPostTranslate * lightPostScaling;
+        Mat44f lightPostMVP = projection * view * lightPostModel;
 
         // Draw scene
         OGL_CHECKPOINT_DEBUG();
@@ -242,15 +232,17 @@ int main() try {
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram( prog.programId() );
 
-        //uniforms
-        static float const cameraPos[] = { state.c.cameraPosition.x, state.c.cameraPosition.y, state.c.cameraPosition.z };
-        glUniform3fv( 2, 1, cameraPos ); // camera position
-        glUniform3fv( 3, 1, lightPos ); // light pos
-        glUniform3fv( 4, 1, lightAmb ); //amb
-        glUniform3fv( 5, 1, lightDiff ); //diff
-        glUniform3fv( 6, 1, lightSpec ); //spec
+        // uniforms
+        static float const cameraPos[] = { state.c.cameraPosition.x,
+                                           state.c.cameraPosition.y,
+                                           state.c.cameraPosition.z };
+        glUniform3fv( 2, 1, cameraPos );   // camera position
+        glUniform3fv( 3, 1, lightPos );    // light pos
+        glUniform3fv( 4, 1, lightAmb );    // amb
+        glUniform3fv( 5, 1, lightDiff );   // diff
+        glUniform3fv( 6, 1, lightSpec );   // spec
 
-        //draw floor
+        // draw floor
         draw_floor( floorVAO, floorMVP );
 
         draw_cube1( cubeVAO, cube1MVP );
@@ -258,13 +250,13 @@ int main() try {
 
         // LAMPPOST
         glUniformMatrix4fv( 0, 1, GL_TRUE, lightPostMVP.v );
-        glUniformMatrix4fv( 1, 1, GL_TRUE, lightPostTranslate.v );
+        glUniformMatrix4fv( 1, 1, GL_TRUE, lightPostModel.v );
         glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
         // LIGHT CUBE
-        glUseProgram( lighting.programId() ); // lighting shader
+        glUseProgram( lighting.programId() );   // lighting shader
         glBindVertexArray( lightVAO );
-        glUniformMatrix4fv( 0, 1, GL_TRUE, lightCubeMVP.v ); // lighting MVP
+        glUniformMatrix4fv( 0, 1, GL_TRUE, lightCubeMVP.v );   // lighting MVP
         glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
         // reset

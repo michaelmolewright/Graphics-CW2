@@ -1,23 +1,20 @@
 constexpr float const kFloorPositions[] = {
-	// coords				normals
-	-1.f, 0.f, -1.f,        0.f, 1.f, 0.f,
-    -1.f, 0.f, 1.f,         0.f, 1.f, 0.f,
-    1.f, 0.f, -1.f,         0.f, 1.f, 0.f,
+    // coords				normals
+    -1.f, 0.f, -1.f, 0.f, 1.f, 0.f,  -1.f, 0.f, 1.f,
+    0.f,  1.f, 0.f,  1.f, 0.f, -1.f, 0.f,  1.f, 0.f,
 
-    1.f, 0.f, -1.f,         0.f, 1.f, 0.f,
-    -1.f, 0.f, 1.f,         0.f, 1.f, 0.f,
-    1.f, 0.f, 1.f,          0.f, 1.f, 0.f,
+    1.f,  0.f, -1.f, 0.f, 1.f, 0.f,  -1.f, 0.f, 1.f,
+    0.f,  1.f, 0.f,  1.f, 0.f, 1.f,  0.f,  1.f, 0.f,
 };
 
 static float const floorAmb[] = { 0.65f, 0.20725f, 0.20725f };
-static float const floorDiff[] = { 1.f, 0.829f, 0.829f};
+static float const floorDiff[] = { 1.f, 0.829f, 0.829f };
 static float const floorSpec[] = { 0.296648f, 0.296648f, 0.296648f };
 static float const floorShin = 0.088f * 128;
 // model matrix
-Mat44f floorModel = make_scaling( 6.f, 1.f, 6.f  );
+Mat44f floorModel = make_scaling( 6.f, 1.f, 6.f );
 
-GLuint create_floor_vao() 
-{
+GLuint create_floor_vao() {
     GLuint floorVBO = 0;
     glGenBuffers( 1, &floorVBO );
     glBindBuffer( GL_ARRAY_BUFFER, floorVBO );
@@ -46,18 +43,17 @@ GLuint create_floor_vao()
     return floorVAO;
 }
 
-void draw_floor( GLuint vao, Mat44f MVP )
-{
+void draw_floor( GLuint vao, Mat44f MVP ) {
     glUniformMatrix4fv( 0, 1, GL_TRUE, MVP.v );
-    glUniformMatrix4fv( 1, 1, GL_TRUE, floorModel.v ); // model matrix
+    glUniformMatrix4fv( 1, 1, GL_TRUE, floorModel.v );   // model matrix
 
-    //material props
-	glUniform3fv( 7, 1, floorAmb ); //amb
-	glUniform3fv( 8, 1, floorDiff ); //diff
-	glUniform3fv( 9, 1, floorSpec ); //spec
-	glUniform1f( 10, floorShin ); //shin
+    // material props
+    glUniform3fv( 7, 1, floorAmb );    // amb
+    glUniform3fv( 8, 1, floorDiff );   // diff
+    glUniform3fv( 9, 1, floorSpec );   // spec
+    glUniform1f( 10, floorShin );      // shin
 
     // FLOOR
     glBindVertexArray( vao );
-    glDrawArrays( GL_TRIANGLES, 0, 6);
+    glDrawArrays( GL_TRIANGLES, 0, 6 );
 }
