@@ -248,10 +248,10 @@ int main() try {
         draw_cube1( cubeVAO, cube1MVP );
         draw_cube2( cubeVAO, cube2MVP );
 
-        // LAMPPOST
-        glUniformMatrix4fv( 0, 1, GL_TRUE, lightPostMVP.v );
-        glUniformMatrix4fv( 1, 1, GL_TRUE, lightPostModel.v );
-        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+        // // LAMPPOST
+        // glUniformMatrix4fv( 0, 1, GL_TRUE, lightPostMVP.v );
+        // glUniformMatrix4fv( 1, 1, GL_TRUE, lightPostModel.v );
+        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
         // LIGHT CUBE
         glUseProgram( lighting.programId() );   // lighting shader
