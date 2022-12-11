@@ -7,10 +7,10 @@ constexpr float const kFloorPositions[] = {
     0.f,  1.f, 0.f,  1.f, 0.f, 1.f,  0.f,  1.f, 0.f,
 };
 
-static float const floorAmb[] = { 0.65f, 0.20725f, 0.20725f };
+static float const floorAmb[] = { 0.35f, 0.20725f, 0.20725f };
 static float const floorDiff[] = { 1.f, 0.829f, 0.829f };
 static float const floorSpec[] = { 0.296648f, 0.296648f, 0.296648f };
-static float const floorShin = 0.088f * 128;
+static float const floorShin = 0.048f * 128;
 // model matrix
 Mat44f floorModel = make_scaling( 6.f, 1.f, 6.f );
 
@@ -48,10 +48,10 @@ void draw_floor( GLuint vao, Mat44f MVP ) {
     glUniformMatrix4fv( 1, 1, GL_TRUE, floorModel.v );   // model matrix
 
     // material props
-    glUniform3fv( 7, 1, floorAmb );    // amb
-    glUniform3fv( 8, 1, floorDiff );   // diff
-    glUniform3fv( 9, 1, floorSpec );   // spec
-    glUniform1f( 10, floorShin );      // shin
+    glUniform3fv( 6, 1, floorAmb );    // amb
+    glUniform3fv( 7, 1, floorDiff );   // diff
+    glUniform3fv( 8, 1, floorSpec );   // spec
+    glUniform1f( 9, floorShin );      // shin
 
     // FLOOR
     glBindVertexArray( vao );

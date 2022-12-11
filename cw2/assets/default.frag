@@ -9,36 +9,39 @@ layout( location = 2 ) uniform vec3 cameraPos;
 
 // light props
 layout( location = 3 ) uniform vec3 lightPos;
-layout( location = 4 ) uniform vec3 lightAmbient;
-layout( location = 5 ) uniform vec3 lightDiffuse;
-layout( location = 6 ) uniform vec3 lightSpecular;
+layout( location = 4 ) uniform vec3 lightAmb;
+layout( location = 5 ) uniform vec3 lightIncoming;
 
 // material props
-layout( location = 7 ) uniform vec3 materialAmbient;
-layout( location = 8 ) uniform vec3 materialDiffuse;
-layout( location = 9 ) uniform vec3 materialSpecular;
-layout( location = 10 ) uniform float materialShininess;
+layout( location = 6 ) uniform vec3 materialAmbient;
+layout( location = 7 ) uniform vec3 materialDiffuse;
+layout( location = 8 ) uniform vec3 materialSpecular;
+layout( location = 9 ) uniform float materialShininess;
 
 void main()
 {
+    // CORRECTED BLINN PHONG IMPLEMENTATION
+    const float pi = 3.1415926;
+
     // ambient lighting
-    vec3 ambient = materialAmbient * lightAmbient;
+    vec3 ambient = materialAmbient * lightAmb;
 
     // diffuse lighting
     vec3 norm = normalize( normal );
     vec3 lightDir = normalize( lightPos - fragPos );  
     float NdotL = max( dot(norm, lightDir), 0.0 );
-    vec3 diffuse = materialDiffuse * lightDiffuse * NdotL;
+    vec3 diffuse = materialDiffuse * ( lightIncoming / pi )* NdotL;
 
     // specular lighting
     vec3 viewDir = normalize( cameraPos - fragPos );
     vec3 halfwayDir = normalize( lightDir + viewDir ); // blinn halfway vector
     float NdotH = max( dot( normal, halfwayDir ), 0.0);
     float specularTerm = pow( NdotH, materialShininess );
-    vec3 specular = materialSpecular * lightSpecular * specularTerm;  
+    float correctionTerm = ( materialShininess + 2 ) / 8;
+    vec3 specular = correctionTerm * NdotL * materialSpecular * lightIncoming * specularTerm;  
 
     // emissive term
-    float emissive = 0.1;
+    const float emissive = 0.01;
     
     vec3 result = ambient + diffuse + specular + emissive;
     oColor = vec4( result, 1.0 );

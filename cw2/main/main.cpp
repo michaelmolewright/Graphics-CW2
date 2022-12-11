@@ -171,21 +171,21 @@ int main() try {
                                       lightPositionVector.y,
                                       lightPositionVector.z };
     static float const lightAmb[] = { 0.2f, 0.2f, 0.2f };
-    static float const lightDiff[] = { 0.5f, 0.5f, 0.5f };
-    static float const lightSpec[] = { 1.0f, 1.0f, 1.0f };
+    static float const lightIncoming[] = { 1.0f, 1.0f, 1.0f };
 
     // light/post model matrices
-    Mat44f lightModel = make_translation( lightPositionVector ) *
-                        make_scaling( 0.2f, 0.2f, 0.2f );
-    Mat44f lightPostModel = make_translation( { 2.f, 0.5f, 2.f } ) *
-                            make_scaling( 0.1f, 3.f, 0.1f );
+    Mat44f lightModel = make_translation( lightPositionVector )
+                        * make_scaling( 0.2f, 0.2f, 0.2f );
+
+    Mat44f lightPostModel = make_translation( { 2.f, 0.5f, 2.f } )
+                           * make_scaling( 0.1f, 3.f, 0.1f );
 
     OGL_CHECKPOINT_ALWAYS();
 
     // Main loop
     while ( !glfwWindowShouldClose( window ) ) {
         // Let GLFW process events
-        // glfwPollEvents();
+        glfwPollEvents();
 
         // Check if window was resized.
         float fbwidth, fbheight;
@@ -239,8 +239,7 @@ int main() try {
         glUniform3fv( 2, 1, cameraPos );   // camera position
         glUniform3fv( 3, 1, lightPos );    // light pos
         glUniform3fv( 4, 1, lightAmb );    // amb
-        glUniform3fv( 5, 1, lightDiff );   // diff
-        glUniform3fv( 6, 1, lightSpec );   // spec
+        glUniform3fv( 5, 1, lightIncoming );   // incoming light value
 
         // draw floor
         draw_floor( floorVAO, floorMVP );
@@ -249,9 +248,9 @@ int main() try {
         draw_cube2( cubeVAO, cube2MVP );
 
         // // LAMPPOST
-        // glUniformMatrix4fv( 0, 1, GL_TRUE, lightPostMVP.v );
-        // glUniformMatrix4fv( 1, 1, GL_TRUE, lightPostModel.v );
-        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+        glUniformMatrix4fv( 0, 1, GL_TRUE, lightPostMVP.v );
+        glUniformMatrix4fv( 1, 1, GL_TRUE, lightPostModel.v );
+        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
         // LIGHT CUBE
         glUseProgram( lighting.programId() );   // lighting shader

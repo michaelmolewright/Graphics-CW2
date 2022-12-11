@@ -113,10 +113,10 @@ void draw_cube1( GLuint vao, Mat44f MVP ) {
     glUniformMatrix4fv( 1, 1, GL_TRUE, cube1Model.v );   // model matrix
 
     // material props
-    glUniform3fv( 7, 1, cubeAmb );    // amb
-    glUniform3fv( 8, 1, cubeDiff );   // diff
-    glUniform3fv( 9, 1, cubeSpec );   // spec
-    glUniform1f( 10, cubeShin );      // shin
+    glUniform3fv( 6, 1, cubeAmb );    // amb
+    glUniform3fv( 7, 1, cubeDiff );   // diff
+    glUniform3fv( 8, 1, cubeSpec );   // spec
+    glUniform1f( 9, cubeShin );      // shin
 
     // FLOOR
     glBindVertexArray( vao );
@@ -128,10 +128,10 @@ void draw_cube2( GLuint vao, Mat44f MVP ) {
     glUniformMatrix4fv( 1, 1, GL_TRUE, cube2Model.v );   // model matrix
 
     // material props
-    glUniform3fv( 7, 1, cube2Amb );    // amb
-    glUniform3fv( 8, 1, cube2Diff );   // diff
-    glUniform3fv( 9, 1, cube2Spec );   // spec
-    glUniform1f( 10, cube2Shin );      // shin
+    glUniform3fv( 6, 1, cube2Amb );    // amb
+    glUniform3fv( 7, 1, cube2Diff );   // diff
+    glUniform3fv( 8, 1, cube2Spec );   // spec
+    glUniform1f( 9, cube2Shin );      // shin
 
     // FLOOR
     glBindVertexArray( vao );
