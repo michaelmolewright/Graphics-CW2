@@ -7,16 +7,17 @@ layout( location = 0 ) out vec4 oColor;
 
 layout( location = 2 ) uniform vec3 cameraPos;
 
-// light props
+// light uniforms
 layout( location = 3 ) uniform vec3 lightPos;
 layout( location = 4 ) uniform vec3 lightAmb;
 layout( location = 5 ) uniform vec3 lightIncoming;
-
-// material props
+// material uniforms
 layout( location = 6 ) uniform vec3 materialAmbient;
 layout( location = 7 ) uniform vec3 materialDiffuse;
 layout( location = 8 ) uniform vec3 materialSpecular;
 layout( location = 9 ) uniform float materialShininess;
+// emissive val
+layout( location = 10 ) uniform float emissive;
 
 void main()
 {
@@ -41,7 +42,7 @@ void main()
     vec3 specular = correctionTerm * NdotL * materialSpecular * lightIncoming * specularTerm;  
 
     // emissive term
-    const float emissive = 0.01;
+    // const float emissive = 0.01;
     
     vec3 result = ambient + diffuse + specular + emissive;
     oColor = vec4( result, 1.0 );

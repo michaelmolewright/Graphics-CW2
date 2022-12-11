@@ -30,8 +30,6 @@ constexpr float kPi_ = 3.1415926f;
 struct State_ {
     ShaderProgram *prog;
 
-    ShaderProgram *lighting;
-
     camera c;
 };
 
@@ -151,12 +149,8 @@ int main() try {
     // TODO: load shaders
     ShaderProgram prog( { { GL_VERTEX_SHADER, "assets/default.vert" },
                           { GL_FRAGMENT_SHADER, "assets/default.frag" } } );
-    // lighting shader
-    ShaderProgram lighting( { { GL_VERTEX_SHADER, "assets/light.vert" },
-                              { GL_FRAGMENT_SHADER, "assets/light.frag" } } );
 
     state.prog = &prog;
-    state.lighting = &lighting;
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -240,6 +234,7 @@ int main() try {
         glUniform3fv( 3, 1, lightPos );    // light pos
         glUniform3fv( 4, 1, lightAmb );    // amb
         glUniform3fv( 5, 1, lightIncoming );   // incoming light value
+        glUniform1f( 10, 0.001f ); // emissive term
 
         // draw floor
         draw_floor( floorVAO, floorMVP );
@@ -253,9 +248,9 @@ int main() try {
         glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
         // LIGHT CUBE
-        glUseProgram( lighting.programId() );   // lighting shader
         glBindVertexArray( lightVAO );
         glUniformMatrix4fv( 0, 1, GL_TRUE, lightCubeMVP.v );   // lighting MVP
+        glUniform1f( 10, 1.f ); // emmissive = 1 for light
         glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
         // reset
@@ -271,7 +266,6 @@ int main() try {
 
     // Cleanup.
     state.prog = nullptr;
-    state.lighting = nullptr;
     // TODO: additional cleanup
 
     return 0;
