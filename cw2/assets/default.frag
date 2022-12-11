@@ -22,22 +22,24 @@ layout( location = 10 ) uniform float materialShininess;
 void main()
 {
     // ambient lighting
-    vec3 ambient = lightAmbient * materialAmbient;
+    vec3 ambient = materialAmbient * lightAmbient;
 
     // diffuse lighting
     vec3 norm = normalize( normal );
     vec3 lightDir = normalize( lightPos - fragPos );  
-    float diff = max( dot(norm, lightDir), 0.0 );
-    vec3 diffuse = diff * lightDiffuse * materialDiffuse;
+    float NdotL = max( dot(norm, lightDir), 0.0 );
+    vec3 diffuse = materialDiffuse * lightDiffuse * NdotL;
 
-    //specular lighting
+    // specular lighting
     vec3 viewDir = normalize( cameraPos - fragPos );
-    // blinn halfway vector
-    vec3 halfwayDir = normalize( lightDir + viewDir );
-    float clampedDotProduct = max( dot( normal, halfwayDir ), 0.0);
-    float spec = pow( clampedDotProduct, materialShininess );
-    vec3 specular = spec * lightSpecular * materialSpecular;  
+    vec3 halfwayDir = normalize( lightDir + viewDir ); // blinn halfway vector
+    float NdotH = max( dot( normal, halfwayDir ), 0.0);
+    float specularTerm = pow( NdotH, materialShininess );
+    vec3 specular = materialSpecular * lightSpecular * specularTerm;  
+
+    // emissive term
+    float emissive = 0.1;
     
-    vec3 result = ambient + diffuse + specular;
+    vec3 result = ambient + diffuse + specular + emissive;
     oColor = vec4( result, 1.0 );
 }
