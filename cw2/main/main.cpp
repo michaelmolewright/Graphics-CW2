@@ -167,7 +167,6 @@ int main() try {
     GLuint cubeVAO = createCubeVBO();
     GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/markus.png");
     //GLuint textureID1 = createTexture(FileSystem::getPath("../extra/markus.png"));
-    FileSystem
     GLuint textureID2 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/sample.png");
     glActiveTexture( GL_TEXTURE0 );
 
