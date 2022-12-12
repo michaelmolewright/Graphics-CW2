@@ -188,15 +188,12 @@ int main() try {
     Mat44f railModel = make_translation( { -2.f, 0.5f, 2.f } ) ;
 
     // HALFPIPE
-    auto pipe = make_half_cylinder( false, 32, { 1.f, 0.f, 0.f },
-                                make_rotation_y( 3* kPi_ / 2 ) *
-                                // make_rotation_z( 3 * kPi_ / 2 ) * 
+    auto pipe = make_half_pipe( 32, { 1.f, 0.f, 0.f },
                                 make_scaling( 4.f, 4.f, 4.f )
                                  );
     GLuint pipeVAO = create_vao( pipe );
     size_t pipeVertCount = pipe.positions.size();
-    Mat44f pipeModel = make_translation( { -2.f, 4.f, -5.f } )
-                        * make_rotation_z( 3 * kPi_ / 2 ) ;
+    Mat44f pipeModel = make_translation( { -2.f, 4.f, -5.f } );
 
     Mat44f pipeEnd1model =  make_translation( { -7.f, 2.f, -3.f } ) *  make_scaling( 2.f, 4.f, 4.f );
                         
@@ -266,7 +263,7 @@ int main() try {
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram( prog.programId() );
 
-        // uniforms
+        // // uniforms
         static float const cameraPos[] = { state.c.cameraPosition.x,
                                            state.c.cameraPosition.y,
                                            state.c.cameraPosition.z };
@@ -276,43 +273,45 @@ int main() try {
         glUniform3fv( 5, 1, lightIncoming );   // incoming light value
         glUniform1f( 10, 0.001f ); // emissive term
 
-        // RAIL
-        glUniformMatrix4fv( 0, 1, GL_TRUE, railMVP.v );
-        glUniformMatrix4fv( 1, 1, GL_TRUE, railModel.v );   // model matrix
-        // material props
-        glUniform3fv( 6, 1, cube2Amb );    // amb
-        glUniform3fv( 7, 1, cube2Diff );   // diff
-        glUniform3fv( 8, 1, cube2Spec );   // spec
-        glUniform1f( 9, cube2Shin );      // shin
+        // // RAIL
+        // glUniformMatrix4fv( 0, 1, GL_TRUE, railMVP.v );
+        // glUniformMatrix4fv( 1, 1, GL_TRUE, railModel.v );   // model matrix
+        // // material props
+        // glUniform3fv( 6, 1, cube2Amb );    // amb
+        // glUniform3fv( 7, 1, cube2Diff );   // diff
+        // glUniform3fv( 8, 1, cube2Spec );   // spec
+        // glUniform1f( 9, cube2Shin );      // shin
+        // glBindVertexArray( railVAO );
+        // glDrawArrays( GL_TRIANGLES, 0, railVertCount );
 
-        glBindVertexArray( railVAO );
-        glDrawArrays( GL_TRIANGLES, 0, railVertCount );
+        // // PIPE
+        // glUniformMatrix4fv( 0, 1, GL_TRUE, pipeMVP.v );
+        // glUniformMatrix4fv( 1, 1, GL_TRUE, pipeModel.v );   // model matrix
+        // // material props
+        // glUniform3fv( 6, 1, cubeAmb );    // amb
+        // glUniform3fv( 7, 1, cubeDiff );   // diff
+        // glUniform3fv( 8, 1, cubeSpec );   // spec
+        // glUniform1f( 9, cubeShin );      // shin
 
-        // PIPE
-        glUniformMatrix4fv( 0, 1, GL_TRUE, pipeMVP.v );
-        glUniformMatrix4fv( 1, 1, GL_TRUE, pipeModel.v );   // model matrix
-        // material props
-        glUniform3fv( 6, 1, cubeAmb );    // amb
-        glUniform3fv( 7, 1, cubeDiff );   // diff
-        glUniform3fv( 8, 1, cubeSpec );   // spec
-        glUniform1f( 9, cubeShin );      // shin
-
-        glBindVertexArray( pipeVAO );
-        glDrawArrays( GL_TRIANGLES, 0, pipeVertCount );
-
-        // PIPE ENDS
-        glUniformMatrix4fv( 0, 1, GL_TRUE, pipeEnd1MVP.v );
-        glUniformMatrix4fv( 1, 1, GL_TRUE, pipeEnd1model.v );   // model matrix
-        glBindVertexArray( cubeVAO );
-        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
-        // 2
-        glUniformMatrix4fv( 0, 1, GL_TRUE, pipeEnd2MVP.v );
-        glUniformMatrix4fv( 1, 1, GL_TRUE, pipeEnd2model.v );   // model matrix
-        glBindVertexArray( cubeVAO );
-        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+        // glBindVertexArray( pipeVAO );
+        // glDrawArrays( GL_TRIANGLES, 0, pipeVertCount );
 
 
-        // draw floor
+
+
+        // // PIPE ENDS
+        // glUniformMatrix4fv( 0, 1, GL_TRUE, pipeEnd1MVP.v );
+        // glUniformMatrix4fv( 1, 1, GL_TRUE, pipeEnd1model.v );   // model matrix
+        // glBindVertexArray( cubeVAO );
+        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+        // // 2
+        // glUniformMatrix4fv( 0, 1, GL_TRUE, pipeEnd2MVP.v );
+        // glUniformMatrix4fv( 1, 1, GL_TRUE, pipeEnd2model.v );   // model matrix
+        // glBindVertexArray( cubeVAO );
+        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+
+
+        //draw floor
         draw_floor( floorVAO, floorMVP );
         draw_cube1( cubeVAO, cube1MVP );
         draw_cube2( cubeVAO, cube2MVP );
@@ -323,10 +322,10 @@ int main() try {
 
 
 
-        // // LAMPPOST
-        glUniformMatrix4fv( 0, 1, GL_TRUE, lightPostMVP.v );
-        glUniformMatrix4fv( 1, 1, GL_TRUE, lightPostModel.v );
-        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+        // // // LAMPPOST
+        // glUniformMatrix4fv( 0, 1, GL_TRUE, lightPostMVP.v );
+        // glUniformMatrix4fv( 1, 1, GL_TRUE, lightPostModel.v );
+        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
         // LIGHT CUBE
         glBindVertexArray( lightVAO );

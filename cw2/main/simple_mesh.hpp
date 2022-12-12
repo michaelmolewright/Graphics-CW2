@@ -7,6 +7,7 @@
 
 #include "../vmlib/vec3.hpp"
 
+
 struct SimpleMeshData {
     std::vector<Vec3f> positions;
     std::vector<Vec3f> colors;

@@ -7,6 +7,29 @@ SimpleMeshData concatenate( SimpleMeshData aM, SimpleMeshData const &aN ) {
     return aM;
 }
 
+// CALCULATE NORMALS FOR SimpleMeshData OBJ
+// each three pos elements is a triangle
+// calc normal for each tri
+// store normal three times in returned vec (vec.data())
+std::vector<Vec3f> calculate_normals( SimpleMeshData const &aMeshData) {
+
+    std::vector<Vec3f> normals;
+
+    for (size_t i = 0; i < aMeshData.positions.size(); i += 3) {
+
+        Vec3f a = aMeshData.positions[i+1] - aMeshData.positions[i];
+        Vec3f c = aMeshData.positions[i+2] - aMeshData.positions[i];
+
+        Vec3f norm = cross_product(a, c);
+
+        normals.emplace_back(norm);
+        normals.emplace_back(norm);
+        normals.emplace_back(norm);
+    }
+    return normals;
+}
+
+
 GLuint create_vao( SimpleMeshData const &aMeshData ) {
     GLuint positionVBO = 0;
     glGenBuffers( 1, &positionVBO );
@@ -20,6 +43,13 @@ GLuint create_vao( SimpleMeshData const &aMeshData ) {
     // glBufferData( GL_ARRAY_BUFFER, aMeshData.colors.size() * sizeof( Vec3f ),
     //               aMeshData.colors.data(), GL_STATIC_DRAW );
 
+    std::vector<Vec3f> normals = calculate_normals( aMeshData );
+    GLuint normalVBO = 0;
+    glGenBuffers( 1, &normalVBO );
+    glBindBuffer( GL_ARRAY_BUFFER, normalVBO );
+    glBufferData( GL_ARRAY_BUFFER, normals.size() * sizeof( Vec3f ),
+                  normals.data(), GL_STATIC_DRAW );
+
     GLuint vao = 0;
     glGenVertexArrays( 1, &vao );
     glBindVertexArray( vao );
@@ -32,10 +62,16 @@ GLuint create_vao( SimpleMeshData const &aMeshData ) {
     // glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, 0 );
     // glEnableVertexAttribArray( 1 );
 
+    // NORMALS
+    glBindBuffer( GL_ARRAY_BUFFER, normalVBO );
+    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+    glEnableVertexAttribArray( 1 );
+
     // reset and delete buffers
     glBindVertexArray( 0 );
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
     glDeleteBuffers( 1, &positionVBO );
+    glDeleteBuffers( 1, &normalVBO );
     // glDeleteBuffers( 1, &colorVBO );
 
     return vao;
