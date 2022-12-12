@@ -7,7 +7,7 @@
 // from
 // https://learnopengl.com/code_viewer.php?code=lighting/basic_lighting_vertex_data
 constexpr float const kCubePositions[] = {
-    // coords				normals
+    // coords				    
     -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f, 0.5f,  -0.5f, -0.5f,
     0.0f,  0.0f,  -1.0f, 0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f,
     0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f, -0.5f, 0.5f,  -0.5f,
@@ -45,14 +45,14 @@ static float const cubeAmb[] = { 0.25f, 0.20725f, 0.20725f };
 static float const cubeDiff[] = { 1.f, 0.829f, 0.829f };
 static float const cubeSpec[] = { 0.296648f, 0.296648f, 0.296648f };
 static float const cubeShin = 0.088f * 128;
-Mat44f cube1Model = make_translation( { 0.f, 0.5f, 0.f } );
+Mat44f cube1Model = make_translation( { 2.f, 0.5f, 0.f } );
 
 // CUBE 2
 static float const cube2Amb[] = { 0.f, 0.f, 0.f };
 static float const cube2Diff[] = { 0.01f, 0.01f, 0.01f };
 static float const cube2Spec[] = { 0.5f, 0.5f, 0.5f };
-static float const cube2Shin = 20.f;
-Mat44f cube2Model = make_translation( { 2.f, 0.5f, 0.f } );
+static float const cube2Shin = 8.f;
+Mat44f cube2Model = make_translation( { 4.f, 0.5f, 0.f } );
 
 GLuint create_cube_vao() {
     // CUBE - now contains positions and normals
@@ -118,7 +118,6 @@ void draw_cube1( GLuint vao, Mat44f MVP ) {
     glUniform3fv( 8, 1, cubeSpec );   // spec
     glUniform1f( 9, cubeShin );      // shin
 
-    // FLOOR
     glBindVertexArray( vao );
     glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 }
@@ -133,7 +132,6 @@ void draw_cube2( GLuint vao, Mat44f MVP ) {
     glUniform3fv( 8, 1, cube2Spec );   // spec
     glUniform1f( 9, cube2Shin );      // shin
 
-    // FLOOR
     glBindVertexArray( vao );
     glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 }

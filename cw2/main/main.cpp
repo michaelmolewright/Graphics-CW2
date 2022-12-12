@@ -20,6 +20,9 @@
 #include "cube.hpp"
 #include "../extra/camera.hpp"
 #include "floor.hpp"
+#include "cylinder.hpp"
+#include "half_pipe.hpp"
+
 
 namespace {
 constexpr char const *kWindowTitle = "COMP3811 - Coursework 2";
@@ -98,7 +101,7 @@ int main() try {
     // Set up event handling
     State_ state{};
     glfwSetWindowUserPointer( window, &state );
-    // glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
+    glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
 
     // Set up event handling
     glfwSetKeyCallback( window, &glfw_callback_key_ );
@@ -174,6 +177,33 @@ int main() try {
     Mat44f lightPostModel = make_translation( { 2.f, 0.5f, 2.f } )
                            * make_scaling( 0.1f, 3.f, 0.1f );
 
+    
+    // RAILING
+    auto mainRail = make_cylinder( true, 16, { 1.f, 0.f, 0.f },
+                                make_rotation_y( 3* kPi_ / 2 ) *
+                                make_scaling( 5.f, 0.06f, 0.06f )
+                                 );
+    GLuint railVAO = create_vao( mainRail );
+    size_t railVertCount = mainRail.positions.size();
+    Mat44f railModel = make_translation( { -2.f, 0.5f, 2.f } ) ;
+
+    // HALFPIPE
+    auto pipe = make_half_cylinder( false, 32, { 1.f, 0.f, 0.f },
+                                make_rotation_y( 3* kPi_ / 2 ) *
+                                // make_rotation_z( 3 * kPi_ / 2 ) * 
+                                make_scaling( 4.f, 4.f, 4.f )
+                                 );
+    GLuint pipeVAO = create_vao( pipe );
+    size_t pipeVertCount = pipe.positions.size();
+    Mat44f pipeModel = make_translation( { -2.f, 4.f, -5.f } )
+                        * make_rotation_z( 3 * kPi_ / 2 ) ;
+
+    Mat44f pipeEnd1model =  make_translation( { -7.f, 2.f, -3.f } ) *  make_scaling( 2.f, 4.f, 4.f );
+                        
+    Mat44f pipeEnd2model = make_translation( { 3.f, 2.f, -3.f} ) *  make_scaling( 2.f, 4.f, 4.f );
+                        
+
+
     OGL_CHECKPOINT_ALWAYS();
 
     // Main loop
@@ -219,6 +249,16 @@ int main() try {
         // light post
         Mat44f lightPostMVP = projection * view * lightPostModel;
 
+        Mat44f railMVP = projection * view * railModel;
+
+        Mat44f pipeMVP = projection * view * pipeModel;
+
+        Mat44f pipeEnd1MVP = projection * view * pipeEnd1model;
+        Mat44f pipeEnd2MVP = projection * view * pipeEnd2model;
+        
+
+
+
         // Draw scene
         OGL_CHECKPOINT_DEBUG();
 
@@ -236,11 +276,52 @@ int main() try {
         glUniform3fv( 5, 1, lightIncoming );   // incoming light value
         glUniform1f( 10, 0.001f ); // emissive term
 
+        // RAIL
+        glUniformMatrix4fv( 0, 1, GL_TRUE, railMVP.v );
+        glUniformMatrix4fv( 1, 1, GL_TRUE, railModel.v );   // model matrix
+        // material props
+        glUniform3fv( 6, 1, cube2Amb );    // amb
+        glUniform3fv( 7, 1, cube2Diff );   // diff
+        glUniform3fv( 8, 1, cube2Spec );   // spec
+        glUniform1f( 9, cube2Shin );      // shin
+
+        glBindVertexArray( railVAO );
+        glDrawArrays( GL_TRIANGLES, 0, railVertCount );
+
+        // PIPE
+        glUniformMatrix4fv( 0, 1, GL_TRUE, pipeMVP.v );
+        glUniformMatrix4fv( 1, 1, GL_TRUE, pipeModel.v );   // model matrix
+        // material props
+        glUniform3fv( 6, 1, cubeAmb );    // amb
+        glUniform3fv( 7, 1, cubeDiff );   // diff
+        glUniform3fv( 8, 1, cubeSpec );   // spec
+        glUniform1f( 9, cubeShin );      // shin
+
+        glBindVertexArray( pipeVAO );
+        glDrawArrays( GL_TRIANGLES, 0, pipeVertCount );
+
+        // PIPE ENDS
+        glUniformMatrix4fv( 0, 1, GL_TRUE, pipeEnd1MVP.v );
+        glUniformMatrix4fv( 1, 1, GL_TRUE, pipeEnd1model.v );   // model matrix
+        glBindVertexArray( cubeVAO );
+        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+        // 2
+        glUniformMatrix4fv( 0, 1, GL_TRUE, pipeEnd2MVP.v );
+        glUniformMatrix4fv( 1, 1, GL_TRUE, pipeEnd2model.v );   // model matrix
+        glBindVertexArray( cubeVAO );
+        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+
+
         // draw floor
         draw_floor( floorVAO, floorMVP );
-
         draw_cube1( cubeVAO, cube1MVP );
         draw_cube2( cubeVAO, cube2MVP );
+
+
+
+
+
+
 
         // // LAMPPOST
         glUniformMatrix4fv( 0, 1, GL_TRUE, lightPostMVP.v );
