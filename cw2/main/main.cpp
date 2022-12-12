@@ -21,6 +21,7 @@
 #include "../extra/camera.hpp"
 #include "../extra/textures.hpp"
 
+
 namespace {
 constexpr char const *kWindowTitle = "COMP3811 - Coursework 2";
 
@@ -164,7 +165,10 @@ int main() try {
     // TODO: VBO AND VAO setup
     // CUBE
     GLuint cubeVAO = createCubeVBO();
-    GLuint textureID = createTexture();
+    GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/markus.png");
+    //GLuint textureID1 = createTexture(FileSystem::getPath("../extra/markus.png"));
+    FileSystem
+    GLuint textureID2 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/sample.png");
     glActiveTexture( GL_TEXTURE0 );
 
     OGL_CHECKPOINT_ALWAYS();
@@ -224,7 +228,7 @@ int main() try {
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram( prog.programId() );
 
-        glBindTexture(GL_TEXTURE_2D, textureID);
+        glBindTexture(GL_TEXTURE_2D, textureID1);
 
         glBindVertexArray( cubeVAO );
 
@@ -233,6 +237,9 @@ int main() try {
 
         // 6 sides * 2 triangles * 3 vertices
         glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+
+
+        glBindTexture(GL_TEXTURE_2D, textureID2);
 
         glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld2.v );
 

@@ -114,7 +114,7 @@ GLuint createCubeVBO(){
 
 	glBindBuffer( GL_ARRAY_BUFFER, positionVBO );
     glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)) );
-    glEnableVertexAttribArray( 0 );
+    glEnableVertexAttribArray( 2 );
 
     glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
     glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, 0 );
