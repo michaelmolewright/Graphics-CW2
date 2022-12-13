@@ -7,20 +7,33 @@ SimpleMeshData concatenate( SimpleMeshData aM, SimpleMeshData const &aN ) {
     return aM;
 }
 
-// CALCULATE NORMALS FOR SimpleMeshData OBJ
-// each three pos elements is a triangle
-// calc normal for each tri
-// store normal three times in returned vec (vec.data())
+// tests whether a triangle is drawn counter clockwise or not
+// returns 1 if counterclockwise, -1 if clockwise
+int ccw( Vec3f a, Vec3f b, Vec3f c ) {
+    return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
+}
+
+// calculate normals for SimpleMeshData faces
 std::vector<Vec3f> calculate_normals( SimpleMeshData const &aMeshData) {
 
     std::vector<Vec3f> normals;
 
     for (size_t i = 0; i < aMeshData.positions.size(); i += 3) {
 
-        Vec3f a = aMeshData.positions[i+1] - aMeshData.positions[i];
-        Vec3f c = aMeshData.positions[i+2] - aMeshData.positions[i];
+        Vec3f a = aMeshData.positions[i];
+        Vec3f b = aMeshData.positions[i+1];
+        Vec3f c = aMeshData.positions[i+2];
 
-        Vec3f norm = cross_product(a, c);
+        Vec3f AB = aMeshData.positions[i+1] - aMeshData.positions[i];
+        Vec3f AC = aMeshData.positions[i+2] - aMeshData.positions[i];
+
+        Vec3f n = cross_product( AB, AC);
+        Vec3f norm = normalize( n );
+
+        // if triangle is clockwise, reverse the normal
+        // if ( ccw( a, b, c) ) {
+        //     norm *= -1;
+        // }
 
         normals.emplace_back(norm);
         normals.emplace_back(norm);

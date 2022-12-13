@@ -39,29 +39,25 @@ SimpleMeshData make_half_pipe( std::size_t aSubdivs, Vec3f aColor,
     float initialSize = pos.size();
     // midpoints are 0,0,0 and 1,0,0
     for ( std::size_t i = 0; i < initialSize/2; i += 6 ) {
-        pos.emplace_back( pos[i] );
-        pos.emplace_back( pos[i + 1] );
-        // x=0 midpoint
         pos.emplace_back( Vec3f{ 0.f, 1.f, 1.f } );
+        pos.emplace_back( pos[i + 1] );
+        pos.emplace_back( pos[i] );
 
-        pos.emplace_back( pos[i + 4] );
-        pos.emplace_back( pos[i + 5] );
-        // x=1 midpoint
         pos.emplace_back( Vec3f{ 1.f, 1.f, 1.f } );
+        pos.emplace_back( pos[i + 5] );
+        pos.emplace_back( pos[i + 4] );
     }
     for ( std::size_t i = initialSize/2; i < initialSize; i += 6 ) {
-        pos.emplace_back( pos[i] );
-        pos.emplace_back( pos[i + 1] );
-        // x=0 midpoint
         pos.emplace_back( Vec3f{ 0.f, -1.f, 1.f } );
+        pos.emplace_back( pos[i + 1] );
+        pos.emplace_back( pos[i] );
 
-        pos.emplace_back( pos[i + 4] );
-        pos.emplace_back( pos[i + 5] );
-        // x=1 midpoint
         pos.emplace_back( Vec3f{ 1.f, -1.f, 1.f } );
+        pos.emplace_back( pos[i + 5] );
+        pos.emplace_back( pos[i + 4] );
     }
 
-    // // end of halfpipe    
+    // end of halfpipe    
     pos.emplace_back( top1 );
     pos.emplace_back( top2 );
     pos.emplace_back( Vec3f{ 0.f, 1.f, 1.f } );
@@ -71,22 +67,22 @@ SimpleMeshData make_half_pipe( std::size_t aSubdivs, Vec3f aColor,
     pos.emplace_back( top2 );
 
     // other end of halfpipe    
+    pos.emplace_back( Vec3f{ 0.f, -1.f, 1.f } );
+    pos.emplace_back( bot2 );
     pos.emplace_back( bot1 );
-    pos.emplace_back( bot2 );
-    pos.emplace_back( Vec3f{ 0.f, -1.f, 1.f } );
 
-    pos.emplace_back( Vec3f{ 1.f, -1.f, 1.f } );
-    pos.emplace_back( Vec3f{ 0.f, -1.f, 1.f } );
     pos.emplace_back( bot2 );
+    pos.emplace_back( Vec3f{ 0.f, -1.f, 1.f } );
+    pos.emplace_back( Vec3f{ 1.f, -1.f, 1.f } );
 
     // bottom of halfpipe
-    pos.emplace_back( Vec3f{ 0.f, 1.f, 1.f } );
+    pos.emplace_back( Vec3f{ 1.f, -1.f, 1.f } );
     pos.emplace_back( Vec3f{ 0.f, -1.f, 1.f } );
-    pos.emplace_back( Vec3f{ 1.f, -1.f, 1.f } );
-
-    pos.emplace_back( Vec3f{ 1.f, -1.f, 1.f } );
-    pos.emplace_back( Vec3f{ 1.f, 1.f, 1.f } );
     pos.emplace_back( Vec3f{ 0.f, 1.f, 1.f } );
+
+    pos.emplace_back( Vec3f{ 0.f, 1.f, 1.f } );
+    pos.emplace_back( Vec3f{ 1.f, 1.f, 1.f } );
+    pos.emplace_back( Vec3f{ 1.f, -1.f, 1.f } );
 
     
 

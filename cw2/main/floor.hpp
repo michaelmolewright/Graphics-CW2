@@ -12,7 +12,7 @@ static float const floorDiff[] = { 1.f, 0.829f, 0.829f };
 static float const floorSpec[] = { 0.296648f, 0.296648f, 0.296648f };
 static float const floorShin = 0.048f * 128;
 // model matrix
-Mat44f floorModel = make_scaling( 6.f, 1.f, 6.f );
+Mat44f floorModel = make_scaling( 10.f, 1.f, 10.f );
 
 GLuint create_floor_vao() {
     GLuint floorVBO = 0;
