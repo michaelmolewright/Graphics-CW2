@@ -19,6 +19,8 @@
 // TAKE OUT
 #include "cube.hpp"
 #include "../extra/camera.hpp"
+#include "sphere.hpp"
+
 
 namespace {
 constexpr char const *kWindowTitle = "COMP3811 - Coursework 2";
@@ -130,9 +132,10 @@ int main() try {
 
     // TODO: global GL setup goes here
     glEnable( GL_FRAMEBUFFER_SRGB );
-    glEnable( GL_CULL_FACE );
+    //glEnable( GL_CULL_FACE );
     glClearColor( 0.5f, 0.5f, 0.5f, 0.0f );
     glEnable( GL_DEPTH_TEST );
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -191,6 +194,12 @@ int main() try {
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
     glDeleteBuffers( 1, &positionVBO );
     glDeleteBuffers( 1, &colorVBO );
+    
+    
+    Mat44f world2camera = make_translation( { 0.f, 0.f, -10.f } ); 
+    auto tri = createSphere(world2camera);
+    GLuint vao = create_vao( tri );
+    std::size_t vertexCount = tri.positions.size();
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -231,7 +240,6 @@ int main() try {
 
         // Update: compute matrices
         // TODO: define and compute projCameraWorld matrix
-        Mat44f world2camera = make_translation( { 0.f, 0.f, -10.f } );
         Mat44f world2camera2 = make_translation( { 5.f, 0.f, -10.f } );
         Mat44f projection = make_perspective_projection(
             45.f * 3.1415926f / 180.f,   // Yes, a proper π would be useful. (
@@ -241,7 +249,7 @@ int main() try {
                               state.c.cameraPosition + state.c.cameraFront,
                               state.c.cameraUp );
 
-        Mat44f projCameraWorld = projection * view * world2camera;
+        Mat44f projCameraWorld = projection * view;
         Mat44f projCameraWorld2 = projection * view * world2camera2;
 
         // Draw scene
@@ -251,18 +259,23 @@ int main() try {
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram( prog.programId() );
 
-        glBindVertexArray( cubeVAO );
+        // glBindVertexArray( cubeVAO );
 
-        // pass in matrix as uniform data
-        glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld.v );
+        // // pass in matrix as uniform data
+        // glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld.v );
 
-        // 6 sides * 2 triangles * 3 vertices
-        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+        // // 6 sides * 2 triangles * 3 vertices
+        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
-        glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld2.v );
+        // glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld2.v );
 
-        // 6 sides * 2 triangles * 3 vertices
-        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+        // // 6 sides * 2 triangles * 3 vertices
+        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+
+        glUniformMatrix4fv(0, 1, GL_TRUE, projCameraWorld.v);
+
+        glBindVertexArray( vao );
+        glDrawArrays( GL_TRIANGLES, 0, vertexCount );
 
         // reset
         glBindVertexArray( 0 );
