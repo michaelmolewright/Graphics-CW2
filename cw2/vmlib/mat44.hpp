@@ -162,7 +162,7 @@ Mat44f make_perspective_projection( float aFovInRadians, float aAspect, float aN
 		sx, 0, 0, 0,
 		0, s, 0, 0,
 		0, 0, a, b,
-		0, 0, -1, 1
+		0, 0, -1, 0
 	};
 }
 inline
