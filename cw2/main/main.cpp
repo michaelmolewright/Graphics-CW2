@@ -158,10 +158,11 @@ int main() try {
     OGL_CHECKPOINT_ALWAYS();
 
     // TODO: VBO AND VAO setup
-
+    GLuint cubeVAO = create_cube_vao();
+    GLuint floorVAO = create_floor_vao();
     GLuint lightVAO = create_light_vao();
 
-    Vec3f lightPositionVector{ 0.f, 2.f, 6.f };
+    Vec3f lightPositionVector{ 2.f, 2.f, 2.f };
     // lighting uniform data
     static float const lightPos[] = { lightPositionVector.x,
                                       lightPositionVector.y,
@@ -173,14 +174,31 @@ int main() try {
     Mat44f lightModel = make_translation( lightPositionVector )
                         * make_scaling( 0.2f, 0.2f, 0.2f );
 
+    Mat44f lightPostModel = make_translation( { 2.f, 0.5f, 2.f } )
+                           * make_scaling( 0.1f, 3.f, 0.1f );
+
+    
+    // RAILING
+    auto mainRail = make_cylinder( true, 16, { 1.f, 0.f, 0.f },
+                                make_rotation_y( 3* kPi_ / 2 ) *
+                                make_scaling( 5.f, 0.06f, 0.06f )
+                                 );
+    GLuint railVAO = create_vao( mainRail );
+    size_t railVertCount = mainRail.positions.size();
+    Mat44f railModel = make_translation( { -2.f, 0.5f, 2.f } ) ;
 
     // HALFPIPE
-    auto pipe = make_half_pipe( 400, { 1.f, 0.f, 0.f },
+    auto pipe = make_half_pipe( 200, { 1.f, 0.f, 0.f },
                                 make_scaling( 4.f, 4.f, 4.f )
                                  );
     GLuint pipeVAO = create_vao( pipe );
     size_t pipeVertCount = pipe.positions.size();
-    Mat44f pipeModel = make_translation( { 0.f, 0.f, 0.f } );
+    Mat44f pipeModel = make_translation( { -2.f, 4.f, -5.f } );
+
+    Mat44f pipeEnd1model =  make_translation( { -7.f, 2.f, -3.f } ) *  make_scaling( 2.f, 4.f, 4.f );
+                        
+    Mat44f pipeEnd2model = make_translation( { 3.f, 2.f, -3.f} ) *  make_scaling( 2.f, 4.f, 4.f );
+                        
 
 
     OGL_CHECKPOINT_ALWAYS();
@@ -218,14 +236,23 @@ int main() try {
         Mat44f view = lookAt( state.c.cameraPosition,
                               state.c.cameraPosition + state.c.cameraFront,
                               state.c.cameraUp );
-
+        Mat44f floorMVP = projection * view * floorModel;
+        // cube 1
+        Mat44f cube1MVP = projection * view * cube1Model;
+        // cube 2
+        Mat44f cube2MVP = projection * view * cube2Model;
         // lighting cube matrix
         Mat44f lightCubeMVP = projection * view * lightModel;
+        // light post
+        Mat44f lightPostMVP = projection * view * lightPostModel;
 
-
+        Mat44f railMVP = projection * view * railModel;
 
         Mat44f pipeMVP = projection * view * pipeModel;
 
+        Mat44f pipeEnd1MVP = projection * view * pipeEnd1model;
+        Mat44f pipeEnd2MVP = projection * view * pipeEnd2model;
+        
 
 
 
@@ -246,8 +273,16 @@ int main() try {
         glUniform3fv( 5, 1, lightIncoming );   // incoming light value
         glUniform1f( 10, 0.001f ); // emissive term
 
-
-
+        // RAIL
+        glUniformMatrix4fv( 0, 1, GL_TRUE, railMVP.v );
+        glUniformMatrix4fv( 1, 1, GL_TRUE, railModel.v );   // model matrix
+        // material props
+        glUniform3fv( 6, 1, cube2Amb );    // amb
+        glUniform3fv( 7, 1, cube2Diff );   // diff
+        glUniform3fv( 8, 1, cube2Spec );   // spec
+        glUniform1f( 9, cube2Shin );      // shin
+        glBindVertexArray( railVAO );
+        glDrawArrays( GL_TRIANGLES, 0, railVertCount );
 
         // PIPE
         glUniformMatrix4fv( 0, 1, GL_TRUE, pipeMVP.v );
@@ -264,9 +299,33 @@ int main() try {
 
 
 
+        // PIPE ENDS
+        glUniformMatrix4fv( 0, 1, GL_TRUE, pipeEnd1MVP.v );
+        glUniformMatrix4fv( 1, 1, GL_TRUE, pipeEnd1model.v );   // model matrix
+        glBindVertexArray( cubeVAO );
+        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+        // 2
+        glUniformMatrix4fv( 0, 1, GL_TRUE, pipeEnd2MVP.v );
+        glUniformMatrix4fv( 1, 1, GL_TRUE, pipeEnd2model.v );   // model matrix
+        glBindVertexArray( cubeVAO );
+        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+
+
+        //draw floor
+        draw_floor( floorVAO, floorMVP );
+        draw_cube1( cubeVAO, cube1MVP );
+        draw_cube2( cubeVAO, cube2MVP );
 
 
 
+
+
+
+
+        // // LAMPPOST
+        glUniformMatrix4fv( 0, 1, GL_TRUE, lightPostMVP.v );
+        glUniformMatrix4fv( 1, 1, GL_TRUE, lightPostModel.v );
+        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
         // LIGHT CUBE
         glBindVertexArray( lightVAO );

@@ -43,18 +43,18 @@ SimpleMeshData make_half_pipe( std::size_t aSubdivs, Vec3f aColor,
         pos.emplace_back( pos[i + 1] );
         pos.emplace_back( pos[i] );
 
-        pos.emplace_back( Vec3f{ 1.f, 1.f, 1.f } );
-        pos.emplace_back( pos[i + 5] );
         pos.emplace_back( pos[i + 4] );
+        pos.emplace_back( pos[i + 5] );
+        pos.emplace_back( Vec3f{ 1.f, 1.f, 1.f } );
     }
     for ( std::size_t i = initialSize/2; i < initialSize; i += 6 ) {
         pos.emplace_back( Vec3f{ 0.f, -1.f, 1.f } );
         pos.emplace_back( pos[i + 1] );
         pos.emplace_back( pos[i] );
 
-        pos.emplace_back( Vec3f{ 1.f, -1.f, 1.f } );
-        pos.emplace_back( pos[i + 5] );
         pos.emplace_back( pos[i + 4] );
+        pos.emplace_back( pos[i + 5] );
+        pos.emplace_back( Vec3f{ 1.f, -1.f, 1.f } );
     }
 
     // end of halfpipe    
