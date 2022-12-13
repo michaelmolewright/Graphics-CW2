@@ -19,6 +19,8 @@
 // TAKE OUT
 #include "cube.hpp"
 #include "../extra/camera.hpp"
+
+
 #include "sphere.hpp"
 
 
@@ -197,7 +199,7 @@ int main() try {
     
     
     Mat44f world2camera = make_translation( { 0.f, 0.f, -10.f } ); 
-    auto tri = createSphere(world2camera);
+    auto tri = createFloor();
     GLuint vao = create_vao( tri );
     std::size_t vertexCount = tri.positions.size();
 

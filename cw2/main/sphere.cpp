@@ -1,7 +1,7 @@
 #include "sphere.hpp"
 #include <cstdio>
 
-SimpleMeshData createSphere(Mat44f aPreTransform){
+SimpleMeshData createSphere(){
     tri triangle1;
     triangle1.a = Vec3f{1.f, 0.f, 0.f};
     triangle1.b = Vec3f{0.f, 1.f, 0.f};
@@ -18,13 +18,13 @@ SimpleMeshData createSphere(Mat44f aPreTransform){
 
     SimpleMeshData ret = concatenate(first, second);
 
-    for ( auto &p : ret.positions ) {
+    /*for ( auto &p : ret.positions ) {
         Vec4f p4{ p.x, p.y, p.z, 1.f };
         Vec4f t = aPreTransform * p4;
         t /= t.w;
 
         p = Vec3f{ t.x, t.y, t.z };
-    }
+    }*/
 
     return ret;
 };   
@@ -32,7 +32,7 @@ SimpleMeshData createSphere(Mat44f aPreTransform){
 SimpleMeshData createDome( tri startingTri ){
     std::vector<Vec3f> pos;
 
-    pos = createTriangles(pos, startingTri, 9);
+    pos = createTriangles(pos, startingTri, 7);
 
     for ( auto &p : pos ) {
         p = normalizePoints(Vec3f{0.f, 0.f, 0.f}, p, 2.f);
@@ -117,3 +117,62 @@ Vec3f normalizePoints(Vec3f center, Vec3f point, float radius){
     c.z = center.z + dz;
     return c;
 };
+
+SimpleMeshData createFloor(){
+    
+    SimpleMeshData a = createSphere();
+
+    Vec3f corner1 = {2.f, 2.f, 0.f};
+    Vec3f corner2 = {2.f, -2.f, 0.f};
+    std::vector<Vec3f> topPos1;
+    std::vector<Vec3f> topPos2;
+
+    for ( auto &p : a.positions ){
+        if ( (p.z == 0.f) && (p.y > 0.f) ){
+            topPos1.emplace_back(p);
+        }
+        else if( (p.z == 0.f) && (p.y < 0.f) ){
+            topPos2.emplace_back(p);
+        }
+    }
+    std::vector<Vec3f> floorTris;
+    int index = 0;
+    Vec3f tempP1;
+
+    for(unsigned int i = 0; i < topPos1.size() - 1; i++)
+    {
+        if (i == 0){    
+            tempP1 = topPos1.at(i);
+        }
+        else{
+
+            floorTris.emplace_back(tempP1);
+            floorTris.emplace_back(topPos1.at(i));
+            floorTris.emplace_back(corner1);
+            tempP1 = topPos1.at(i);
+        }
+    }
+    index = 0;
+    Vec3f tempP2;
+    /*for ( auto &p : topPos2 ){
+        if (index == 0){    
+            tempP2 = p;
+            index = 1;
+        }
+        else{
+
+            floorTris.emplace_back(tempP2);
+            floorTris.emplace_back(p);
+            floorTris.emplace_back(corner2);
+            tempP2 = p;
+        }
+    }*/
+    std::vector col( floorTris.size(), Vec3f{1.f, 0.f, 0.f} );
+
+    SimpleMeshData floor = SimpleMeshData{ std::move( floorTris ), std::move( col ) };
+
+    a = concatenate(a, floor);
+    
+    
+    return a;
+}

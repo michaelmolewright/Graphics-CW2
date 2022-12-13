@@ -16,9 +16,7 @@ struct tri{
 };
 
 
-SimpleMeshData createSphere(
-    Mat44f aPreTransform = kIdentity44f 
-);
+SimpleMeshData createSphere();
 
 SimpleMeshData createDome( 
     tri startingTri
@@ -39,3 +37,6 @@ Vec3f normalizePoints(
     Vec3f point, 
     float radius
 );
+
+
+SimpleMeshData createFloor();
