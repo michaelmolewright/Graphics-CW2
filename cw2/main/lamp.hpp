@@ -1,11 +1,6 @@
 #include "cube.hpp"
 #include "cylinder.hpp"
 
-// lamp post material data
-static float const postAmb[] = { 0.f, 0.f, 0.f };
-static float const postDiff[] = { 0.01f, 0.01f, 0.01f };
-static float const postSpec[] = { 0.5f, 0.5f, 0.5f };
-static float const postShin = 16.f;
 
 
 
@@ -19,4 +14,26 @@ void draw_lamp( GLuint lightVAO, GLuint postVAO, Mat44f aPreTransform ) {
                         * make_scaling( 0.2f, 0.2f, 0.2f );
 
 }
+
+class Lamp {
+   private:
+        float postAmb[3];
+        float postDiff[3];
+        float postSpec[3];
+        float postShin;
+        Vec3f lightPos;
+
+   public:
+        Lamp( Vec3f lightPos )
+            : postAmb { 0.f, 0.f, 0.f },
+            postDiff { 0.01f, 0.01f, 0.01f },
+            postSpec { 0.5f, 0.5f, 0.5f },
+            postShin( 16.f ),
+            lightPos(lightPos)
+        {}
+
+        void draw_lamp( GLuint lightVAO, GLuint postVAO, Mat44f aPreTransform ) {
+
+        }
+};
 
