@@ -26,6 +26,7 @@
 #include "bowl.hpp"
 
 
+
 namespace {
 constexpr char const *kWindowTitle = "COMP3811 - Coursework 2";
 
@@ -181,12 +182,20 @@ int main() try {
 
 
     size_t postVertCount = post.positions.size();
-    
-    
 
-    auto tri = createFinalForm(make_scaling(0.75f, 0.5f, 1.f) *  make_translation({0.f,0.f, 0.f}) * make_rotation_x(kPi_ / 2.f));
-    GLuint vao = create_vao( tri );
-    std::size_t vertexCount = tri.positions.size();
+    //--------------------------FLOOR----------------------------------------------
+
+    //-----------------------------------------------------------------------------
+    
+    
+    // ----------------------------BOWL---------------------------------------------
+    auto bowl = createFinalForm(make_scaling(0.75f, 0.5f, 1.f) *  make_translation({0.f,0.f, 0.f}) * make_rotation_x(kPi_ / 2.f));
+    GLuint bowl_vao = create_vao( bowl );
+    std::size_t vertexCount = bowl.positions.size();
+    // -----------------------------------------------------------------------------
+
+
+
 
     GLuint lightVAO = create_light_vao();
     Mat44f lightModel = make_translation( lightPositionVector )
@@ -224,14 +233,6 @@ int main() try {
             glViewport( 0, 0, nwidth, nheight );
         }
 
-        // Update state
-        // auto const now = Clock::now();
-        // dt = std::chrono::duration_cast<Secondsf>( now - last ).count();
-        // last = now;
-
-        // angle += dt * kPi_ * 0.3f;
-        // if ( angle >= 2.f * kPi_ )
-        //     angle -= 2.f * kPi_;
 
         // Update: compute matrices
         // TODO: define and compute projCameraWorld matrix
@@ -247,8 +248,7 @@ int main() try {
         Mat44f lightMVP = projection * view * lightModel;
         Mat44f postMVP = projection * view * postModel;
 
-        Mat44f projCameraWorld = projection * view;
-        Mat44f projCameraWorld2 = projection * view * world2camera2;
+        Mat44f MVP = projection * view;
 
         // Draw scene
         OGL_CHECKPOINT_DEBUG();
@@ -268,15 +268,8 @@ int main() try {
         glUniform1f( 10, 0.001f ); // emissive term
 
             // material props
-        glUniform3fv( 6, 1, cubeAmb );    // amb
-        glUniform3fv( 7, 1, cubeDiff );   // diff
-        glUniform3fv( 8, 1, cubeSpec );   // spec
-        glUniform1f( 9, cubeShin );      // shin
-
-        glUniformMatrix4fv(0, 1, GL_TRUE, projCameraWorld.v);
-
-        glBindVertexArray( vao );
-        glDrawArrays( GL_TRIANGLES, 0, vertexCount );
+        
+        drawBowl(vertexCount, bowl_vao, MVP, kIdentity44f);
 
 
 

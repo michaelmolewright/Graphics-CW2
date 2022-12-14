@@ -271,6 +271,7 @@ SimpleMeshData createTile( Mat44f preTransform ){
     return SimpleMeshData{ std::move( pos ), std::move( col ) };
 }
 
+
 SimpleMeshData createFinalForm(Mat44f preTransform){
 
     float length = 5.f;
@@ -310,4 +311,17 @@ SimpleMeshData createFinalForm(Mat44f preTransform){
 
     
     return ret;
+}
+
+void drawBowl(std::size_t size, GLuint vao, Mat44f MVP, Mat44f transform){
+    glUniform3fv( 6, 1, bowlAmb );    // amb
+    glUniform3fv( 7, 1, bowlDiff );   // diff
+    glUniform3fv( 8, 1, bowlSpec );   // spec
+    glUniform1f( 9, bowlShin );      // shin
+
+    glUniformMatrix4fv(0, 1, GL_TRUE, MVP.v);
+    glUniformMatrix4fv(1, 1, GL_TRUE, transform.v);
+
+    glBindVertexArray( vao );
+    glDrawArrays( GL_TRIANGLES, 0, size );
 }

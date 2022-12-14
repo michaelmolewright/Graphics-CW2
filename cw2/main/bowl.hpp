@@ -9,6 +9,11 @@
 #include "../vmlib/vec3.hpp"
 #include "../vmlib/mat44.hpp"
 
+static float const bowlAmb[] = { 0.25f, 0.20725f, 0.20725f };
+static float const bowlDiff[] = { 1.f, 0.829f, 0.829f };
+static float const bowlSpec[] = { 0.296648f, 0.296648f, 0.296648f };
+static float const bowlShin = 0.088f * 128;
+
 struct tri{
     Vec3f a;
     Vec3f b;
@@ -51,3 +56,7 @@ SimpleMeshData make_bowl_cylinder( std::size_t aSubdivs, Vec3f aColor, Mat44f aP
 SimpleMeshData createTile(Vec3f bl, Vec3f br, Vec3f tl, Vec3f tr, Mat44f preTransform);
 
 SimpleMeshData createFinalForm(Mat44f preTransform);
+
+
+
+void drawBowl(std::size_t size, GLuint vao, Mat44f MVP, Mat44f transform);
