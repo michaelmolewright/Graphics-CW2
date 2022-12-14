@@ -25,6 +25,10 @@
 #include "lamp.hpp"
 
 
+
+#include "bowl.hpp"
+
+
 namespace {
 constexpr char const *kWindowTitle = "COMP3811 - Coursework 2";
 
@@ -137,6 +141,7 @@ int main() try {
     glEnable( GL_CULL_FACE );
     glClearColor( 0.6f, 0.6f, 0.6f, 0.0f );
     glEnable( GL_DEPTH_TEST );
+    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -179,6 +184,12 @@ int main() try {
 
 
     size_t postVertCount = post.positions.size();
+    
+    
+
+    auto tri = createFinalForm(make_scaling(0.75f, 0.5f, 1.f) *  make_translation({0.f,-2.f, -10.f}) * make_rotation_x(kPi_ / 2.f));
+    GLuint vao = create_vao( tri );
+    std::size_t vertexCount = tri.positions.size();
 
     GLuint lightVAO = create_light_vao();
     Mat44f lightModel = make_translation( lightPositionVector )
@@ -216,18 +227,31 @@ int main() try {
             glViewport( 0, 0, nwidth, nheight );
         }
 
-        // compute MVP matrices
+        // Update state
+        auto const now = Clock::now();
+        dt = std::chrono::duration_cast<Secondsf>( now - last ).count();
+        last = now;
+
+        angle += dt * kPi_ * 0.3f;
+        if ( angle >= 2.f * kPi_ )
+            angle -= 2.f * kPi_;
+
+        // Update: compute matrices
+        // TODO: define and compute projCameraWorld matrix
+        Mat44f world2camera2 = make_translation( { 5.f, 0.f, -10.f } );
         Mat44f projection = make_perspective_projection(
             45.f * 3.1415926f / 180.f,   // Yes, a proper π would be useful. (
                                          // C++20: mathematical constants)
             fbwidth / float( fbheight ), 0.1f, 100.0f );
-        Mat44f view = lookAt( state.c.cameraPosition,
+        Mat44f view = camMat( state.c.cameraPosition,
                               state.c.cameraPosition + state.c.cameraFront,
                               state.c.cameraUp );
         
         Mat44f lightMVP = projection * view * lightModel;
         Mat44f postMVP = projection * view * postModel;
 
+        Mat44f projCameraWorld = projection * view;
+        Mat44f projCameraWorld2 = projection * view * world2camera2;
 
         // Draw scene
         OGL_CHECKPOINT_DEBUG();
@@ -322,6 +346,23 @@ int main() try {
         // glUniformMatrix4fv( 0, 1, GL_TRUE, lightCubeMVP.v );   // lighting MVP
         // glUniform1f( 10, 1.f ); // emmissive = 1 for light
         // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+        // glBindVertexArray( cubeVAO );
+
+        // // pass in matrix as uniform data
+        // glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld.v );
+
+        // // 6 sides * 2 triangles * 3 vertices
+        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+
+        // glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld2.v );
+
+        // // 6 sides * 2 triangles * 3 vertices
+        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+
+        glUniformMatrix4fv(0, 1, GL_TRUE, projCameraWorld.v);
+
+        glBindVertexArray( vao );
+        glDrawArrays( GL_TRIANGLES, 0, vertexCount );
 
         // reset
         glBindVertexArray( 0 );

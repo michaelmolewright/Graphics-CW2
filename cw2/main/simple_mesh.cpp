@@ -1,32 +1,5 @@
 #include "simple_mesh.hpp"
 
-// check if a triangle is drawn ccw or not
-// returns 1 if counterclockwise, -1 if clockwise
-int ccw(Vec3f a, Vec3f b, Vec3f c) {
-   return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
-}
-
-void reverse_cw_triangles( std::vector<Vec3f> &pos ) {
-
-    for (size_t i = 0; i < pos.size(); i += 3) {
-
-        Vec3f a = pos[i], b = pos[i+1], c = pos[i+2];
-
-        if ( ccw(a, b, c)< 0 ) {
-            pos[i] = c;
-            pos[i+2] = a;
-        }
-
-    }   
-}
-
-SimpleMeshData concatenate( SimpleMeshData aM, SimpleMeshData const &aN ) {
-    aM.positions.insert( aM.positions.end(), aN.positions.begin(),
-                         aN.positions.end() );
-    aM.colors.insert( aM.colors.end(), aN.colors.begin(), aN.colors.end() );
-    return aM;
-}
-
 // calculate normals for SimpleMeshData faces
 std::vector<Vec3f> calculate_normals( SimpleMeshData const &aMeshData) {
 
@@ -52,6 +25,13 @@ std::vector<Vec3f> calculate_normals( SimpleMeshData const &aMeshData) {
 }
 
 
+SimpleMeshData concatenate( SimpleMeshData aM, SimpleMeshData const &aN ) {
+    aM.positions.insert( aM.positions.end(), aN.positions.begin(),
+                         aN.positions.end() );
+    aM.colors.insert( aM.colors.end(), aN.colors.begin(), aN.colors.end() );
+    return aM;
+}
+
 GLuint create_vao( SimpleMeshData const &aMeshData ) {
     GLuint positionVBO = 0;
     glGenBuffers( 1, &positionVBO );
@@ -71,6 +51,11 @@ GLuint create_vao( SimpleMeshData const &aMeshData ) {
     glBindBuffer( GL_ARRAY_BUFFER, normalVBO );
     glBufferData( GL_ARRAY_BUFFER, normals.size() * sizeof( Vec3f ),
                   normals.data(), GL_STATIC_DRAW );
+    GLuint colorVBO = 0;
+    glGenBuffers( 1, &colorVBO );
+    glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
+    glBufferData( GL_ARRAY_BUFFER, aMeshData.colors.size() * sizeof( Vec3f ),
+                  aMeshData.colors.data(), GL_STATIC_DRAW );
 
     GLuint vao = 0;
     glGenVertexArrays( 1, &vao );
@@ -86,6 +71,7 @@ GLuint create_vao( SimpleMeshData const &aMeshData ) {
 
     // NORMALS
     glBindBuffer( GL_ARRAY_BUFFER, normalVBO );
+    glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
     glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, 0 );
     glEnableVertexAttribArray( 1 );
 
@@ -95,6 +81,7 @@ GLuint create_vao( SimpleMeshData const &aMeshData ) {
     glDeleteBuffers( 1, &positionVBO );
     glDeleteBuffers( 1, &normalVBO );
     // glDeleteBuffers( 1, &colorVBO );
+    glDeleteBuffers( 1, &colorVBO );
 
     return vao;
 }

@@ -150,11 +150,11 @@ Vec3f cross_product(Vec3f aLeft, Vec3f aRight)
 }
 
 inline
-Vec3f normalize(Vec3f vector)
+Vec3f normalize(Vec3f input)
 {
-	float len = length(vector);
+	float len = length(input);
 	
-	return {(vector.x / len), (vector.y / len), (vector.z / len)};
+	return {(input.x / len), (input.y / len), (input.z / len)};
 }
 
 #endif // VEC3_HPP_5710DADF_17EF_453C_A9C8_4A73DC66B1CD
