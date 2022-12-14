@@ -21,7 +21,7 @@
 #include "../extra/camera.hpp"
 
 
-#include "sphere.hpp"
+#include "bowl.hpp"
 
 
 namespace {
@@ -134,10 +134,10 @@ int main() try {
 
     // TODO: global GL setup goes here
     glEnable( GL_FRAMEBUFFER_SRGB );
-    //glEnable( GL_CULL_FACE );
+    glEnable( GL_CULL_FACE );
     glClearColor( 0.5f, 0.5f, 0.5f, 0.0f );
     glEnable( GL_DEPTH_TEST );
-    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -197,9 +197,8 @@ int main() try {
     glDeleteBuffers( 1, &positionVBO );
     glDeleteBuffers( 1, &colorVBO );
     
-    
-    Mat44f world2camera = make_translation( { 0.f, 0.f, -10.f } ); 
-    auto tri = createFloor();
+
+    auto tri = createFinalForm(make_scaling(0.75f, 0.5f, 1.f) *  make_translation({0.f,-2.f, -10.f}) * make_rotation_x(kPi_ / 2.f));
     GLuint vao = create_vao( tri );
     std::size_t vertexCount = tri.positions.size();
 

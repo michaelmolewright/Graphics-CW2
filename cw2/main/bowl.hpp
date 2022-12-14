@@ -15,11 +15,14 @@ struct tri{
     Vec3f c;
 };
 
+const float PI = 3.1415926f;
+
 
 SimpleMeshData createSphere();
 
 SimpleMeshData createDome( 
-    tri startingTri
+    tri startingTri,
+    Mat44f preTransform
 );
 
 tri newTri(
@@ -39,4 +42,12 @@ Vec3f normalizePoints(
 );
 
 
-SimpleMeshData createFloor();
+SimpleMeshData createFloor(Mat44f preTransform);
+
+std::vector<Vec3f> sortVecs(std::vector<Vec3f> input);
+
+SimpleMeshData make_bowl_cylinder( std::size_t aSubdivs, Vec3f aColor, Mat44f aPreTransform, float width );
+
+SimpleMeshData createTile(Vec3f bl, Vec3f br, Vec3f tl, Vec3f tr, Mat44f preTransform);
+
+SimpleMeshData createFinalForm(Mat44f preTransform);
