@@ -13,11 +13,17 @@ SimpleMeshData make_half_pipe( std::size_t aSubdivs, Vec3f aColor,
 
     std::vector<Vec3f> pos;
 
-    auto mainRail = make_cylinder( true, 100, { 1.f, 0.f, 0.f },
+    auto leg1 = make_cylinder( true, 100, { 1.f, 0.f, 0.f },
                                 // kIdentity44f
                                 make_rotation_z( kPi_/2 ) *
                                 make_scaling( 2.f, 0.05f,  0.05f )
                                  );
+
+    // make cyls for main and legs
+    //merge the simplemeshs
+
+
+    
 
     std::vector col( pos.size(), aColor );
 
