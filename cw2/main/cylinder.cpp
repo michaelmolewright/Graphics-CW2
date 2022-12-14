@@ -32,15 +32,14 @@ SimpleMeshData make_cylinder( bool aCapped, std::size_t aSubdivs, Vec3f aColor,
         float initialSize = pos.size();
         // midpoints are 0,0,0 and 1,0,0
         for ( std::size_t i = 0; i < initialSize; i += 6 ) {
-            pos.emplace_back( pos[i] );
-            pos.emplace_back( pos[i + 1] );
-            // x=0 midpoint
             pos.emplace_back( Vec3f{ 0.f, 0.f, 0.f } );
+            pos.emplace_back( pos[i + 1] );
+            pos.emplace_back( pos[i] );
 
-            pos.emplace_back( pos[i + 4] );
-            pos.emplace_back( pos[i + 5] );
-            // x=1 midpoint
             pos.emplace_back( Vec3f{ 1.f, 0.f, 0.f } );
+            pos.emplace_back( pos[i + 5] );
+            pos.emplace_back( pos[i + 4] );
+
         }
     }
 

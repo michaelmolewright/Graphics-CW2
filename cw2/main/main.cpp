@@ -24,8 +24,7 @@
 #include "half_pipe.hpp"
 #include "lamp.hpp"
 #include "bowl.hpp"
-
-
+#include "rail.hpp"
 
 namespace {
 constexpr char const *kWindowTitle = "COMP3811 - Coursework 2";
@@ -104,7 +103,7 @@ int main() try {
     // Set up event handling
     State_ state{};
     glfwSetWindowUserPointer( window, &state );
-    glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
+    // glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
 
     // Set up event handling
     glfwSetKeyCallback( window, &glfw_callback_key_ );
@@ -139,7 +138,7 @@ int main() try {
     glEnable( GL_CULL_FACE );
     glClearColor( 0.6f, 0.6f, 0.6f, 0.0f );
     glEnable( GL_DEPTH_TEST );
-    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    // glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -163,33 +162,34 @@ int main() try {
 
     // TODO: VBO AND VAO setup
 
-
     // light position
     GLuint lightVAO = create_light_vao();
-    Mat44f lightModel = make_translation( {2.5f, 0.f, -3.5f} );
+    Mat44f lightModel = make_translation( { 2.5f, 0.f, -3.5f } );
     // Mat44f lightModel = kIdentity44f;
 
     auto post = make_cylinder( true, 100, { 1.f, 0.f, 0.f },
-                                // kIdentity44f
-                                make_rotation_z( kPi_/2 ) *
-                                make_scaling( 2.f, 0.05f,  0.05f )
-                                 );
+                               // kIdentity44f
+                               make_rotation_z( kPi_ / 2 ) *
+                                   make_scaling( 2.f, 0.05f, 0.05f ) );
     GLuint postVAO = create_vao( post );
 
+    // RAIL
+    auto rail = make_rail( 100, {0.f,0.f,0.f}, make_translation({2.f, 0.f, 0.f}) );
+    GLuint railVAO = create_vao( rail );
+
+    
 
     //--------------------------FLOOR----------------------------------------------
 
     //-----------------------------------------------------------------------------
-    
-    
+
     // ----------------------------BOWL---------------------------------------------
-    auto bowl = createFinalForm(make_scaling(1.5f, 1.f, 2.f) *  make_translation({0.f,0.f, 0.f}) * make_rotation_x(kPi_ / 2.f));
+    auto bowl = createFinalForm( make_scaling( 1.5f, 1.f, 2.f ) *
+                                 make_translation( { 0.f, 0.f, 0.f } ) *
+                                 make_rotation_x( kPi_ / 2.f ) );
     GLuint bowl_vao = create_vao( bowl );
     std::size_t vertexCount = bowl.positions.size();
     // -----------------------------------------------------------------------------
-
-    
-
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -226,7 +226,6 @@ int main() try {
         Mat44f view = camMat( state.c.cameraPosition,
                               state.c.cameraPosition + state.c.cameraFront,
                               state.c.cameraUp );
-    
 
         Mat44f baseMVP = projection * view;
 
@@ -237,19 +236,17 @@ int main() try {
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram( prog.programId() );
 
-
-
         // UNIFORMS
         float cameraPos[] = { state.c.cameraPosition.x,
-                                           state.c.cameraPosition.y,
-                                           state.c.cameraPosition.z };
+                              state.c.cameraPosition.y,
+                              state.c.cameraPosition.z };
         glUniform3fv( 2, 1, cameraPos );   // camera position
 
-        draw_lamp( lightVAO, postVAO, baseMVP, lightModel );
-        
+        draw_lamp( lightVAO, postVAO, baseMVP, kIdentity44f );
+
         // draw_bowl( vertexCount, bowl_vao, baseMVP, kIdentity44f );
 
-
+        draw_rail( railVAO, baseMVP, kIdentity44f, rail.positions.size() );
 
 
         // reset
