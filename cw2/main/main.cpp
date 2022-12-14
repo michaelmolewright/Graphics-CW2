@@ -247,7 +247,7 @@ int main() try {
 
         draw_lamp( lightVAO, postVAO, baseMVP, lightModel );
         
-        draw_bowl( vertexCount, bowl_vao, baseMVP, kIdentity44f );
+        // draw_bowl( vertexCount, bowl_vao, baseMVP, kIdentity44f );
 
 
 

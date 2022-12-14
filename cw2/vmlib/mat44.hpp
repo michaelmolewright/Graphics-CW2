@@ -189,10 +189,5 @@ Mat44f camMat(Vec3f position, Vec3f target, Vec3f up)
 	return aLeft * aRight;
 }
 
-inline
-Vec4f toVec4f(Vec3f aVec) {
-	return Vec4f{aVec.x, aVec.y, aVec.z, 1};
-}
-
 
 #endif // MAT44_HPP_E7187A26_469E_48AD_A3D2_63150F05A4CA

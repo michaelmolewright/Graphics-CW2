@@ -9,7 +9,8 @@ float const postShin( 16.f );
 
 // LIGHT UNIFORMS
 Vec3f lightPositionVector{ 0.f, 2.f, 0.f };
-Vec4f lightPosVec4f = toVec4f( lightPositionVector );
+Vec4f lightPosVec4f{ lightPositionVector.x, lightPositionVector.y, lightPositionVector.z, 1.f };
+
 
 float const lightAmb[] = { 0.2f, 0.2f, 0.2f };
 float const lightIncoming[] = { 1.0f, 1.0f, 1.0f };
