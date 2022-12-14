@@ -7,6 +7,9 @@
 
 #include "../vmlib/vec3.hpp"
 
+int ccw( Vec3f a, Vec3f b, Vec3f c );
+
+void reverse_cw_triangles( std::vector<Vec3f> &pos );
 
 struct SimpleMeshData {
     std::vector<Vec3f> positions;

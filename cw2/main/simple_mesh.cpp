@@ -1,5 +1,25 @@
 #include "simple_mesh.hpp"
 
+// check if a triangle is drawn ccw or not
+// returns 1 if counterclockwise, -1 if clockwise
+int ccw(Vec3f a, Vec3f b, Vec3f c) {
+   return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
+}
+
+void reverse_cw_triangles( std::vector<Vec3f> &pos ) {
+
+    for (size_t i = 0; i < pos.size(); i += 3) {
+
+        Vec3f a = pos[i], b = pos[i+1], c = pos[i+2];
+
+        if ( ccw(a, b, c)< 0 ) {
+            pos[i] = c;
+            pos[i+2] = a;
+        }
+
+    }   
+}
+
 SimpleMeshData concatenate( SimpleMeshData aM, SimpleMeshData const &aN ) {
     aM.positions.insert( aM.positions.end(), aN.positions.begin(),
                          aN.positions.end() );

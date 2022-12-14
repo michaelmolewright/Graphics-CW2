@@ -133,7 +133,7 @@ int main() try {
 
     // TODO: global GL setup goes here
     glEnable( GL_FRAMEBUFFER_SRGB );
-    // glEnable( GL_CULL_FACE );
+    glEnable( GL_CULL_FACE );
     glClearColor( 0.6f, 0.6f, 0.6f, 0.0f );
     glEnable( GL_DEPTH_TEST );
 
@@ -193,13 +193,11 @@ int main() try {
                                  );
     GLuint pipeVAO = create_vao( pipe );
     size_t pipeVertCount = pipe.positions.size();
-    Mat44f pipeModel = make_translation( { -2.f, 4.f, -5.f } );
+    // Mat44f pipeModel = make_translation( { -2.f, 4.f, -5.f } );
 
     Mat44f pipeEnd1model =  make_translation( { -7.f, 2.f, -3.f } ) *  make_scaling( 2.f, 4.f, 4.f );
                         
     Mat44f pipeEnd2model = make_translation( { 3.f, 2.f, -3.f} ) *  make_scaling( 2.f, 4.f, 4.f );
-                        
-
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -248,7 +246,7 @@ int main() try {
 
         Mat44f railMVP = projection * view * railModel;
 
-        Mat44f pipeMVP = projection * view * pipeModel;
+        Mat44f pipeMVP = projection * view; // * pipeModel;
 
         Mat44f pipeEnd1MVP = projection * view * pipeEnd1model;
         Mat44f pipeEnd2MVP = projection * view * pipeEnd2model;
@@ -286,7 +284,9 @@ int main() try {
 
         // PIPE
         glUniformMatrix4fv( 0, 1, GL_TRUE, pipeMVP.v );
-        glUniformMatrix4fv( 1, 1, GL_TRUE, pipeModel.v );   // model matrix
+        // glUniformMatrix4fv( 1, 1, GL_TRUE, pipeModel.v );   // model matrix
+        glUniformMatrix4fv( 1, 1, GL_TRUE, kIdentity44f.v );   // model matrix
+
         // material props
         glUniform3fv( 6, 1, cubeAmb );    // amb
         glUniform3fv( 7, 1, cubeDiff );   // diff

@@ -82,9 +82,13 @@ SimpleMeshData make_half_pipe( std::size_t aSubdivs, Vec3f aColor,
 
     pos.emplace_back( Vec3f{ 0.f, 1.f, 1.f } );
     pos.emplace_back( Vec3f{ 1.f, 1.f, 1.f } );
-    pos.emplace_back( Vec3f{ 1.f, -1.f, 1.f } );
+    pos.emplace_back( Vec3f{ 1.f, -1.f, 1.f } );  
 
-    
+
+    // check that all triangles are drawn ccw and reverse if not
+
+
+
 
     std::vector col( pos.size(), aColor );
 
@@ -100,6 +104,8 @@ SimpleMeshData make_half_pipe( std::size_t aSubdivs, Vec3f aColor,
 
         p = Vec3f{ t.x, t.y, t.z };
     }
+
+    reverse_cw_triangles( pos );
     
     return SimpleMeshData{ std::move( pos ), std::move( col ) };
 }
