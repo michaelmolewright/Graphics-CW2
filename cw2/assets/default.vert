@@ -10,11 +10,9 @@ out vec3 normal;
 out vec3 fragPos;
 
 void main()
-{
+{    
+    normal = mat3( transpose( inverse( uModel ) )) * iNormal;
+
     gl_Position = uProjCameraWorld * vec4( iPosition, 1.0 );
-    fragPos = vec3( uModel * vec4(iPosition, 1.0) );
-    
-    // CALCULATE THIS OUTSIDE OF SHADER AND PASS THROUGH - mat3(transpose(inverse( uModel )))
-    // ask Marcus about this
-    normal = mat3(transpose(inverse( uModel ))) * iNormal;
+    fragPos = vec3( uModel * vec4( iPosition, 1.0 ));
 }
