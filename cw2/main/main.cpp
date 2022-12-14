@@ -20,6 +20,7 @@
 #include "cube.hpp"
 #include "../extra/camera.hpp"
 #include "../extra/textures.hpp"
+#include "tile.hpp"
 
 
 namespace {
@@ -165,9 +166,11 @@ int main() try {
     // TODO: VBO AND VAO setup
     // CUBE
     GLuint cubeVAO = createCubeVBO();
-    GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/markus.png");
+    GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/concrete.png");
     //GLuint textureID1 = createTexture(FileSystem::getPath("../extra/markus.png"));
     GLuint textureID2 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/sample.png");
+
+    GLuint tileVAO = createTextureTileVao();
     glActiveTexture( GL_TEXTURE0 );
 
     OGL_CHECKPOINT_ALWAYS();
@@ -198,14 +201,6 @@ int main() try {
             glViewport( 0, 0, nwidth, nheight );
         }
 
-        // Update state
-        auto const now = Clock::now();
-        dt = std::chrono::duration_cast<Secondsf>( now - last ).count();
-        last = now;
-
-        angle += dt * kPi_ * 0.3f;
-        if ( angle >= 2.f * kPi_ )
-            angle -= 2.f * kPi_;
 
         // Update: compute matrices
         // TODO: define and compute projCameraWorld matrix
@@ -217,8 +212,8 @@ int main() try {
             fbwidth / float( fbheight ), 0.1f, 100.0f );
         Mat44f view = camMat( state.c.cameraPosition, state.c.cameraPosition + state.c.cameraFront, state.c.cameraUp );
 
-        Mat44f projCameraWorld = projection * view * world2camera;
-        Mat44f projCameraWorld2 = projection * view * world2camera2;
+        Mat44f baseMVP = projection * view;
+
 
         // Draw scene
         OGL_CHECKPOINT_DEBUG();
@@ -227,7 +222,7 @@ int main() try {
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram( prog.programId() );
 
-        glBindTexture(GL_TEXTURE_2D, textureID1);
+        /*glBindTexture(GL_TEXTURE_2D, textureID1);
 
         glBindVertexArray( cubeVAO );
 
@@ -244,6 +239,10 @@ int main() try {
 
         // 6 sides * 2 triangles * 3 vertices
         glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+        glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld.v );*/
+        //glDrawArrays( GL_TRIANGLES, 0, 6 );
+
+        drawTile(textureID1 , baseMVP, make_translation({-10.f, -2.f,10.f}) * make_scaling(20.f,20.f,20.f) * make_rotation_x(-kPi_/2), tileVAO);
 
         // reset
         glBindVertexArray( 0 );

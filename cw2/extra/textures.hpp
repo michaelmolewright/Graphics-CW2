@@ -23,9 +23,11 @@ GLuint createTexture(const char* file)
     {
         if (chan == 4){
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, idata);
+            glGenerateMipmap(GL_TEXTURE_2D);
         }
         else if (chan == 3){
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, idata);
+            glGenerateMipmap(GL_TEXTURE_2D);
         } 
         
         //glGenerateMipmap(GL_TEXTURE_2D);
