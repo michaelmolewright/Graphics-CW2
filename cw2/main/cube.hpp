@@ -1,54 +1,59 @@
 #ifndef CUBE_HPP_6874B39C_112D_4D34_BD85_AB81A730955B
 #define CUBE_HPP_6874B39C_112D_4D34_BD85_AB81A730955B
 
+#include "simple_mesh.hpp"
+
 // This defines the vertex data for a colored unit cube.
 
 // vertices and normals
-// from
-// https://learnopengl.com/code_viewer.php?code=lighting/basic_lighting_vertex_data
-constexpr float const kCubePositionsNormals[] = {
-    // coords				    
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+constexpr float const cubePositions[] = {
+     0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f, 
+     0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f, 
+    -0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f, 
 
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f, 
+    -0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f, 
+     0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f, 
+    // Front face
+     0.5f, -0.5f,  0.5f,    0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,    0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,    0.0f,  0.0f, 1.0f,
 
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f,    0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,    0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,    0.0f,  0.0f, 1.0f,
+    // Left face
+    -0.5f,  0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
 
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,
+    // Right face
+     0.5f, -0.5f, -0.5f,    1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,    1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,    1.0f,  0.0f,  0.0f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,    1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,    1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,    1.0f,  0.0f,  0.0f,
+    // Bottom face          
+     0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+    -0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,
+    // Top face
+     0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,
+
+    -0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,
 };
 
 // CUBE 1 material colour data
@@ -66,12 +71,41 @@ static float const cube2Spec[] = { 0.5f, 0.5f, 0.5f };
 static float const cube2Shin = 16.f;
 Mat44f cube2Model = make_translation( { 4.f, 0.5f, 0.f } );
 
+
+
+SimpleMeshData make_cube( Mat44f aPreTransform, Vec3f aColor ) { 
+
+    std::vector<Vec3f> pos;
+
+    // add each triangle from cube positions to pos
+    for (size_t i = 0; i < sizeof(cubePositions); i += 6 ) {
+        Vec3f tri = { cubePositions[i], cubePositions[i+1], cubePositions[i+2] };
+
+        pos.emplace_back( tri );
+    }
+
+    // pre transform each point
+    for ( auto &p : pos ) {
+        Vec4f p4{ p.x, p.y, p.z, 1.f };
+        Vec4f t = aPreTransform * p4;
+        t /= t.w;
+
+        p = Vec3f{ t.x, t.y, t.z };
+    }
+
+    std::vector col( pos.size(), aColor );
+
+    return SimpleMeshData{ std::move( pos ), std::move( col ) };
+}
+
+
+
 GLuint create_cube_vao() {
     // CUBE - now contains positions and normals
     GLuint cubeVBO = 0;
     glGenBuffers( 1, &cubeVBO );
     glBindBuffer( GL_ARRAY_BUFFER, cubeVBO );
-    glBufferData( GL_ARRAY_BUFFER, sizeof( kCubePositionsNormals ), kCubePositionsNormals,
+    glBufferData( GL_ARRAY_BUFFER, sizeof( cubePositions ), cubePositions,
                   GL_STATIC_DRAW );
 
     GLuint cubeVAO = 0;
@@ -101,7 +135,7 @@ GLuint create_light_vao() {
     GLuint cubeVBO = 0;
     glGenBuffers( 1, &cubeVBO );
     glBindBuffer( GL_ARRAY_BUFFER, cubeVBO );
-    glBufferData( GL_ARRAY_BUFFER, sizeof( kCubePositionsNormals ), kCubePositionsNormals,
+    glBufferData( GL_ARRAY_BUFFER, sizeof( cubePositions ), cubePositions,
                   GL_STATIC_DRAW );
 
     GLuint lightVAO = 0;
