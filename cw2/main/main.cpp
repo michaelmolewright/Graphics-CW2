@@ -23,9 +23,6 @@
 #include "cylinder.hpp"
 #include "half_pipe.hpp"
 #include "lamp.hpp"
-
-
-
 #include "bowl.hpp"
 
 
@@ -166,7 +163,7 @@ int main() try {
     // TODO: VBO AND VAO setup
    
 
-    Vec3f lightPositionVector{ 0.f, 2.f, 0.f };
+    Vec3f lightPositionVector{ 0.f, 5.f, 0.f };
     // lighting uniform data
     float const lightPos[] = { lightPositionVector.x,
                                       lightPositionVector.y,
@@ -187,7 +184,7 @@ int main() try {
     
     
 
-    auto tri = createFinalForm(make_scaling(0.75f, 0.5f, 1.f) *  make_translation({0.f,-2.f, -10.f}) * make_rotation_x(kPi_ / 2.f));
+    auto tri = createFinalForm(make_scaling(0.75f, 0.5f, 1.f) *  make_translation({0.f,0.f, 0.f}) * make_rotation_x(kPi_ / 2.f));
     GLuint vao = create_vao( tri );
     std::size_t vertexCount = tri.positions.size();
 
@@ -228,13 +225,13 @@ int main() try {
         }
 
         // Update state
-        auto const now = Clock::now();
-        dt = std::chrono::duration_cast<Secondsf>( now - last ).count();
-        last = now;
+        // auto const now = Clock::now();
+        // dt = std::chrono::duration_cast<Secondsf>( now - last ).count();
+        // last = now;
 
-        angle += dt * kPi_ * 0.3f;
-        if ( angle >= 2.f * kPi_ )
-            angle -= 2.f * kPi_;
+        // angle += dt * kPi_ * 0.3f;
+        // if ( angle >= 2.f * kPi_ )
+        //     angle -= 2.f * kPi_;
 
         // Update: compute matrices
         // TODO: define and compute projCameraWorld matrix
@@ -270,18 +267,30 @@ int main() try {
         glUniform3fv( 5, 1, lightIncoming );   // incoming light value
         glUniform1f( 10, 0.001f ); // emissive term
 
+            // material props
+        glUniform3fv( 6, 1, cubeAmb );    // amb
+        glUniform3fv( 7, 1, cubeDiff );   // diff
+        glUniform3fv( 8, 1, cubeSpec );   // spec
+        glUniform1f( 9, cubeShin );      // shin
+
+        glUniformMatrix4fv(0, 1, GL_TRUE, projCameraWorld.v);
+
+        glBindVertexArray( vao );
+        glDrawArrays( GL_TRIANGLES, 0, vertexCount );
+
+
 
 
         // LAMPPOST
-        glUniform3fv( 6, 1, postAmb );    // amb
-        glUniform3fv( 7, 1, postDiff );   // diff
-        glUniform3fv( 8, 1, postSpec );   // spec
-        glUniform1f( 9, postShin );      // shin
+        // glUniform3fv( 6, 1, postAmb );    // amb
+        // glUniform3fv( 7, 1, postDiff );   // diff
+        // glUniform3fv( 8, 1, postSpec );   // spec
+        // glUniform1f( 9, postShin );      // shin
 
-        glBindVertexArray( postVAO );
-        glUniformMatrix4fv( 0, 1, GL_TRUE, postMVP.v );
-        glUniformMatrix4fv( 1, 1, GL_TRUE, postModel.v );
-        glDrawArrays( GL_TRIANGLES, 0, postVertCount );
+        // glBindVertexArray( postVAO );
+        // glUniformMatrix4fv( 0, 1, GL_TRUE, postMVP.v );
+        // glUniformMatrix4fv( 1, 1, GL_TRUE, postModel.v );
+        // glDrawArrays( GL_TRIANGLES, 0, postVertCount );
 
         // LIGHT CUBE
         glBindVertexArray( lightVAO );
@@ -359,10 +368,7 @@ int main() try {
         // // 6 sides * 2 triangles * 3 vertices
         // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
-        glUniformMatrix4fv(0, 1, GL_TRUE, projCameraWorld.v);
-
-        glBindVertexArray( vao );
-        glDrawArrays( GL_TRIANGLES, 0, vertexCount );
+        
 
         // reset
         glBindVertexArray( 0 );

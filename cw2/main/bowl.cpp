@@ -28,7 +28,7 @@ SimpleMeshData createSphere(){
 SimpleMeshData createDome( tri startingTri, Mat44f preTransform ){
     std::vector<Vec3f> pos;
 
-    pos = createTriangles(pos, startingTri, 7);
+    pos = createTriangles(pos, startingTri, 5);
 
     for ( auto &p : pos ) {
         p = normalizePoints(Vec3f{0.f, 0.f, 0.f}, p, 2.f);
@@ -226,6 +226,8 @@ SimpleMeshData make_bowl_cylinder( std::size_t aSubdivs, Vec3f aColor, Mat44f aP
         pos.emplace_back( Vec3f{ 0.f, y, z } );
         pos.emplace_back( Vec3f{ width, prevY, prevZ } );
         pos.emplace_back( Vec3f{ width, y, z } );
+
+        
         prevY = y;
         prevZ = z;
     }

@@ -107,7 +107,6 @@ SimpleMeshData make_half_pipe( std::size_t aSubdivs, Vec3f aColor,
         p = Vec3f{ t.x, t.y, t.z };
     }
 
-    reverse_cw_triangles( pos );
     
     return SimpleMeshData{ std::move( pos ), std::move( col ) };
 }

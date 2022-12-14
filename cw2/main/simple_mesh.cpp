@@ -14,7 +14,7 @@ std::vector<Vec3f> calculate_normals( SimpleMeshData const &aMeshData) {
         Vec3f AB = b - a;
         Vec3f AC = c - a;
 
-        Vec3f n = cross_product( AB, AC);
+        Vec3f n = cross_product( AC, AB );
         Vec3f norm = normalize( n );
 
         normals.emplace_back(norm);
