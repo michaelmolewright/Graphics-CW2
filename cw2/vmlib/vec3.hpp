@@ -157,4 +157,5 @@ Vec3f normalize(Vec3f input)
 	return {(input.x / len), (input.y / len), (input.z / len)};
 }
 
+
 #endif // VEC3_HPP_5710DADF_17EF_453C_A9C8_4A73DC66B1CD

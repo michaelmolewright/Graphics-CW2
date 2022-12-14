@@ -9,14 +9,13 @@ float const postShin( 16.f );
 
 // LIGHT UNIFORMS
 Vec3f lightPositionVector{ 0.f, 2.f, 0.f };
-float const lightPos[] = { lightPositionVector.x,
-                                      lightPositionVector.y,
-                                      lightPositionVector.z };
+Vec4f lightPosVec4f = toVec4f( lightPositionVector );
+
 float const lightAmb[] = { 0.2f, 0.2f, 0.2f };
 float const lightIncoming[] = { 1.0f, 1.0f, 1.0f };
 
 
-Mat44f basicLightModel = make_translation( { 0.f, 2.f, 0.f } )
+Mat44f basicLightModel = make_translation( lightPositionVector )
                         * make_scaling( 0.2f, 0.2f, 0.2f );
 
 GLuint create_light_vao() {
@@ -52,22 +51,14 @@ void draw_lamp( GLuint lightVAO, GLuint postVAO, Mat44f MVP, Mat44f aPreTransfor
     Mat44f postModel = aPreTransform;
     Mat44f postMVP = MVP * postModel;
 
+    Vec4f newLightPos = aPreTransform * lightPosVec4f;
+    float const lightPos[] = { newLightPos.x,
+                                      newLightPos.y,
+                                      newLightPos.z };
 
     glUniform3fv( 3, 1, lightPos );    // light pos
     glUniform3fv( 4, 1, lightAmb );    // amb
     glUniform3fv( 5, 1, lightIncoming );   // incoming light value
-    glUniform1f( 10, 0.001f ); // emissive term
-
-    // LAMPPOST
-    glUniform3fv( 6, 1, postAmb );    // amb
-    glUniform3fv( 7, 1, postDiff );   // diff
-    glUniform3fv( 8, 1, postSpec );   // spec
-    glUniform1f( 9, postShin );      // shin
-
-    glBindVertexArray( postVAO );
-    glUniformMatrix4fv( 0, 1, GL_TRUE, postMVP.v );
-    glUniformMatrix4fv( 1, 1, GL_TRUE, postModel.v );
-    glDrawArrays( GL_TRIANGLES, 0, 1200 );
 
     // LIGHT CUBE
     glBindVertexArray( lightVAO );
@@ -76,6 +67,17 @@ void draw_lamp( GLuint lightVAO, GLuint postVAO, Mat44f MVP, Mat44f aPreTransfor
     glUniform1f( 10, 1.f ); // emmissive = 1 for light
     glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
+    // LAMPPOST
+    glUniform3fv( 6, 1, postAmb );    // amb
+    glUniform3fv( 7, 1, postDiff );   // diff
+    glUniform3fv( 8, 1, postSpec );   // spec
+    glUniform1f( 9, postShin );      // shin
+    glUniform1f( 10, 0.001f ); // set emissive term
+
+    glBindVertexArray( postVAO );
+    glUniformMatrix4fv( 0, 1, GL_TRUE, postMVP.v );
+    glUniformMatrix4fv( 1, 1, GL_TRUE, postModel.v );
+    glDrawArrays( GL_TRIANGLES, 0, 1200 );
 
 }
 

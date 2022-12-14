@@ -163,13 +163,11 @@ int main() try {
 
     // TODO: VBO AND VAO setup
 
-    Vec3f lightPositionVector{ 0.f, 5.f, 0.f };
-    // lighting uniform data
-    float const lightPos[] = { lightPositionVector.x,
-                                      lightPositionVector.y,
-                                      lightPositionVector.z };
-    float const lightAmb[] = { 0.2f, 0.2f, 0.2f };
-    float const lightIncoming[] = { 1.0f, 1.0f, 1.0f };
+
+    // light position
+    GLuint lightVAO = create_light_vao();
+    Mat44f lightModel = make_translation( {2.5f, 0.f, -3.5f} );
+    // Mat44f lightModel = kIdentity44f;
 
     auto post = make_cylinder( true, 100, { 1.f, 0.f, 0.f },
                                 // kIdentity44f
@@ -179,26 +177,20 @@ int main() try {
     GLuint postVAO = create_vao( post );
 
 
-    size_t postVertCount = post.positions.size();
-
     //--------------------------FLOOR----------------------------------------------
 
     //-----------------------------------------------------------------------------
     
     
     // ----------------------------BOWL---------------------------------------------
-    auto bowl = createFinalForm(make_scaling(0.75f, 0.5f, 1.f) *  make_translation({0.f,0.f, 0.f}) * make_rotation_x(kPi_ / 2.f));
+    auto bowl = createFinalForm(make_scaling(1.5f, 1.f, 2.f) *  make_translation({0.f,0.f, 0.f}) * make_rotation_x(kPi_ / 2.f));
     GLuint bowl_vao = create_vao( bowl );
     std::size_t vertexCount = bowl.positions.size();
     // -----------------------------------------------------------------------------
 
-
-
-
-    GLuint lightVAO = create_light_vao();
- 
-    Mat44f secondLightModel = make_translation( { 2.f, 0.f, 2.f } );
     
+
+
     OGL_CHECKPOINT_ALWAYS();
 
     // Main loop
@@ -226,10 +218,7 @@ int main() try {
             glViewport( 0, 0, nwidth, nheight );
         }
 
-
-        // Update: compute matrices
-        // TODO: define and compute projCameraWorld matrix
-        Mat44f world2camera2 = make_translation( { 5.f, 0.f, -10.f } );
+        // compute MVP matrix
         Mat44f projection = make_perspective_projection(
             45.f * 3.1415926f / 180.f,   // Yes, a proper π would be useful. (
                                          // C++20: mathematical constants)
@@ -237,11 +226,9 @@ int main() try {
         Mat44f view = camMat( state.c.cameraPosition,
                               state.c.cameraPosition + state.c.cameraFront,
                               state.c.cameraUp );
-        
-        Mat44f lightMVP = projection * view * lightModel;
-        Mat44f postMVP = projection * view * postModel;
+    
 
-        Mat44f MVP = projection * view;
+        Mat44f baseMVP = projection * view;
 
         // Draw scene
         OGL_CHECKPOINT_DEBUG();
@@ -250,117 +237,19 @@ int main() try {
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram( prog.programId() );
 
+
+
         // UNIFORMS
         float cameraPos[] = { state.c.cameraPosition.x,
                                            state.c.cameraPosition.y,
                                            state.c.cameraPosition.z };
         glUniform3fv( 2, 1, cameraPos );   // camera position
-        glUniform3fv( 3, 1, lightPos );    // light pos
-        glUniform3fv( 4, 1, lightAmb );    // amb
-        glUniform3fv( 5, 1, lightIncoming );   // incoming light value
-        glUniform1f( 10, 0.001f ); // emissive term
 
-            // material props
+        draw_lamp( lightVAO, postVAO, baseMVP, lightModel );
         
-        drawBowl(vertexCount, bowl_vao, MVP, kIdentity44f);
+        draw_bowl( vertexCount, bowl_vao, baseMVP, kIdentity44f );
 
 
-
-
-        // LAMPPOST
-        // glUniform3fv( 6, 1, postAmb );    // amb
-        // glUniform3fv( 7, 1, postDiff );   // diff
-        // glUniform3fv( 8, 1, postSpec );   // spec
-        // glUniform1f( 9, postShin );      // shin
-
-        // glBindVertexArray( postVAO );
-        // glUniformMatrix4fv( 0, 1, GL_TRUE, postMVP.v );
-        // glUniformMatrix4fv( 1, 1, GL_TRUE, postModel.v );
-        // glDrawArrays( GL_TRIANGLES, 0, postVertCount );
-
-        // LIGHT CUBE
-        glBindVertexArray( lightVAO );
-        glUniformMatrix4fv( 0, 1, GL_TRUE, lightMVP.v );  
-        glUniformMatrix4fv( 1, 1, GL_TRUE, lightModel.v ); 
-        glUniform1f( 10, 1.f ); // emmissive = 1 for light
-        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
-
-        // // RAIL
-        // glUniformMatrix4fv( 0, 1, GL_TRUE, railMVP.v );
-        // glUniformMatrix4fv( 1, 1, GL_TRUE, railModel.v );   // model matrix
-        // // material props
-        // glUniform3fv( 6, 1, cube2Amb );    // amb
-        // glUniform3fv( 7, 1, cube2Diff );   // diff
-        // glUniform3fv( 8, 1, cube2Spec );   // spec
-        // glUniform1f( 9, cube2Shin );      // shin
-        // glBindVertexArray( railVAO );
-        // glDrawArrays( GL_TRIANGLES, 0, railVertCount );
-
-        // // PIPE
-        // glUniformMatrix4fv( 0, 1, GL_TRUE, pipeMVP.v );
-        // // glUniformMatrix4fv( 1, 1, GL_TRUE, pipeModel.v );   // model matrix
-        // glUniformMatrix4fv( 1, 1, GL_TRUE, kIdentity44f.v );   // model matrix
-
-        // // material props
-        // glUniform3fv( 6, 1, cubeAmb );    // amb
-        // glUniform3fv( 7, 1, cubeDiff );   // diff
-        // glUniform3fv( 8, 1, cubeSpec );   // spec
-        // glUniform1f( 9, cubeShin );      // shin
-
-        // glBindVertexArray( pipeVAO );
-        // glDrawArrays( GL_TRIANGLES, 0, pipeVertCount );
-
-
-
-
-        // PIPE ENDS
-        // glUniformMatrix4fv( 0, 1, GL_TRUE, pipeEnd1MVP.v );
-        // glUniformMatrix4fv( 1, 1, GL_TRUE, pipeEnd1model.v );   // model matrix
-        // glBindVertexArray( cubeVAO );
-        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
-        // // 2
-        // glUniformMatrix4fv( 0, 1, GL_TRUE, pipeEnd2MVP.v );
-        // glUniformMatrix4fv( 1, 1, GL_TRUE, pipeEnd2model.v );   // model matrix
-        // glBindVertexArray( cubeVAO );
-        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
-
-
-        // //draw floor
-        // draw_floor( floorVAO, floorMVP );
-        // draw_cube1( cubeVAO, cube1MVP );
-        // draw_cube2( cubeVAO, cube2MVP );
-
-
-        // // // LAMPPOST
-        // glUniformMatrix4fv( 0, 1, GL_TRUE, lightPostMVP.v );
-        // glUniformMatrix4fv( 1, 1, GL_TRUE, lightPostModel.v );
-        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
-
-        // // LIGHT CUBE
-        // glBindVertexArray( lightVAO );
-        // glUniformMatrix4fv( 0, 1, GL_TRUE, lightCubeMVP.v );   // lighting MVP
-        // glUniform1f( 10, 1.f ); // emmissive = 1 for light
-        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
-        // glBindVertexArray( cubeVAO );
-
-        // // pass in matrix as uniform data
-        // glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld.v );
-
-        // // 6 sides * 2 triangles * 3 vertices
-        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
-
-        // glUniformMatrix4fv( 0, 1, GL_TRUE, projCameraWorld2.v );
-
-        // // 6 sides * 2 triangles * 3 vertices
-        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
-
-        
-
-
-
-        draw_lamp( lightVAO, postVAO, baseMVP, kIdentity44f );
-
-        draw_lamp( lightVAO, postVAO, baseMVP, secondLightModel );
 
 
         // reset

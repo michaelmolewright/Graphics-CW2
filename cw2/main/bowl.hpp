@@ -59,4 +59,4 @@ SimpleMeshData createFinalForm(Mat44f preTransform);
 
 
 
-void drawBowl(std::size_t size, GLuint vao, Mat44f MVP, Mat44f transform);
+void draw_bowl(std::size_t size, GLuint vao, Mat44f MVP, Mat44f transform);

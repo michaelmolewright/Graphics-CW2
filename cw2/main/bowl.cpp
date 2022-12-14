@@ -313,7 +313,7 @@ SimpleMeshData createFinalForm(Mat44f preTransform){
     return ret;
 }
 
-void drawBowl(std::size_t size, GLuint vao, Mat44f MVP, Mat44f transform){
+void draw_bowl(std::size_t size, GLuint vao, Mat44f MVP, Mat44f transform){
     glUniform3fv( 6, 1, bowlAmb );    // amb
     glUniform3fv( 7, 1, bowlDiff );   // diff
     glUniform3fv( 8, 1, bowlSpec );   // spec
