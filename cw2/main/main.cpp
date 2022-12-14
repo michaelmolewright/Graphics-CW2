@@ -162,7 +162,6 @@ int main() try {
     OGL_CHECKPOINT_ALWAYS();
 
     // TODO: VBO AND VAO setup
-   
 
     Vec3f lightPositionVector{ 0.f, 5.f, 0.f };
     // lighting uniform data
@@ -172,7 +171,6 @@ int main() try {
     float const lightAmb[] = { 0.2f, 0.2f, 0.2f };
     float const lightIncoming[] = { 1.0f, 1.0f, 1.0f };
 
-    // RAILING
     auto post = make_cylinder( true, 100, { 1.f, 0.f, 0.f },
                                 // kIdentity44f
                                 make_rotation_z( kPi_/2 ) *
@@ -198,13 +196,8 @@ int main() try {
 
 
     GLuint lightVAO = create_light_vao();
-    Mat44f lightModel = make_translation( lightPositionVector )
-                        * make_scaling( 0.2f, 0.2f, 0.2f );
-    Mat44f postModel = kIdentity44f;
-
-    // draw_lamp( lightVAO, postVAO, lightMVP, lightModel, postMVP, postModel )
-
-
+ 
+    Mat44f secondLightModel = make_translation( { 2.f, 0.f, 2.f } );
     
     OGL_CHECKPOINT_ALWAYS();
 
@@ -257,7 +250,7 @@ int main() try {
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram( prog.programId() );
 
-        // // uniforms
+        // UNIFORMS
         float cameraPos[] = { state.c.cameraPosition.x,
                                            state.c.cameraPosition.y,
                                            state.c.cameraPosition.z };
@@ -362,6 +355,13 @@ int main() try {
         // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
         
+
+
+
+        draw_lamp( lightVAO, postVAO, baseMVP, kIdentity44f );
+
+        draw_lamp( lightVAO, postVAO, baseMVP, secondLightModel );
+
 
         // reset
         glBindVertexArray( 0 );

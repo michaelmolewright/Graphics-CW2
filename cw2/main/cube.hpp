@@ -130,29 +130,6 @@ GLuint create_cube_vao() {
     return cubeVAO;
 }
 
-GLuint create_light_vao() {
-    // LIGHT CUBE
-    GLuint cubeVBO = 0;
-    glGenBuffers( 1, &cubeVBO );
-    glBindBuffer( GL_ARRAY_BUFFER, cubeVBO );
-    glBufferData( GL_ARRAY_BUFFER, sizeof( cubePositions ), cubePositions,
-                  GL_STATIC_DRAW );
-
-    GLuint lightVAO = 0;
-    glGenVertexArrays( 1, &lightVAO );
-    glBindVertexArray( lightVAO );
-    glBindBuffer( GL_ARRAY_BUFFER, cubeVBO );
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof( float ),
-                           (void *)0 );
-    glEnableVertexAttribArray( 0 );
-
-    // reset and delete buffers
-    glBindVertexArray( 0 );
-    glBindBuffer( GL_ARRAY_BUFFER, 0 );
-    glDeleteBuffers( 1, &cubeVBO );
-
-    return lightVAO;
-}
 
 void draw_cube1( GLuint vao, Mat44f MVP ) {
     glUniformMatrix4fv( 0, 1, GL_TRUE, MVP.v );
