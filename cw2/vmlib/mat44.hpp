@@ -120,7 +120,7 @@ Mat44f make_rotation_z( float aAngle ) noexcept
 {
 	return Mat44f{
 		std::cos(aAngle), -std::sin(aAngle), 0, 0,
-		-std::sin(aAngle), std::cos(aAngle), 0, 0,
+		std::sin(aAngle), std::cos(aAngle), 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1
 	};

@@ -193,7 +193,7 @@ int main() try {
                                  );
     GLuint pipeVAO = create_vao( pipe );
     size_t pipeVertCount = pipe.positions.size();
-    // Mat44f pipeModel = make_translation( { -2.f, 4.f, -5.f } );
+    Mat44f pipeModel = make_translation( { -2.f, 4.f, -5.f } );
 
     Mat44f pipeEnd1model =  make_translation( { -7.f, 2.f, -3.f } ) *  make_scaling( 2.f, 4.f, 4.f );
                         
@@ -246,7 +246,7 @@ int main() try {
 
         Mat44f railMVP = projection * view * railModel;
 
-        Mat44f pipeMVP = projection * view; // * pipeModel;
+        Mat44f pipeMVP = projection * view  * pipeModel;
 
         Mat44f pipeEnd1MVP = projection * view * pipeEnd1model;
         Mat44f pipeEnd2MVP = projection * view * pipeEnd2model;
@@ -300,15 +300,15 @@ int main() try {
 
 
         // PIPE ENDS
-        glUniformMatrix4fv( 0, 1, GL_TRUE, pipeEnd1MVP.v );
-        glUniformMatrix4fv( 1, 1, GL_TRUE, pipeEnd1model.v );   // model matrix
-        glBindVertexArray( cubeVAO );
-        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
-        // 2
-        glUniformMatrix4fv( 0, 1, GL_TRUE, pipeEnd2MVP.v );
-        glUniformMatrix4fv( 1, 1, GL_TRUE, pipeEnd2model.v );   // model matrix
-        glBindVertexArray( cubeVAO );
-        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+        // glUniformMatrix4fv( 0, 1, GL_TRUE, pipeEnd1MVP.v );
+        // glUniformMatrix4fv( 1, 1, GL_TRUE, pipeEnd1model.v );   // model matrix
+        // glBindVertexArray( cubeVAO );
+        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
+        // // 2
+        // glUniformMatrix4fv( 0, 1, GL_TRUE, pipeEnd2MVP.v );
+        // glUniformMatrix4fv( 1, 1, GL_TRUE, pipeEnd2model.v );   // model matrix
+        // glBindVertexArray( cubeVAO );
+        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
 
         //draw floor

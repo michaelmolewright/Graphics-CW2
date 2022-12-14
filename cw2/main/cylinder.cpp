@@ -22,6 +22,7 @@ SimpleMeshData make_cylinder( bool aCapped, std::size_t aSubdivs, Vec3f aColor,
         pos.emplace_back( Vec3f{ 0.f, y, z } );
         pos.emplace_back( Vec3f{ 1.f, y, z } );
         pos.emplace_back( Vec3f{ 1.f, prevY, prevZ } );
+        
         prevY = y;
         prevZ = z;
     }
