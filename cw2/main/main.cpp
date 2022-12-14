@@ -159,35 +159,33 @@ int main() try {
     OGL_CHECKPOINT_ALWAYS();
 
     // TODO: VBO AND VAO setup
-   
 
-    Vec3f lightPositionVector{ 0.f, 2.f, 0.f };
-    // lighting uniform data
-    float const lightPos[] = { lightPositionVector.x,
-                                      lightPositionVector.y,
-                                      lightPositionVector.z };
-    float const lightAmb[] = { 0.2f, 0.2f, 0.2f };
-    float const lightIncoming[] = { 1.0f, 1.0f, 1.0f };
+    // float const postAmb[] =  { 0.f, 0.f, 0.f };
+    // float const postDiff[] = { 0.01f, 0.01f, 0.01f };
+    // float const postSpec[] = { 0.5f, 0.5f, 0.5f };
+    // float const postShin( 16.f );
 
-    // RAILING
+    // Vec3f lightPositionVector{ 0.f, 2.f, 0.f };
+    // // lighting uniform data
+    // float const lightPos[] = { lightPositionVector.x,
+    //                                   lightPositionVector.y,
+    //                                   lightPositionVector.z };
+    // float const lightAmb[] = { 0.2f, 0.2f, 0.2f };
+    // float const lightIncoming[] = { 1.0f, 1.0f, 1.0f };
+
+
+
+
     auto post = make_cylinder( true, 100, { 1.f, 0.f, 0.f },
                                 // kIdentity44f
                                 make_rotation_z( kPi_/2 ) *
                                 make_scaling( 2.f, 0.05f,  0.05f )
                                  );
     GLuint postVAO = create_vao( post );
-
-
-    size_t postVertCount = post.positions.size();
-
+    
     GLuint lightVAO = create_light_vao();
-    Mat44f lightModel = make_translation( lightPositionVector )
-                        * make_scaling( 0.2f, 0.2f, 0.2f );
-    Mat44f postModel = kIdentity44f;
-
-    // draw_lamp( lightVAO, postVAO, lightMVP, lightModel, postMVP, postModel )
-
-
+ 
+    Mat44f secondLightModel = make_translation( { 2.f, 0.f, 2.f } );
     
     OGL_CHECKPOINT_ALWAYS();
 
@@ -225,9 +223,7 @@ int main() try {
                               state.c.cameraPosition + state.c.cameraFront,
                               state.c.cameraUp );
         
-        Mat44f lightMVP = projection * view * lightModel;
-        Mat44f postMVP = projection * view * postModel;
-
+        Mat44f baseMVP = projection * view;
 
         // Draw scene
         OGL_CHECKPOINT_DEBUG();
@@ -236,92 +232,18 @@ int main() try {
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram( prog.programId() );
 
-        // // uniforms
+        // UNIFORMS
         float cameraPos[] = { state.c.cameraPosition.x,
                                            state.c.cameraPosition.y,
                                            state.c.cameraPosition.z };
         glUniform3fv( 2, 1, cameraPos );   // camera position
-        glUniform3fv( 3, 1, lightPos );    // light pos
-        glUniform3fv( 4, 1, lightAmb );    // amb
-        glUniform3fv( 5, 1, lightIncoming );   // incoming light value
-        glUniform1f( 10, 0.001f ); // emissive term
 
 
 
-        // LAMPPOST
-        glUniform3fv( 6, 1, postAmb );    // amb
-        glUniform3fv( 7, 1, postDiff );   // diff
-        glUniform3fv( 8, 1, postSpec );   // spec
-        glUniform1f( 9, postShin );      // shin
+        draw_lamp( lightVAO, postVAO, baseMVP, kIdentity44f );
 
-        glBindVertexArray( postVAO );
-        glUniformMatrix4fv( 0, 1, GL_TRUE, postMVP.v );
-        glUniformMatrix4fv( 1, 1, GL_TRUE, postModel.v );
-        glDrawArrays( GL_TRIANGLES, 0, postVertCount );
+        draw_lamp( lightVAO, postVAO, baseMVP, secondLightModel );
 
-        // LIGHT CUBE
-        glBindVertexArray( lightVAO );
-        glUniformMatrix4fv( 0, 1, GL_TRUE, lightMVP.v );  
-        glUniformMatrix4fv( 1, 1, GL_TRUE, lightModel.v ); 
-        glUniform1f( 10, 1.f ); // emmissive = 1 for light
-        glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
-
-        // // RAIL
-        // glUniformMatrix4fv( 0, 1, GL_TRUE, railMVP.v );
-        // glUniformMatrix4fv( 1, 1, GL_TRUE, railModel.v );   // model matrix
-        // // material props
-        // glUniform3fv( 6, 1, cube2Amb );    // amb
-        // glUniform3fv( 7, 1, cube2Diff );   // diff
-        // glUniform3fv( 8, 1, cube2Spec );   // spec
-        // glUniform1f( 9, cube2Shin );      // shin
-        // glBindVertexArray( railVAO );
-        // glDrawArrays( GL_TRIANGLES, 0, railVertCount );
-
-        // // PIPE
-        // glUniformMatrix4fv( 0, 1, GL_TRUE, pipeMVP.v );
-        // // glUniformMatrix4fv( 1, 1, GL_TRUE, pipeModel.v );   // model matrix
-        // glUniformMatrix4fv( 1, 1, GL_TRUE, kIdentity44f.v );   // model matrix
-
-        // // material props
-        // glUniform3fv( 6, 1, cubeAmb );    // amb
-        // glUniform3fv( 7, 1, cubeDiff );   // diff
-        // glUniform3fv( 8, 1, cubeSpec );   // spec
-        // glUniform1f( 9, cubeShin );      // shin
-
-        // glBindVertexArray( pipeVAO );
-        // glDrawArrays( GL_TRIANGLES, 0, pipeVertCount );
-
-
-
-
-        // PIPE ENDS
-        // glUniformMatrix4fv( 0, 1, GL_TRUE, pipeEnd1MVP.v );
-        // glUniformMatrix4fv( 1, 1, GL_TRUE, pipeEnd1model.v );   // model matrix
-        // glBindVertexArray( cubeVAO );
-        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
-        // // 2
-        // glUniformMatrix4fv( 0, 1, GL_TRUE, pipeEnd2MVP.v );
-        // glUniformMatrix4fv( 1, 1, GL_TRUE, pipeEnd2model.v );   // model matrix
-        // glBindVertexArray( cubeVAO );
-        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
-
-
-        // //draw floor
-        // draw_floor( floorVAO, floorMVP );
-        // draw_cube1( cubeVAO, cube1MVP );
-        // draw_cube2( cubeVAO, cube2MVP );
-
-
-        // // // LAMPPOST
-        // glUniformMatrix4fv( 0, 1, GL_TRUE, lightPostMVP.v );
-        // glUniformMatrix4fv( 1, 1, GL_TRUE, lightPostModel.v );
-        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
-
-        // // LIGHT CUBE
-        // glBindVertexArray( lightVAO );
-        // glUniformMatrix4fv( 0, 1, GL_TRUE, lightCubeMVP.v );   // lighting MVP
-        // glUniform1f( 10, 1.f ); // emmissive = 1 for light
-        // glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
         // reset
         glBindVertexArray( 0 );
