@@ -164,11 +164,11 @@ int main() try {
 
     Vec3f lightPositionVector{ 2.f, 2.f, 2.f };
     // lighting uniform data
-    static float const lightPos[] = { lightPositionVector.x,
+    float const lightPos[] = { lightPositionVector.x,
                                       lightPositionVector.y,
                                       lightPositionVector.z };
-    static float const lightAmb[] = { 0.2f, 0.2f, 0.2f };
-    static float const lightIncoming[] = { 1.0f, 1.0f, 1.0f };
+    float const lightAmb[] = { 0.2f, 0.2f, 0.2f };
+    float const lightIncoming[] = { 1.0f, 1.0f, 1.0f };
 
     // light/post model matrices
     Mat44f lightModel = make_translation( lightPositionVector )
@@ -264,7 +264,7 @@ int main() try {
         glUseProgram( prog.programId() );
 
         // // uniforms
-        static float const cameraPos[] = { state.c.cameraPosition.x,
+        float cameraPos[] = { state.c.cameraPosition.x,
                                            state.c.cameraPosition.y,
                                            state.c.cameraPosition.z };
         glUniform3fv( 2, 1, cameraPos );   // camera position
@@ -315,11 +315,6 @@ int main() try {
         draw_floor( floorVAO, floorMVP );
         draw_cube1( cubeVAO, cube1MVP );
         draw_cube2( cubeVAO, cube2MVP );
-
-
-
-
-
 
 
         // // LAMPPOST
