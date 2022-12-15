@@ -136,7 +136,7 @@ int main() try {
     // TODO: global GL setup goes here
     glEnable( GL_FRAMEBUFFER_SRGB );
     glEnable( GL_CULL_FACE );
-    glClearColor( 0.6f, 0.6f, 0.6f, 0.0f );
+    glClearColor( 0.2f, 0.2f, 0.2f, 0.0f );
     glEnable( GL_DEPTH_TEST );
     // glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
@@ -180,6 +180,10 @@ int main() try {
 
     Mat44f railModel = make_translation({0.f, 0.f, 2.f});
 
+
+    // CUBE
+    GLuint cubeVAO = create_cube_vao();
+    Mat44f cubeModel = make_translation({2.f, 0.f, 1.f});
     
 
     //--------------------------FLOOR----------------------------------------------
@@ -250,6 +254,8 @@ int main() try {
         // draw_bowl( vertexCount, bowl_vao, baseMVP, kIdentity44f );
 
         draw_rail( railVAO, baseMVP, railModel, rail.positions.size() );
+
+        draw_cube( cubeVAO, baseMVP, cubeModel );
 
 
         // reset

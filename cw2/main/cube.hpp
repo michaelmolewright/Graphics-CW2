@@ -131,15 +131,20 @@ GLuint create_cube_vao() {
 }
 
 
-void draw_cube1( GLuint vao, Mat44f MVP ) {
-    glUniformMatrix4fv( 0, 1, GL_TRUE, MVP.v );
-    glUniformMatrix4fv( 1, 1, GL_TRUE, cube1Model.v );   // model matrix
+void draw_cube( GLuint vao, Mat44f baseMVP, Mat44f model ) {
+    Mat44f cubeMVP = baseMVP * model;
 
-    // material props
-    glUniform3fv( 6, 1, cubeAmb );    // amb
-    glUniform3fv( 7, 1, cubeDiff );   // diff
-    glUniform3fv( 8, 1, cubeSpec );   // spec
-    glUniform1f( 9, cubeShin );      // shin
+    glUniformMatrix4fv( 0, 1, GL_TRUE, cubeMVP.v );
+    glUniformMatrix4fv( 1, 1, GL_TRUE, model.v );   // model matrix
+
+    // // material props
+    // glUniform3fv( 6, 1, cubeAmb );    // amb
+    // glUniform3fv( 7, 1, cubeDiff );   // diff
+    // glUniform3fv( 8, 1, cubeSpec );   // spec
+    // glUniform1f( 9, cubeShin );      // shin
+
+    float const cubeColor [] = { 1.0f, 0.5f, 0.31f };
+    glUniform3fv( 5, 1, cubeColor );    // object color
 
     glBindVertexArray( vao );
     glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );

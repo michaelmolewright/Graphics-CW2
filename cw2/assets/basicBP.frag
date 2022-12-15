@@ -46,13 +46,19 @@ void main()
     // oColor = vec4( diffuse, 1.0 );
     // return;
 
+
     // specular lighting
-    float specularStrength = 0.5;
-    vec3 reflectDir = reflect(-lightDir, norm);  
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    vec3 specular = specularStrength * spec * lightColor;  
+    // PHONG
+    // float specularStrength = 0.5;
+    // vec3 reflectDir = reflect(-lightDir, norm);  
+    // float spec = pow(max(dot(viewDir, reflectDir), 0.0), 128);
+    // vec3 specular = specularStrength * spec * lightColor;  
+
+    // CORRECTED
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
+    vec3 specular = lightColor * spec;
 
 
-    vec3 result = (ambient + diffuse +  specular + emissive) * objectColor;
+    vec3 result = (ambient + diffuse + specular + emissive) * objectColor;
     oColor = vec4(result, 1.0);
 }
