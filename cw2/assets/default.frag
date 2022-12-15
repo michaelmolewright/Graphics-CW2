@@ -1,7 +1,8 @@
 #version 430
 
 in vec3 normal;
-in vec3 fragPos;  
+in vec3 fragPos;
+in vec2 texCood;  
 
 layout( location = 2 ) uniform vec3 cameraPos;
 // light uniforms
@@ -15,7 +16,9 @@ layout( location = 8 ) uniform vec3 materialSpecular;
 layout( location = 9 ) uniform float materialShininess;
 // emissive val
 layout( location = 10 ) uniform float emissive;
+layout( location = 11 ) uniform bool drawTexture;
 uniform sampler2D ourTexture;
+
 
 layout( location = 0 ) out vec4 oColor;
 
@@ -38,10 +41,15 @@ void main()
     vec3 halfwayDir = normalize( lightDir + viewDir ); // blinn halfway vector
     float NdotH = max( dot( norm, halfwayDir ), 0.0);
     float specularTerm = pow( NdotH, materialShininess );
-    float correctionTerm = ( materialShininess + 2 ) / 8;
+    //float correctionTerm = ( materialShininess + 2 ) / 8;
     vec3 specular = correctionTerm * NdotL * materialSpecular * lightIncoming * specularTerm;  
     
     vec3 result = ambient + diffuse + specular + emissive;
-    oColor = vec4( result, 1.0 );
-    //oColor = texture(ourTexture, texCood);
+    if (drawTexture){
+        vec4 textureColour = texture(ourTexture, texCood);
+        oColor = textureColour * vec4( result, 1.0 );
+    }
+    else{
+        oColor = vec4( result, 1.0 );
+    }
 }

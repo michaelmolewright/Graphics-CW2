@@ -6,13 +6,14 @@
 #include "../vmlib/mat44.hpp"
 
 constexpr float const tileValues[] = {
-    0.f, 1.f, 0.f,      0.f, 1.f,
-    0.f, 0.f, 0.f,      0.f, 0.f,
-    1.f, 0.f, 0.f,      1.f, 0.f,
+    //positions         //normals           //texture co-ordinates
+    0.f, 1.f, 0.f,      0.f, 0.f, 1.f,      0.f, 1.f, 
+    0.f, 0.f, 0.f,      0.f, 0.f, 1.f,      0.f, 0.f,
+    1.f, 0.f, 0.f,      0.f, 0.f, 1.f,      1.f, 0.f,
 
-    0.f, 1.f, 0.f,      0.f, 1.f,
-    1.f, 0.f, 0.f,      1.f, 0.f,
-    1.f, 1.f, 0.f,      1.f, 1.f
+    0.f, 1.f, 0.f,      0.f, 0.f, 1.f,      0.f, 1.f,              
+    1.f, 0.f, 0.f,      0.f, 0.f, 1.f,      1.f, 0.f,
+    1.f, 1.f, 0.f,      0.f, 0.f, 1.f,      1.f, 1.f
 };
 
 
@@ -27,11 +28,15 @@ GLuint createTextureTileVao(){
     glBindVertexArray( tileVao );
 
     glBindBuffer( GL_ARRAY_BUFFER, valuesVBO );
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, (5 * sizeof(float)), 0 );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, (8 * sizeof(float)), 0 );
     glEnableVertexAttribArray( 0 );
 
+    glBindBuffer( GL_ARRAY_BUFFER, valuesVBO );
+    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, (8 * sizeof(float)), (void*)(3 * sizeof(float)) );
+    glEnableVertexAttribArray( 1 );
+
 	glBindBuffer( GL_ARRAY_BUFFER, valuesVBO );
-    glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)) );
+    glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, (8 * sizeof(float)), (void*)(6 * sizeof(float)) );
     glEnableVertexAttribArray( 2 );
 
     glBindVertexArray( 0 );
@@ -42,11 +47,16 @@ GLuint createTextureTileVao(){
 }   
 
 void drawTile(GLuint textureID, Mat44f baseMVP, Mat44f translation, GLuint vao){
+
+
     glBindTexture(GL_TEXTURE_2D, textureID);
 
-    glUniformMatrix4fv( 0, 1, GL_TRUE, baseMVP.v );
+    Mat44f MVP = baseMVP * translation;
+
+    glUniformMatrix4fv( 0, 1, GL_TRUE, MVP.v );
     glUniformMatrix4fv( 1, 1, GL_TRUE, translation.v );
     glBindVertexArray( vao );
 
     glDrawArrays( GL_TRIANGLES, 0, 6 );
+
 }

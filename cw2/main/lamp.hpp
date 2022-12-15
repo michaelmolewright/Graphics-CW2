@@ -51,6 +51,8 @@ void draw_lamp( GLuint lightVAO, GLuint postVAO, Mat44f MVP, Mat44f aPreTransfor
     Mat44f postModel = aPreTransform;
     Mat44f postMVP = MVP * postModel;
 
+    Mat44f transform = lightModel * postModel;
+
     Vec4f newLightPos = aPreTransform * lightPosVec4f;
     float const lightPos[] = { newLightPos.x,
                                       newLightPos.y,
@@ -62,8 +64,8 @@ void draw_lamp( GLuint lightVAO, GLuint postVAO, Mat44f MVP, Mat44f aPreTransfor
 
     // LIGHT CUBE
     glBindVertexArray( lightVAO );
-    glUniformMatrix4fv( 0, 1, GL_TRUE, lightMVP.v );  
-    glUniformMatrix4fv( 1, 1, GL_TRUE, lightModel.v ); 
+    glUniformMatrix4fv( 0, 1, GL_TRUE, MVP.v );  
+    glUniformMatrix4fv( 1, 1, GL_TRUE, transform.v ); 
     glUniform1f( 10, 1.f ); // emmissive = 1 for light
     glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
