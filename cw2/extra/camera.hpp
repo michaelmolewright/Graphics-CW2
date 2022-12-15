@@ -8,7 +8,7 @@ const float shiftMult = 4.f;
 const float ctrlMult = 0.5;
 
 struct camera {
-    Vec3f cameraPosition = {0.f, 2.f, 3.f};
+    Vec3f cameraPosition = {0.f, 0.f, -5.f};
     Vec3f cameraFront = {0.f,0.f,-1.f};
     Vec3f cameraUp = {0.f,1.f,0.f};
     float cameraSpeed = 0.2f;
@@ -39,11 +39,11 @@ void move(GLFWwindow* aWindow, auto* state)
         return;
     }
     else if (glfwGetKey(aWindow, GLFW_KEY_Q) == GLFW_PRESS && glfwGetKey(aWindow, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS){
-        state->c.cameraPosition += normalize(cross_product(cross_product(state->c.cameraFront, state->c.cameraUp), state->c.cameraFront)) * state->c.cameraSpeed * shiftMult; 
+        state->c.cameraPosition += Vec3f{0.f, 1.f, 0.f} * state->c.cameraSpeed * shiftMult; 
         return;
     }
     else if (glfwGetKey(aWindow, GLFW_KEY_E) == GLFW_PRESS && glfwGetKey(aWindow, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS){
-        state->c.cameraPosition -= normalize(cross_product(cross_product(state->c.cameraFront, state->c.cameraUp), state->c.cameraFront)) * state->c.cameraSpeed * shiftMult;
+        state->c.cameraPosition -= Vec3f{0.f, 1.f, 0.f} * state->c.cameraSpeed * shiftMult;
         return;
     }
 
@@ -65,11 +65,11 @@ void move(GLFWwindow* aWindow, auto* state)
         return;
     }
     else if (glfwGetKey(aWindow, GLFW_KEY_Q) == GLFW_PRESS && glfwGetKey(aWindow, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS){
-        state->c.cameraPosition += normalize(cross_product(cross_product(state->c.cameraFront, state->c.cameraUp), state->c.cameraFront)) * state->c.cameraSpeed * ctrlMult;
+        state->c.cameraPosition += Vec3f{0.f, 1.f, 0.f} * state->c.cameraSpeed * ctrlMult;
         return;
     }
     else if (glfwGetKey(aWindow, GLFW_KEY_E) == GLFW_PRESS && glfwGetKey(aWindow, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS){
-        state->c.cameraPosition -= normalize(cross_product(cross_product(state->c.cameraFront, state->c.cameraUp), state->c.cameraFront)) * state->c.cameraSpeed * ctrlMult;
+        state->c.cameraPosition -= Vec3f{0.f, 1.f, 0.f} * state->c.cameraSpeed * ctrlMult;
         return;
     }
     //implement just keys
@@ -90,11 +90,11 @@ void move(GLFWwindow* aWindow, auto* state)
         return;
     }
     else if (glfwGetKey(aWindow, GLFW_KEY_Q) == GLFW_PRESS){
-        state->c.cameraPosition += normalize(cross_product(cross_product(state->c.cameraFront, state->c.cameraUp), state->c.cameraFront)) * state->c.cameraSpeed;
+        state->c.cameraPosition += Vec3f{0.f, 1.f, 0.f} * state->c.cameraSpeed;
         return;
     }
     else if (glfwGetKey(aWindow, GLFW_KEY_E) == GLFW_PRESS){
-        state->c.cameraPosition -= normalize(cross_product(cross_product(state->c.cameraFront, state->c.cameraUp), state->c.cameraFront)) * state->c.cameraSpeed;
+        state->c.cameraPosition -= Vec3f{0.f, 1.f, 0.f} * state->c.cameraSpeed;
         return;
     }
 };

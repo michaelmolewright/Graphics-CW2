@@ -71,7 +71,7 @@ GLuint create_vao( SimpleMeshData const &aMeshData ) {
 
     // NORMALS
     glBindBuffer( GL_ARRAY_BUFFER, normalVBO );
-    glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
+    // glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
     glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, 0 );
     glEnableVertexAttribArray( 1 );
 
@@ -81,7 +81,7 @@ GLuint create_vao( SimpleMeshData const &aMeshData ) {
     glDeleteBuffers( 1, &positionVBO );
     glDeleteBuffers( 1, &normalVBO );
     // glDeleteBuffers( 1, &colorVBO );
-    glDeleteBuffers( 1, &colorVBO );
+    //glDeleteBuffers( 1, &colorVBO );
 
     return vao;
 }

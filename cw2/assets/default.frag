@@ -32,16 +32,20 @@ void main()
 
     // diffuse lighting
     vec3 norm = normalize( normal );
+    oColor = vec4( norm, 1.0 );
+    return;
     vec3 lightDir = normalize( lightPos - fragPos );  
     float NdotL = max( dot(norm, lightDir), 0.0 );
     vec3 diffuse = materialDiffuse * ( lightIncoming / pi )* NdotL;
+    oColor = vec4( lightDir, 1.0 );
+    return;
 
     // specular lighting
     vec3 viewDir = normalize( cameraPos - fragPos );
     vec3 halfwayDir = normalize( lightDir + viewDir ); // blinn halfway vector
     float NdotH = max( dot( norm, halfwayDir ), 0.0);
     float specularTerm = pow( NdotH, materialShininess );
-    //float correctionTerm = ( materialShininess + 2 ) / 8;
+    float correctionTerm = ( materialShininess + 2 ) / 8;
     vec3 specular = correctionTerm * NdotL * materialSpecular * lightIncoming * specularTerm;  
     
     vec3 result = ambient + diffuse + specular + emissive;

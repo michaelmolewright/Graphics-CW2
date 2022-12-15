@@ -54,9 +54,10 @@ void draw_lamp( GLuint lightVAO, GLuint postVAO, Mat44f MVP, Mat44f aPreTransfor
     Mat44f transform = lightModel * postModel;
 
     Vec4f newLightPos = aPreTransform * lightPosVec4f;
-    float const lightPos[] = { newLightPos.x,
-                                      newLightPos.y,
-                                      newLightPos.z };
+    // float const lightPos[] = { newLightPos.x,
+                                    //   newLightPos.y,
+                                    //   newLightPos.z };
+    float const lightPos[] = { 0.f, 0.f, -5.f };
 
     glUniform3fv( 3, 1, lightPos );    // light pos
     glUniform3fv( 4, 1, lightAmb );    // amb
