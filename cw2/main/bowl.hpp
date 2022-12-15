@@ -14,6 +14,9 @@ static float const bowlDiff[] = { 1.f, 0.829f, 0.829f };
 static float const bowlSpec[] = { 0.296648f, 0.296648f, 0.296648f };
 static float const bowlShin = 0.088f * 128;
 
+static float const bowlCol[] ={ 0.25f, 0.25f, 0.25f };
+static float const bowlShine = 4.f;
+
 struct tri{
     Vec3f a;
     Vec3f b;

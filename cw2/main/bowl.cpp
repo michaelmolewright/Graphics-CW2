@@ -351,9 +351,12 @@ void draw_bowl(std::size_t size, GLuint vao, Mat44f MVP, Mat44f transform){
     //glUniform3fv( 8, 1, bowlSpec );   // spec
     //glUniform1f( 9, bowlShin );      // shin
 
-    //Mat44f newMVP = MVP * transform;
+    Mat44f newMVP = MVP * transform;
 
-    glUniformMatrix4fv(0, 1, GL_TRUE, MVP.v);
+    glUniform3fv( 5, 1, bowlCol );    
+    glUniform1f( 7, bowlShine );
+
+    glUniformMatrix4fv(0, 1, GL_TRUE, newMVP.v);
     glUniformMatrix4fv(1, 1, GL_TRUE, transform.v);
 
     glBindVertexArray( vao );

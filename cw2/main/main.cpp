@@ -185,7 +185,7 @@ int main() try {
 
     // CUBE
     GLuint cubeVAO = create_cube_vao();
-    Mat44f cubeModel = make_translation({2.f, 0.f, 1.f});
+    Mat44f cubeModel = make_translation({2.f, -2.f, 1.f});
     
     //--------------------------TEXTURES-------------------------------------------
     GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/concrete.png");
@@ -202,7 +202,7 @@ int main() try {
     //-----------------------------------------------------------------------------
 
     // ----------------------------BOWL---------------------------------------------
-    auto bowl = createFinalForm( make_translation({0.f,-2.f,0.f}) * make_rotation_x(PI/2) );
+    auto bowl = createFinalForm( make_scaling(0.5f, 0.5f, 0.5f) * make_rotation_x(PI/2.f) );
     GLuint bowl_vao = create_vao( bowl );
     std::size_t vertexCount = bowl.positions.size();
     // -----------------------------------------------------------------------------
@@ -261,16 +261,16 @@ int main() try {
 
         glUniform1i(10, GL_FALSE);
 
-        draw_lamp( lightVAO, postVAO, baseMVP, make_translation({-5.f, 0.f, 0.f}) );
+        draw_lamp( lightVAO, postVAO, baseMVP, make_translation({-5.f, -2.f, 5.f}) );
 
-        //draw_bowl( vertexCount, bowl_vao, baseMVP, kIdentity44f );
+        draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({1.f, -1.4f, 4.f}) * make_scaling(1.f, 0.6f, 1.f) );
 
-        draw_rail( railVAO, baseMVP, make_translation({-5.f, -5.f, -10.f}), rail.positions.size() );
+        draw_rail( railVAO, baseMVP, make_translation({-3.f, -2.f, -4.f}), rail.positions.size() );
 
-        //draw_cube( cubeVAO, baseMVP, cubeModel );
+        draw_cube( cubeVAO, baseMVP, cubeModel );
 
         glUniform1i(10, GL_TRUE);
-        drawTile(textureID1 , baseMVP,make_rotation_x(-kPi_ / 2.f) * make_scaling(10.f, 10.f, 10.f) * make_translation({-5.f, -2.f, 5.f}) , tileVAO);
+        drawTile(textureID1 , baseMVP, make_translation({-5.f, -2.f, 5.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(10.f, 10.f, 1.f) , tileVAO);
 
 
 
