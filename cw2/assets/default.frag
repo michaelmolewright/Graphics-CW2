@@ -15,6 +15,7 @@ layout( location = 8 ) uniform vec3 materialSpecular;
 layout( location = 9 ) uniform float materialShininess;
 // emissive val
 layout( location = 10 ) uniform float emissive;
+uniform sampler2D ourTexture;
 
 layout( location = 0 ) out vec4 oColor;
 
@@ -42,4 +43,5 @@ void main()
     
     vec3 result = ambient + diffuse + specular + emissive;
     oColor = vec4( result, 1.0 );
+    //oColor = texture(ourTexture, texCood);
 }

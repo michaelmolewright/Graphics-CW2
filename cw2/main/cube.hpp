@@ -5,6 +5,7 @@
 
 // This defines the vertex data for a colored unit cube.
 
+<<<<<<< HEAD
 // vertices and normals
 constexpr float const cubePositions[] = {
      0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f, 
@@ -26,6 +27,51 @@ constexpr float const cubePositions[] = {
     -0.5f,  0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,
     -0.5f, -0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,
     -0.5f,  0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
+=======
+constexpr float const kCubePositions[] = {
+	+1.f, +1.f, -1.f,	0.f, 1.f,
+	-1.f, +1.f, -1.f,	0.f, 0.f,	
+	-1.f, +1.f, +1.f,	1.f, 0.f,
+	+1.f, +1.f, -1.f,	0.f, 1.f,
+	-1.f, +1.f, +1.f,	1.f, 0.f,
+	+1.f, +1.f, +1.f,	1.f, 1.f,
+
+	+1.f, -1.f, +1.f,	0.f, 1.f,
+	+1.f, +1.f, +1.f,	0.f, 0.f,
+	-1.f, +1.f, +1.f,	1.f, 0.f,
+	+1.f, -1.f, +1.f,	0.f, 1.f,
+	-1.f, +1.f, +1.f,	1.f, 0.f,
+	-1.f, -1.f, +1.f,	1.f, 1.f,
+
+	-1.f, -1.f, +1.f,	0.f, 1.f,
+	-1.f, +1.f, +1.f,	0.f, 0.f,
+	-1.f, +1.f, -1.f,	1.f, 0.f,
+	-1.f, -1.f, +1.f,	0.f, 1.f,
+	-1.f, +1.f, -1.f,	1.f, 0.f,
+	-1.f, -1.f, -1.f,	1.f, 1.f,
+
+	-1.f, -1.f, -1.f,	0.f, 1.f,
+	+1.f, -1.f, -1.f,	0.f, 0.f,
+	+1.f, -1.f, +1.f,	1.f, 0.f,
+	-1.f, -1.f, -1.f,	0.f, 1.f,
+	+1.f, -1.f, +1.f,	1.f, 0.f,
+	-1.f, -1.f, +1.f,	1.f, 1.f,
+
+	+1.f, -1.f, -1.f,	0.f, 1.f,
+	+1.f, +1.f, -1.f,	0.f, 0.f,
+	+1.f, +1.f, +1.f,	1.f, 0.f,
+	+1.f, -1.f, -1.f,	0.f, 1.f,
+	+1.f, +1.f, +1.f,	1.f, 0.f,
+	+1.f, -1.f, +1.f,	1.f, 1.f,
+
+	-1.f, -1.f, -1.f,	0.f, 1.f,
+	-1.f, +1.f, -1.f,	0.f, 0.f,
+	+1.f, +1.f, -1.f,	1.f, 0.f,
+	-1.f, -1.f, -1.f,	0.f, 1.f,
+	+1.f, +1.f, -1.f,	1.f, 0.f,
+	+1.f, -1.f, -1.f,	1.f, 1.f,
+};
+>>>>>>> textures
 
     -0.5f, -0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
     -0.5f,  0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
@@ -56,6 +102,7 @@ constexpr float const cubePositions[] = {
      0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,
 };
 
+<<<<<<< HEAD
 // CUBE 1 material colour data
 // http://devernay.free.fr/cours/opengl/materials.html
 static float const cubeAmb[] = { 0.25f, 0.20725f, 0.20725f };
@@ -106,12 +153,26 @@ GLuint create_cube_vao() {
     glGenBuffers( 1, &cubeVBO );
     glBindBuffer( GL_ARRAY_BUFFER, cubeVBO );
     glBufferData( GL_ARRAY_BUFFER, sizeof( cubePositions ), cubePositions,
+=======
+GLuint createCubeVBO(){
+	GLuint positionVBO = 0;
+    glGenBuffers( 1, &positionVBO );
+    glBindBuffer( GL_ARRAY_BUFFER, positionVBO );
+    glBufferData( GL_ARRAY_BUFFER, sizeof( kCubePositions ), kCubePositions,
+                  GL_STATIC_DRAW );
+
+    GLuint colorVBO = 0;
+    glGenBuffers( 1, &colorVBO );
+    glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
+    glBufferData( GL_ARRAY_BUFFER, sizeof( kCubeColors ), kCubeColors,
+>>>>>>> textures
                   GL_STATIC_DRAW );
 
     GLuint cubeVAO = 0;
     glGenVertexArrays( 1, &cubeVAO );
     glBindVertexArray( cubeVAO );
 
+<<<<<<< HEAD
     glBindBuffer( GL_ARRAY_BUFFER, cubeVBO );
     // positions
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof( float ),
@@ -120,11 +181,24 @@ GLuint create_cube_vao() {
     // normals
     glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof( float ),
                            (void *)( 3 * sizeof( float ) ) );
+=======
+    glBindBuffer( GL_ARRAY_BUFFER, positionVBO );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, (5 * sizeof(float)), 0 );
+    glEnableVertexAttribArray( 0 );
+
+	glBindBuffer( GL_ARRAY_BUFFER, positionVBO );
+    glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)) );
+    glEnableVertexAttribArray( 2 );
+
+    glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
+    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+>>>>>>> textures
     glEnableVertexAttribArray( 1 );
 
     // reset and delete buffers
     glBindVertexArray( 0 );
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
+<<<<<<< HEAD
     glDeleteBuffers( 1, &cubeVBO );
 
     return cubeVAO;
@@ -158,5 +232,15 @@ void draw_cube2( GLuint vao, Mat44f MVP ) {
     glBindVertexArray( vao );
     glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 }
+=======
+    glDeleteBuffers( 1, &positionVBO );
+    glDeleteBuffers( 1, &colorVBO );
+	return cubeVAO;
+}
+
+//static_assert( sizeof(kCubeColors) == sizeof(kCubePositions),
+//	"Size of cube colors and cube positions do not match. Both are 3D vectors."
+//);
+>>>>>>> textures
 
 #endif   // CUBE_HPP_6874B39C_112D_4D34_BD85_AB81A730955B

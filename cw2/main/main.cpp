@@ -25,6 +25,8 @@
 #include "lamp.hpp"
 #include "bowl.hpp"
 
+#include "../extra/textures.hpp"
+#include "tile.hpp"
 
 
 namespace {
@@ -190,6 +192,14 @@ int main() try {
 
     
 
+    // CUBE
+    GLuint cubeVAO = createCubeVBO();
+    GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/concrete.png");
+    //GLuint textureID1 = createTexture(FileSystem::getPath("../extra/markus.png"));
+    GLuint textureID2 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/sample.png");
+
+    GLuint tileVAO = createTextureTileVao();
+    glActiveTexture( GL_TEXTURE0 );
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -249,8 +259,7 @@ int main() try {
         
         draw_bowl( vertexCount, bowl_vao, baseMVP, kIdentity44f );
 
-
-
+        drawTile(textureID1 , baseMVP, make_translation({-10.f, -2.f,10.f}) * make_scaling(20.f,20.f,20.f) * make_rotation_x(-kPi_/2), tileVAO);
 
         // reset
         glBindVertexArray( 0 );

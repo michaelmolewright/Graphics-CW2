@@ -78,6 +78,5 @@ void draw_lamp( GLuint lightVAO, GLuint postVAO, Mat44f MVP, Mat44f aPreTransfor
     glUniformMatrix4fv( 0, 1, GL_TRUE, postMVP.v );
     glUniformMatrix4fv( 1, 1, GL_TRUE, postModel.v );
     glDrawArrays( GL_TRIANGLES, 0, 1200 );
-
 }
 
