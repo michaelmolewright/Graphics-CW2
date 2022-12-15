@@ -1,5 +1,6 @@
 #include "bowl.hpp"
 #include <cstdio>
+#include <iostream>
 
 SimpleMeshData createSphere(){
     
@@ -31,20 +32,48 @@ SimpleMeshData createDome( tri startingTri, Mat44f preTransform ){
     pos = createTriangles(pos, startingTri, 5);
 
     for ( auto &p : pos ) {
-        p = normalizePoints(Vec3f{0.f, 0.f, 0.f}, p, 2.f);
+        p = normalizePoints(middleOfSphere, p, 2.f);
     
     }
-    std::vector col( pos.size(), Vec3f{0.f, 1.f, 0.f} );
+    std::vector<Vec3f> normals;
 
-    for ( auto &p : pos ) {
-        Vec4f p4{ p.x, p.y, p.z, 1.f };
+    Vec3f p1;
+    for ( int i=0; i < pos.size(); i++ ) {
+
+        p1 = pos.at(i);
+        Vec4f p4{ p1.x, p1.y, p1.z, 1.f };
         Vec4f t = preTransform * p4;
+        t /= t.w;
+
+        pos.at(i) = Vec3f{ t.x, t.y, t.z };
+
+        normals.emplace_back(normalize(middleOfSphere - pos.at(i)));
+    }
+
+    return SimpleMeshData{ std::move( pos ), std::move( normals ) };
+};
+
+std::vector<Vec3f> transformPoints(std::vector<Vec3f> input, Mat44f transform){
+    for ( auto &p : input ) {
+        Vec4f p4{ p.x, p.y, p.z, 1.f };
+        Vec4f t = transform * p4;
         t /= t.w;
 
         p = Vec3f{ t.x, t.y, t.z };
     }
+    return input;
+};
 
-    return SimpleMeshData{ std::move( pos ), std::move( col ) };
+std::vector<Vec3f> transformNormals(std::vector<Vec3f> input, Mat44f transform){
+    for ( auto &p : input ) {
+        Vec4f p4{ p.x, p.y, p.z, 1.f };
+        Vec4f t = transform * p4;
+        t /= t.w;
+
+        p = Vec3f{ t.x, t.y, t.z };
+        //p = normalize(p);
+    }
+    return input;
 };
 
 tri halfTri(tri input){
@@ -84,18 +113,22 @@ std::vector<Vec3f> createTriangles(std::vector<Vec3f> pos, tri abc, int counter)
             pos.emplace_back(new_tri.a);
             pos.emplace_back(new_tri.b);
             pos.emplace_back(new_tri.c);
+            
 
             pos.emplace_back(triangle1.a);
             pos.emplace_back(triangle1.b);
             pos.emplace_back(triangle1.c);
 
+
             pos.emplace_back(triangle2.a);
             pos.emplace_back(triangle2.b);
             pos.emplace_back(triangle2.c);
 
+
             pos.emplace_back(triangle3.a);
             pos.emplace_back(triangle3.b);
             pos.emplace_back(triangle3.c);
+
         }
 
         pos = createTriangles(pos, triangle1, counter);
@@ -173,19 +206,14 @@ SimpleMeshData createFloor(Mat44f preTransform){
             tempP1 = p;
         }
     }
-    std::vector col( floorTris.size(), Vec3f{1.f, 0.f, 0.f} );
+    std::vector normals( floorTris.size(), Vec3f{0.f, 0.f, -1.f} );
 
-    SimpleMeshData floor = SimpleMeshData{ std::move( floorTris ), std::move( col ) };
+    SimpleMeshData floor = SimpleMeshData{ std::move( floorTris ), std::move( normals ) };
 
     a = concatenate(a, floor);
 
-    for ( auto &p : a.positions ) {
-        Vec4f p4{ p.x, p.y, p.z, 1.f };
-        Vec4f t = preTransform * p4;
-        t /= t.w;
-
-        p = Vec3f{ t.x, t.y, t.z };
-    }
+    a.positions = transformPoints(a.positions, preTransform);
+    a.normals = transformNormals(a.normals, preTransform);
     
     
     return a;
@@ -206,12 +234,16 @@ std::vector<Vec3f> sortVecs(std::vector<Vec3f> input){
     return input;
 }
 
-SimpleMeshData make_bowl_cylinder( std::size_t aSubdivs, Vec3f aColor, Mat44f aPreTransform, float width ) {
+SimpleMeshData make_bowl_cylinder( std::size_t aSubdivs, Mat44f aPreTransform, float width ) {
 
     std::vector<Vec3f> pos;
+    std::vector<Vec3f> norms;
 
     float prevY = std::cos( 0.f );
     float prevZ = std::sin( 0.f );
+
+    Vec3f middleLeft = {0.f,0.f,0.f};
+    Vec3f middleRight = {width,0.f,0.f};
 
     for ( std::size_t i = 0; i < aSubdivs; ++i ) {
         float const angle = ( i + 1 ) / float( aSubdivs ) * 3.1415926f;
@@ -223,27 +255,28 @@ SimpleMeshData make_bowl_cylinder( std::size_t aSubdivs, Vec3f aColor, Mat44f aP
         pos.emplace_back( Vec3f{ width, prevY, prevZ } );
         pos.emplace_back( Vec3f{ 0.f, y, z } );
 
+        norms.emplace_back( normalize(middleLeft  - Vec3f{ 0.f, prevY, prevZ }) );
+        norms.emplace_back( normalize(middleRight - Vec3f{ width, prevY, prevZ }) );
+        norms.emplace_back( normalize(middleLeft  - Vec3f{ 0.f, y, z }) );
+
         pos.emplace_back( Vec3f{ 0.f, y, z } );
         pos.emplace_back( Vec3f{ width, prevY, prevZ } );
         pos.emplace_back( Vec3f{ width, y, z } );
+
+        norms.emplace_back( normalize(middleLeft  - Vec3f{ 0.f, y, z }) );
+        norms.emplace_back( normalize(middleRight - Vec3f{ width, prevY, prevZ }) );
+        norms.emplace_back( normalize(middleRight - Vec3f{ width, y, z }) );
 
         
         prevY = y;
         prevZ = z;
     }
 
-    std::vector col( pos.size(), aColor );
-
     // pre transform each point
-    for ( auto &p : pos ) {
-        Vec4f p4{ p.x, p.y, p.z, 1.f };
-        Vec4f t = aPreTransform * p4;
-        t /= t.w;
+    pos = transformPoints(pos, aPreTransform);
+    norms = transformNormals(norms, aPreTransform);
 
-        p = Vec3f{ t.x, t.y, t.z };
-    }
-
-    return SimpleMeshData{ std::move( pos ), std::move( col ) };
+    return SimpleMeshData{ std::move( pos ), std::move( norms ) };
 }
 
 SimpleMeshData createTile( Mat44f preTransform ){
@@ -275,12 +308,14 @@ SimpleMeshData createTile( Mat44f preTransform ){
 SimpleMeshData createFinalForm(Mat44f preTransform){
 
     float length = 5.f;
+
+    //SimpleMeshData ret = createFloor(kIdentity44f);
     
     SimpleMeshData floor1 = createFloor(kIdentity44f);
 
-    SimpleMeshData floor2 = createFloor(make_rotation_z(PI) * make_translation({length, 0.f, 0.f}));
+    SimpleMeshData floor2 = createFloor(make_rotation_z(PI) * make_translation({length, 0.f, 0.f}));make_scaling(1.f,2.f,2.f) * make_translation({-length, 0.f, 0.f});
 
-    SimpleMeshData cyclinder = make_bowl_cylinder( 200, {0.f, 0.f, 1.f}, make_scaling(1.f,2.f,2.f) * make_translation({-length, 0.f, 0.f}), length);
+    SimpleMeshData cyclinder = make_bowl_cylinder( 200, make_scaling(1.f,2.f,2.f) * make_translation({-length, 0.f, 0.f}), length);
 
     SimpleMeshData ret = concatenate(floor1, floor2);
     ret = concatenate(ret, cyclinder);
@@ -300,13 +335,10 @@ SimpleMeshData createFinalForm(Mat44f preTransform){
     SimpleMeshData tile5 = createTile( make_translation({-7.f,-2.f, 0.f}) * make_rotation_x(PI/2.f) * make_scaling(9.f,2.f,1.f));
     ret = concatenate(ret, tile5);
 
-    for ( auto &p : ret.positions ) {
-        Vec4f p4{ p.x, p.y, p.z, 1.f };
-        Vec4f t = preTransform * p4;
-        t /= t.w;
+    ret.positions = transformPoints(ret.positions, preTransform);
 
-        p = Vec3f{ t.x, t.y, t.z };
-    }
+    ret.normals = transformNormals(ret.normals, preTransform);
+
 
 
     
@@ -318,6 +350,8 @@ void draw_bowl(std::size_t size, GLuint vao, Mat44f MVP, Mat44f transform){
     glUniform3fv( 7, 1, bowlDiff );   // diff
     glUniform3fv( 8, 1, bowlSpec );   // spec
     glUniform1f( 9, bowlShin );      // shin
+
+    Mat44f newMVP = MVP * transform;
 
     glUniformMatrix4fv(0, 1, GL_TRUE, MVP.v);
     glUniformMatrix4fv(1, 1, GL_TRUE, transform.v);
