@@ -8,7 +8,7 @@ const float shiftMult = 4.f;
 const float ctrlMult = 0.5;
 
 struct camera {
-    Vec3f cameraPosition = {0.f, 2.f, 3.f};
+    Vec3f cameraPosition = {0.f, 0.f, 0.f};
     Vec3f cameraFront = {0.f,0.f,-1.f};
     Vec3f cameraUp = {0.f,1.f,0.f};
     float cameraSpeed = 0.2f;

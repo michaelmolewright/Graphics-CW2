@@ -29,7 +29,7 @@ SimpleMeshData createSphere(){
 SimpleMeshData createDome( tri startingTri, Mat44f preTransform ){
     std::vector<Vec3f> pos;
 
-    pos = createTriangles(pos, startingTri, 8);
+    pos = createTriangles(pos, startingTri, 7);
 
     for ( auto &p : pos ) {
         p = normalizePoints(middleOfSphere, p, 2.f);
@@ -351,7 +351,7 @@ void draw_bowl(std::size_t size, GLuint vao, Mat44f MVP, Mat44f transform){
     //glUniform3fv( 8, 1, bowlSpec );   // spec
     //glUniform1f( 9, bowlShin );      // shin
 
-    Mat44f newMVP = MVP * transform;
+    //Mat44f newMVP = MVP * transform;
 
     glUniformMatrix4fv(0, 1, GL_TRUE, MVP.v);
     glUniformMatrix4fv(1, 1, GL_TRUE, transform.v);

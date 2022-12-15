@@ -1,7 +1,8 @@
 #version 430
 
 in vec3 normal;
-in vec3 fragPos;  
+in vec3 fragPos;
+in vec2 texCood; 
 
 layout( location = 2 ) uniform vec3 cameraPos;
 // light uniforms
@@ -9,6 +10,13 @@ layout( location = 3 ) uniform vec3 lightPos;
 layout( location = 4 ) uniform vec3 lightColor;
 layout( location = 5 ) uniform vec3 objectColor;
 layout( location = 6 ) uniform float emissive;
+layout( location = 7 ) uniform float shineyness;
+
+
+layout( location = 10 ) uniform bool drawTexture;
+uniform sampler2D ourTexture;
+
+
 
 
 
@@ -55,10 +63,18 @@ void main()
     // vec3 specular = specularStrength * spec * lightColor;  
 
     // CORRECTED
-    float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), shineyness);
     vec3 specular = lightColor * spec;
 
 
     vec3 result = (ambient + diffuse + specular + emissive) * objectColor;
-    oColor = vec4(result, 1.0);
+
+    if (drawTexture){
+        vec4 textureColour = texture(ourTexture, texCood);
+        oColor = textureColour * vec4( result, 1.0 );
+    }
+    else{
+        oColor = vec4( result, 1.0 );
+    }
+
 }
