@@ -30,7 +30,7 @@ void main()
     vec3 norm = normalize( normal );
 
     // OUTPUT NORMALS
-    // oColor = vec4( norm, 1.0 );
+    //oColor = vec4( norm, 1.0 );
     // return;
 
     vec3 lightDir = normalize( lightPos - fragPos );  

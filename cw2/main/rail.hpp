@@ -50,7 +50,7 @@ SimpleMeshData make_rail( std::size_t aSubdivs, Vec3f aColor,
         p = Vec3f{ t.x, t.y, t.z };
     }
 
-    rail.colors = col;
+    rail.normals = col;
 
     return rail;
 }

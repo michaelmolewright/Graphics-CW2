@@ -35,8 +35,8 @@ void main()
 
 
     // OUTPUT NORMALS
-    // oColor = vec4( norm, 1.0 );
-    // return;
+    //oColor = vec4( norm, 1.0 );
+    //return;
 
     // OUTPUT LIGHTDIR
     // oColor = vec4( lightDir, 1.0 );

@@ -29,7 +29,7 @@ SimpleMeshData createSphere(){
 SimpleMeshData createDome( tri startingTri, Mat44f preTransform ){
     std::vector<Vec3f> pos;
 
-    pos = createTriangles(pos, startingTri, 5);
+    pos = createTriangles(pos, startingTri, 8);
 
     for ( auto &p : pos ) {
         p = normalizePoints(middleOfSphere, p, 2.f);
@@ -255,17 +255,17 @@ SimpleMeshData make_bowl_cylinder( std::size_t aSubdivs, Mat44f aPreTransform, f
         pos.emplace_back( Vec3f{ width, prevY, prevZ } );
         pos.emplace_back( Vec3f{ 0.f, y, z } );
 
-        norms.emplace_back( normalize(middleLeft  - Vec3f{ 0.f, prevY, prevZ }) );
-        norms.emplace_back( normalize(middleRight - Vec3f{ width, prevY, prevZ }) );
-        norms.emplace_back( normalize(middleLeft  - Vec3f{ 0.f, y, z }) );
+        norms.emplace_back( -normalize(middleLeft  - Vec3f{ 0.f, prevY, prevZ }) );
+        norms.emplace_back( -normalize(middleRight - Vec3f{ width, prevY, prevZ }) );
+        norms.emplace_back( -normalize(middleLeft  - Vec3f{ 0.f, y, z }) );
 
         pos.emplace_back( Vec3f{ 0.f, y, z } );
         pos.emplace_back( Vec3f{ width, prevY, prevZ } );
         pos.emplace_back( Vec3f{ width, y, z } );
 
-        norms.emplace_back( normalize(middleLeft  - Vec3f{ 0.f, y, z }) );
-        norms.emplace_back( normalize(middleRight - Vec3f{ width, prevY, prevZ }) );
-        norms.emplace_back( normalize(middleRight - Vec3f{ width, y, z }) );
+        norms.emplace_back( -normalize(middleLeft  - Vec3f{ 0.f, y, z }) );
+        norms.emplace_back( -normalize(middleRight - Vec3f{ width, prevY, prevZ }) );
+        norms.emplace_back( -normalize(middleRight - Vec3f{ width, y, z }) );
 
         
         prevY = y;
@@ -346,10 +346,10 @@ SimpleMeshData createFinalForm(Mat44f preTransform){
 }
 
 void draw_bowl(std::size_t size, GLuint vao, Mat44f MVP, Mat44f transform){
-    glUniform3fv( 6, 1, bowlAmb );    // amb
-    glUniform3fv( 7, 1, bowlDiff );   // diff
-    glUniform3fv( 8, 1, bowlSpec );   // spec
-    glUniform1f( 9, bowlShin );      // shin
+    //glUniform3fv( 6, 1, bowlAmb );    // amb
+    //glUniform3fv( 7, 1, bowlDiff );   // diff
+    //glUniform3fv( 8, 1, bowlSpec );   // spec
+    //glUniform1f( 9, bowlShin );      // shin
 
     Mat44f newMVP = MVP * transform;
 

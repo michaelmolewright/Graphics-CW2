@@ -191,9 +191,7 @@ int main() try {
     //-----------------------------------------------------------------------------
 
     // ----------------------------BOWL---------------------------------------------
-    auto bowl = createFinalForm( make_scaling( 1.5f, 1.f, 2.f ) *
-                                 make_translation( { 0.f, 0.f, 0.f } ) *
-                                 make_rotation_x( kPi_ / 2.f ) );
+    auto bowl = createFinalForm( make_translation({0.f,-2.f,0.f}) * make_rotation_x(PI/2) );
     GLuint bowl_vao = create_vao( bowl );
     std::size_t vertexCount = bowl.positions.size();
     // -----------------------------------------------------------------------------
@@ -249,9 +247,9 @@ int main() try {
                               state.c.cameraPosition.z };
         glUniform3fv( 2, 1, cameraPos );   // camera position
 
-        draw_lamp( lightVAO, postVAO, baseMVP, kIdentity44f );
+        draw_lamp( lightVAO, postVAO, baseMVP, make_translation({-5.f, 0.f, 0.f}) );
 
-        // draw_bowl( vertexCount, bowl_vao, baseMVP, kIdentity44f );
+        draw_bowl( vertexCount, bowl_vao, baseMVP, kIdentity44f );
 
         draw_rail( railVAO, baseMVP, railModel, rail.positions.size() );
 
