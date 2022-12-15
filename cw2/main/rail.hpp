@@ -1,7 +1,7 @@
 #include "cylinder.hpp"
 
 // POST UNIFORMS
-float const railAmb[] = { 0.f, 0.f, 0.f };
+float const railAmb[] = { 0.01f, 0.01f, 0.01f };
 float const railDiff[] = { 0.01f, 0.01f, 0.01f };
 float const railSpec[] = { 0.5f, 0.5f, 0.5f };
 float const railShin( 16.f );
@@ -55,18 +55,21 @@ SimpleMeshData make_rail( std::size_t aSubdivs, Vec3f aColor,
     return rail;
 }
 
-void draw_rail( GLuint vao, Mat44f MVP, Mat44f model, size_t vertexCount ) {
+void draw_rail( GLuint vao, Mat44f baseMVP, Mat44f model, size_t vertexCount ) {
 
-    Mat44f railMVP = MVP * model;
+    Mat44f railMVP = baseMVP * model;
     // LAMPPOST
-    glUniform3fv( 6, 1, railAmb );    // amb
-    glUniform3fv( 7, 1, railDiff );   // diff
-    glUniform3fv( 8, 1, railSpec );   // spec
-    glUniform1f( 9, railShin );      // shin
+    // glUniform3fv( 6, 1, railAmb );    // amb
+    // glUniform3fv( 7, 1, railDiff );   // diff
+    // glUniform3fv( 8, 1, railSpec );   // spec
+    // glUniform1f( 9, railShin );      // shin
 
     glBindVertexArray( vao );
     glUniformMatrix4fv( 0, 1, GL_TRUE, railMVP.v );
     glUniformMatrix4fv( 1, 1, GL_TRUE, model.v );
+
+    float const railColor [] = { 0.2f, 0.2f, 0.2f };
+    glUniform3fv( 5, 1, railColor );    // object color
     glDrawArrays( GL_TRIANGLES, 0, vertexCount );
 
 }

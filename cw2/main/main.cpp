@@ -103,7 +103,7 @@ int main() try {
     // Set up event handling
     State_ state{};
     glfwSetWindowUserPointer( window, &state );
-    // glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
+    glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
 
     // Set up event handling
     glfwSetKeyCallback( window, &glfw_callback_key_ );
@@ -154,7 +154,8 @@ int main() try {
     // Other initialization & loading
     // TODO: load shaders
     ShaderProgram prog( { { GL_VERTEX_SHADER, "assets/default.vert" },
-                          { GL_FRAGMENT_SHADER, "assets/default.frag" } } );
+                          { GL_FRAGMENT_SHADER, "assets/basicBP.frag" } } );
+                        //   { GL_FRAGMENT_SHADER, "assets/default.frag" } } );
 
     state.prog = &prog;
 
@@ -164,7 +165,7 @@ int main() try {
 
     // light position
     GLuint lightVAO = create_light_vao();
-    Mat44f lightModel = make_translation( { 2.5f, 0.f, -3.5f } );
+    Mat44f lightModel = make_translation( { 6.5f, 0.f, -5.5f } );
     // Mat44f lightModel = kIdentity44f;
 
     auto post = make_cylinder( true, 100, { 1.f, 0.f, 0.f },
@@ -174,8 +175,10 @@ int main() try {
     GLuint postVAO = create_vao( post );
 
     // RAIL
-    auto rail = make_rail( 100, {0.f,0.f,0.f}, make_translation({2.f, 0.f, 0.f}) );
+    auto rail = make_rail( 100, {0.f,0.f,0.f}, kIdentity44f);
     GLuint railVAO = create_vao( rail );
+
+    Mat44f railModel = make_translation({0.f, 0.f, 2.f});
 
     
 
@@ -246,7 +249,7 @@ int main() try {
 
         // draw_bowl( vertexCount, bowl_vao, baseMVP, kIdentity44f );
 
-        draw_rail( railVAO, baseMVP, kIdentity44f, rail.positions.size() );
+        draw_rail( railVAO, baseMVP, railModel, rail.positions.size() );
 
 
         // reset

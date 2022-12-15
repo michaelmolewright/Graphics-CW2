@@ -11,8 +11,9 @@ out vec3 fragPos;
 
 void main()
 {    
+    fragPos = vec3( uModel * vec4( iPosition, 1.0 ));
+
     normal = mat3( transpose( inverse( uModel ) )) * iNormal;
 
     gl_Position = uProjCameraWorld * vec4( iPosition, 1.0 );
-    fragPos = vec3( uModel * vec4( iPosition, 1.0 ));
 }

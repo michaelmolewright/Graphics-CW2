@@ -13,7 +13,7 @@ Vec4f lightPosVec4f{ lightPositionVector.x, lightPositionVector.y, lightPosition
 
 
 float const lightAmb[] = { 0.2f, 0.2f, 0.2f };
-float const lightIncoming[] = { 1.0f, 1.0f, 1.0f };
+float const lightIncoming[] = { 1.0f, 1.f, 1.0f };
 
 
 Mat44f basicLightModel = make_translation( lightPositionVector )
@@ -56,24 +56,39 @@ void draw_lamp( GLuint lightVAO, GLuint postVAO, Mat44f MVP, Mat44f aPreTransfor
     float const lightPos[] = { newLightPos.x,
                                       newLightPos.y,
                                       newLightPos.z };
+    // float const lightPos[] = { lightPositionVector.x, lightPositionVector.y, lightPositionVector.z };
 
+    float const lightColor [] = { 1.f, 1.f, 1.f };
+    float const bulbColor [] = { 1.f, 1.f, 1.f };
     glUniform3fv( 3, 1, lightPos );    // light pos
-    glUniform3fv( 4, 1, lightAmb );    // amb
-    glUniform3fv( 5, 1, lightIncoming );   // incoming light value
+    glUniform3fv( 4, 1, lightColor );    // light color
+    glUniform3fv( 5, 1, bulbColor );    // object color
+
+    glUniform1f( 6, 1.f ); // set emissive term
+
+    // glUniform3fv( 4, 1, lightAmb );    // amb
+    // glUniform3fv( 5, 1, lightIncoming );   // incoming light value
 
     // LIGHT CUBE
     glBindVertexArray( lightVAO );
     glUniformMatrix4fv( 0, 1, GL_TRUE, lightMVP.v );  
     glUniformMatrix4fv( 1, 1, GL_TRUE, lightModel.v ); 
-    glUniform1f( 10, 1.f ); // emmissive = 1 for light
+    // glUniform1f( 10, 1.f ); // emmissive = 1 for light
     glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 
-    // LAMPPOST
-    glUniform3fv( 6, 1, postAmb );    // amb
-    glUniform3fv( 7, 1, postDiff );   // diff
-    glUniform3fv( 8, 1, postSpec );   // spec
-    glUniform1f( 9, postShin );      // shin
-    glUniform1f( 10, 0.001f ); // set emissive term
+    glUniform1f( 6, .0001f ); // set emissive term
+
+    // // LAMPPOST
+    // glUniform3fv( 6, 1, postAmb );    // amb
+    // glUniform3fv( 7, 1, postDiff );   // diff
+    // glUniform3fv( 8, 1, postSpec );   // spec
+    // glUniform1f( 9, postShin );      // shin
+    // glUniform1f( 10, 0.001f ); // set emissive term
+
+
+    float const railColor [] = { 0.2f, 0.2f, 0.2f };
+    glUniform3fv( 5, 1, railColor );    // object color
+
 
     glBindVertexArray( postVAO );
     glUniformMatrix4fv( 0, 1, GL_TRUE, postMVP.v );

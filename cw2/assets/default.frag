@@ -28,9 +28,22 @@ void main()
 
     // diffuse lighting
     vec3 norm = normalize( normal );
+
+    // OUTPUT NORMALS
+    // oColor = vec4( norm, 1.0 );
+    // return;
+
     vec3 lightDir = normalize( lightPos - fragPos );  
+    // OUTPUT LIGHTDIR
+    // oColor = vec4( lightDir, 1.0 );
+    // return;
+
     float NdotL = max( dot(norm, lightDir), 0.0 );
     vec3 diffuse = materialDiffuse * ( lightIncoming / pi )* NdotL;
+
+    // OUTPUT DIFFUSE  
+    //oColor = vec4( diffuse, 1.0 );
+    //return;
 
     // specular lighting
     vec3 viewDir = normalize( cameraPos - fragPos );
