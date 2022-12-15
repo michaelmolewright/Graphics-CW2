@@ -34,6 +34,8 @@ void main()
     vec3 norm = normalize( normal );
     oColor = vec4( norm, 1.0 );
     return;
+
+    
     vec3 lightDir = normalize( lightPos - fragPos );  
     float NdotL = max( dot(norm, lightDir), 0.0 );
     vec3 diffuse = materialDiffuse * ( lightIncoming / pi )* NdotL;

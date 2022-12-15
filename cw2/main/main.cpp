@@ -256,9 +256,9 @@ int main() try {
 
         glUniform1i(11, GL_FALSE);
 
-        draw_lamp( lightVAO, postVAO, baseMVP, lightModel );
+        //draw_lamp( lightVAO, postVAO, baseMVP, lightModel );make_rotation_x(PI/2.f)
         
-        draw_bowl( vertexCount, bowl_vao, baseMVP, kIdentity44f );
+        draw_bowl( vertexCount, bowl_vao, baseMVP, make_rotation_x(PI/2.f) );
         
         //glUniform1i(11, GL_TRUE);
         //drawTile(textureID1 , baseMVP, make_translation({0.f,0.f, -10.f}), tileVAO);
