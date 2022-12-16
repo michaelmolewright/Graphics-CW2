@@ -33,20 +33,27 @@ SimpleMeshData concatenate( SimpleMeshData aM, SimpleMeshData const &aN ) {
 }
 
 GLuint create_vao( SimpleMeshData const &aMeshData ) {
+    // POSITIONS
     GLuint positionVBO = 0;
     glGenBuffers( 1, &positionVBO );
     glBindBuffer( GL_ARRAY_BUFFER, positionVBO );
     glBufferData( GL_ARRAY_BUFFER, aMeshData.positions.size() * sizeof( Vec3f ),
                   aMeshData.positions.data(), GL_STATIC_DRAW );
 
-
-
+    // NORMALS
     std::vector<Vec3f> normals = calculate_normals( aMeshData );
     GLuint normalVBO = 0;
     glGenBuffers( 1, &normalVBO );
     glBindBuffer( GL_ARRAY_BUFFER, normalVBO );
     glBufferData( GL_ARRAY_BUFFER, normals.size() * sizeof( Vec3f ),
                   normals.data(), GL_STATIC_DRAW );
+
+    // TEX COORDS
+    GLuint textureVBO = 0;
+    glGenBuffers( 1, &textureVBO );
+    glBindBuffer( GL_ARRAY_BUFFER, textureVBO );
+    glBufferData( GL_ARRAY_BUFFER, aMeshData.textures.size() * sizeof( Vec2f ),
+                  aMeshData.textures.data(), GL_STATIC_DRAW );
 
 
     GLuint vao = 0;
@@ -57,20 +64,20 @@ GLuint create_vao( SimpleMeshData const &aMeshData ) {
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
     glEnableVertexAttribArray( 0 );
 
-
-    // NORMALS
     glBindBuffer( GL_ARRAY_BUFFER, normalVBO );
-    // glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
     glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, 0 );
     glEnableVertexAttribArray( 1 );
+
+    glBindBuffer( GL_ARRAY_BUFFER, textureVBO );
+    glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 0, 0 );
+    glEnableVertexAttribArray( 2 );
 
     // reset and delete buffers
     glBindVertexArray( 0 );
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
     glDeleteBuffers( 1, &positionVBO );
     glDeleteBuffers( 1, &normalVBO );
-    // glDeleteBuffers( 1, &colorVBO );
-    // glDeleteBuffers( 1, &colorVBO );
+    glDeleteBuffers( 1, &textureVBO );
 
     return vao;
 }

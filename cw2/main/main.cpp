@@ -215,9 +215,12 @@ int main() try {
 
     // SKATEBOARD
     auto skateboardMesh = load_wavefront_obj("assets/skateboard/11703_skateboard_v1_L3.obj");
+    GLuint skateboardVAO = create_vao(skateboardMesh);
+    size_t skateboardVertexCount = skateboardMesh.positions.size();
+    Mat44f skateboardModel = make_translation({0.f, -2.f, 0.f}) * make_rotation_x( 3* kPi_ / 2 ) * make_scaling(0.02f, 0.02f, 0.02f);
 
-    // for ( std::size_t i = 0; i < skateboardMesh.texture.size(); i += 2 ) 
-    //     printf( "\n %f, %f \n", skateboardMesh.texture[i].x,skateboardMesh.texture[i].y );
+    // for ( std::size_t i = 0; i < skateboardMesh.textures.size(); i += 2 ) 
+    //     printf( "\n %f, %f \n", skateboardMesh.textures[i].x,skateboardMesh.textures[i].y );
 
 
     OGL_CHECKPOINT_ALWAYS();
@@ -256,6 +259,8 @@ int main() try {
 
         Mat44f baseMVP = projection * view;
 
+        Mat44f skateboardMVP = baseMVP * skateboardModel;
+
         OGL_CHECKPOINT_DEBUG();
 
         
@@ -278,6 +283,15 @@ int main() try {
         draw_rail( railVAO, baseMVP, make_translation({-3.f, -2.f, -4.f}), rail.positions.size() );
 
         draw_cube( cubeVAO, baseMVP, cubeModel );
+
+        // SKATEBOARD
+        glBindVertexArray( skateboardVAO );
+        glUniformMatrix4fv( 0, 1, GL_TRUE, skateboardMVP.v );
+        glUniformMatrix4fv( 1, 1, GL_TRUE, skateboardModel.v );
+        float const sbColor [] = { 0.6f, 0.2f, 0.6f };
+        glUniform3fv( 5, 1, sbColor );    // object color
+        glDrawArrays( GL_TRIANGLES, 0, skateboardVertexCount );
+
         //-------------------------------------------------------------------------------------------------
         
 

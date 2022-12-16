@@ -43,7 +43,7 @@ SimpleMeshData load_wavefront_obj( char const *aPath ) {
     for ( std::size_t i = 0; i < result.attributes.texcoords.size(); i += 2 ) {
 
         Vec2f uv{ result.attributes.texcoords[i], result.attributes.texcoords[i+1] };
-        ret.texture.emplace_back( uv );
+        ret.textures.emplace_back( uv );
     }
 
     return ret;
