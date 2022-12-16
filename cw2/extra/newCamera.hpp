@@ -6,7 +6,7 @@
 
 class camera{
     public:
-        Vec3f cameraPosition = {0.f, 0.f, 0.f};
+        Vec3f cameraPosition = {0.f, 5.f, 20.f};
         Vec3f cameraFront = {0.f,0.f,-1.f};
         Vec3f cameraUp = {0.f,1.f,0.f};
         float fastSpeed = 0.5f;

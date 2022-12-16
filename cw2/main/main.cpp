@@ -45,6 +45,8 @@ camera c;
 float startX = 640, startY = 360;
 float yaw = -90.f, pitch = 0.f;
 
+float sizeOfFloor = 20.f;
+
 void glfw_callback_error_( int, char const * );
 
 void glfw_callback_key_( GLFWwindow *, int, int, int, int );
@@ -140,7 +142,7 @@ int main() try {
     // TODO: global GL setup goes here
     glEnable( GL_FRAMEBUFFER_SRGB );
     glEnable( GL_CULL_FACE );
-    glClearColor( 0.2f, 0.2f, 0.2f, 0.0f );
+    glClearColor( 0.26f, 0.75f, 0.98f, 0.0f );
     glEnable( GL_DEPTH_TEST );
     // glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     glEnable(GL_BLEND);
@@ -171,25 +173,18 @@ int main() try {
 
     // light position
     GLuint lightVAO = create_light_vao();
-    Mat44f lightModel = make_translation( { 6.5f, 0.f, -5.5f } );
-    // Mat44f lightModel = kIdentity44f;
 
-    auto post = make_cylinder( true, 100, { 1.f, 0.f, 0.f },
-                               // kIdentity44f
-                               make_rotation_z( kPi_ / 2 ) *
-                                   make_scaling( 2.f, 0.05f, 0.05f ) );
+    auto post = make_cylinder( true, 100, { 1.f, 0.f, 0.f }, make_rotation_z( kPi_ / 2 ) * make_scaling( 2.f, 0.05f, 0.05f ) );
     GLuint postVAO = create_vao( post );
 
     // RAIL
     auto rail = make_rail( 100, {0.f,0.f,0.f}, kIdentity44f);
     GLuint railVAO = create_vao( rail );
 
-    Mat44f railModel = make_translation({0.f, 0.f, 2.f});
 
 
     // CUBE
     GLuint cubeVAO = create_cube_vao();
-    Mat44f cubeModel = make_translation({2.f, -2.f, 1.f});
     
     //--------------------------TEXTURES-------------------------------------------
     GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/concrete.png");
@@ -206,7 +201,7 @@ int main() try {
     //-----------------------------------------------------------------------------
 
     // ----------------------------BOWL---------------------------------------------
-    auto bowl = createFinalForm( make_scaling(0.5f, 0.5f, 0.5f) * make_rotation_x(PI/2.f) );
+    auto bowl = createFinalForm( make_scaling(sizeOfFloor/9.f, 0.6f, 1.75f) * make_translation({-2.f,2.f,2.f}) * make_rotation_x(PI/2.f) );
     GLuint bowl_vao = create_vao( bowl );
     std::size_t vertexCount = bowl.positions.size();
     // -----------------------------------------------------------------------------
@@ -266,31 +261,33 @@ int main() try {
         //------------------------------------DRAWING-NON-TEXTURED-OBJECTS---------------------------------
         glUniform1i(10, GL_FALSE);
 
-        draw_lamp( lightVAO, postVAO, baseMVP, make_translation({-5.f, -2.f, 5.f}) );
+        draw_lamp( lightVAO, postVAO, baseMVP, make_translation({0.f, 3.f, 0.f}) );
 
-        draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({1.f, -1.4f, 4.f}) * make_scaling(1.f, 0.6f, 1.f) );
+        draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}));
 
-        draw_rail( railVAO, baseMVP, make_translation({-3.f, -2.f, -4.f}), rail.positions.size() );
+        draw_rail( railVAO, baseMVP, make_translation({-3.f, 0.f, -4.f}), rail.positions.size() );
 
-        draw_cube( cubeVAO, baseMVP, cubeModel );
+        draw_cube( cubeVAO, baseMVP, kIdentity44f );
         //-------------------------------------------------------------------------------------------------
         
 
 
         //---------------------------------------DRAWING-TEXTURED-OBJECTS------------------------------
         glUniform1i(10, GL_TRUE); // Set to TRUE
-        drawTile(textureID1 , baseMVP, make_translation({-5.f, -2.f, 5.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(10.f, 10.f, 1.f) , tileVAO);
+
+
+        drawTile(textureID1 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(sizeOfFloor, sizeOfFloor, 1.f) , tileVAO);
 
 
         // INSIDE FENCES
-        drawTile(textureID2 , baseMVP, make_translation({-5.f, -2.f, 5.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(10.f, 2.f, 1.f), tileVAO);//left
-        drawTile(textureID2 , baseMVP, make_translation({5.f, -2.f, -5.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(10.f, 2.f, 1.f) , tileVAO);//right
-        drawTile(textureID2 , baseMVP, make_translation({-5.f, -2.f, -5.f}) * make_scaling(10.f, 2.f, 1.f) , tileVAO);//front
+        drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f), tileVAO);//left
+        drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f) , tileVAO);//right
+        drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_scaling(sizeOfFloor, 2.f, 1.f) , tileVAO);//front
 
         //OUTSIDE FENCES
-        drawTile(textureID2 , baseMVP, make_translation({-5.f, -2.f, -5.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(10.f, 2.f, 1.f) , tileVAO);//left
-        drawTile(textureID2 , baseMVP, make_translation({5.f, -2.f, 5.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(10.f, 2.f, 1.f), tileVAO);//right
-        drawTile(textureID2 , baseMVP, make_translation({5.f, -2.f, -5.f}) * make_scaling(10.f, 2.f, 1.f) * make_rotation_y(kPi_), tileVAO);//front
+        drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f) , tileVAO);//left
+        drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f), tileVAO);//right
+        drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_scaling(sizeOfFloor, 2.f, 1.f) * make_rotation_y(kPi_), tileVAO);//front
         
 
         // reset
@@ -322,9 +319,7 @@ void glfw_callback_error_( int aErrNum, char const *aErrDesc ) {
     std::fprintf( stderr, "GLFW error: %s (%d)\n", aErrDesc, aErrNum );
 }
 
-void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction,
-                         int ) {
-    auto *state = static_cast<State_ *>( glfwGetWindowUserPointer( aWindow ) );
+void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction, int ) {
 
     if ( GLFW_KEY_ESCAPE == aKey && GLFW_PRESS == aAction ) {
         glfwSetWindowShouldClose( aWindow, GLFW_TRUE );
@@ -332,16 +327,10 @@ void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction,
     }
 
     c.movement(aKey, aAction);
-
-
-
-    
-    //move( aWindow, state );
 }
 
 void mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
-    auto *state = static_cast<State_ *>( glfwGetWindowUserPointer( aWindow ) );
-
+    
     float xoffset = xP - startX;
     float yoffset = startY - yP;
     startX = xP;
