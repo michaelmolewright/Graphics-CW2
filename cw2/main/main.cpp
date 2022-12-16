@@ -27,6 +27,7 @@
 #include "bowl.hpp"
 #include "rail.hpp"
 #include "tile.hpp"
+#include "loadobj.hpp"
 
 namespace {
 constexpr char const *kWindowTitle = "COMP3811 - Coursework 2";
@@ -190,8 +191,10 @@ int main() try {
     Mat44f cubeModel = make_translation({2.f, -2.f, 1.f});
     
     //--------------------------TEXTURES-------------------------------------------
-    GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/concrete.png");
-    GLuint textureID2 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/fence.png");
+    // GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/concrete.png");
+    // GLuint textureID2 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/fence.png");
+    GLuint textureID1 = createTexture("/home/cserv1_a/soc_ug/sc19ldbm/coursework/graphics/cw2/cw2/extra/concrete.png");
+    GLuint textureID2 = createTexture("/home/cserv1_a/soc_ug/sc19ldbm/coursework/graphics/cw2/cw2/extra/fence.png");
 
 
     glActiveTexture( GL_TEXTURE0 );
@@ -208,6 +211,14 @@ int main() try {
     GLuint bowl_vao = create_vao( bowl );
     std::size_t vertexCount = bowl.positions.size();
     // -----------------------------------------------------------------------------
+
+
+    // SKATEBOARD
+    auto skateboardMesh = load_wavefront_obj("assets/skateboard/11703_skateboard_v1_L3.obj");
+
+    // for ( std::size_t i = 0; i < skateboardMesh.texture.size(); i += 2 ) 
+    //     printf( "\n %f, %f \n", skateboardMesh.texture[i].x,skateboardMesh.texture[i].y );
+
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -262,7 +273,7 @@ int main() try {
 
         draw_lamp( lightVAO, postVAO, baseMVP, make_translation({-5.f, -2.f, 5.f}) );
 
-        draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({1.f, -1.4f, 4.f}) * make_scaling(1.f, 0.6f, 1.f) );
+        draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({1.f, -1.35f, 4.f}) * make_scaling(1.f, 0.6f, 1.f) );
 
         draw_rail( railVAO, baseMVP, make_translation({-3.f, -2.f, -4.f}), rail.positions.size() );
 

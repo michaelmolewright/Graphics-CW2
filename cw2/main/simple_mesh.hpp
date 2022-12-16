@@ -6,10 +6,12 @@
 #include <vector>
 
 #include "../vmlib/vec3.hpp"
+#include "../vmlib/vec2.hpp"
 
 struct SimpleMeshData {
     std::vector<Vec3f> positions;
     std::vector<Vec3f> normals;
+    std::vector<Vec2f> texture;
 };
 
 SimpleMeshData concatenate( SimpleMeshData, SimpleMeshData const & );
