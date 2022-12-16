@@ -241,26 +241,23 @@ int main() try {
             45.f * 3.1415926f / 180.f,   // Yes, a proper π would be useful. (
                                          // C++20: mathematical constants)
             fbwidth / float( fbheight ), 0.1f, 100.0f );
-        Mat44f view = camMat( state.c.cameraPosition,
-                              state.c.cameraPosition + state.c.cameraFront,
-                              state.c.cameraUp );
+        Mat44f view = camMat( state.c.cameraPosition, state.c.cameraPosition + state.c.cameraFront, state.c.cameraUp );
 
         Mat44f baseMVP = projection * view;
 
-        // Draw scene
         OGL_CHECKPOINT_DEBUG();
 
-        // // TODO: draw frame
+        
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram( prog.programId() );
 
         // UNIFORMS
-        float cameraPos[] = { state.c.cameraPosition.x,
-                              state.c.cameraPosition.y,
-                              state.c.cameraPosition.z };
+        float cameraPos[] = { state.c.cameraPosition.x, state.c.cameraPosition.y, state.c.cameraPosition.z };
         glUniform3fv( 2, 1, cameraPos );   // camera position
 
+        //-------------------------------------DRAWING-STARTS-HERE-----------------------------------------
 
+        //------------------------------------DRAWING-NON-TEXTURED-OBJECTS---------------------------------
         glUniform1i(10, GL_FALSE);
 
         draw_lamp( lightVAO, postVAO, baseMVP, make_translation({-5.f, -2.f, 5.f}) );
@@ -270,19 +267,25 @@ int main() try {
         draw_rail( railVAO, baseMVP, make_translation({-3.f, -2.f, -4.f}), rail.positions.size() );
 
         draw_cube( cubeVAO, baseMVP, cubeModel );
+        //-------------------------------------------------------------------------------------------------
+        
 
-        glUniform1i(10, GL_TRUE);
+
+        //---------------------------------------DRAWING-TEXTURED-OBJECTS------------------------------
+        glUniform1i(10, GL_TRUE); // Set to TRUE
         drawTile(textureID1 , baseMVP, make_translation({-5.f, -2.f, 5.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(10.f, 10.f, 1.f) , tileVAO);
 
-        drawTile(textureID2 , baseMVP, make_rotation_y(-kPi_ / 2.f) * make_translation({-5.f, -2.f, -5.f}) * make_scaling(10.f, 2.f, 1.f) , tileVAO);
-        drawTile(textureID2 , baseMVP, make_rotation_y(kPi_ / 2.f) * make_translation({-5.f, -2.f, 5.f}) * make_scaling(10.f, 2.f, 1.f) , tileVAO);
+
+        // INSIDE FENCES
+        drawTile(textureID2 , baseMVP, make_translation({-5.f, -2.f, 5.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(10.f, 2.f, 1.f), tileVAO);//left
+        drawTile(textureID2 , baseMVP, make_translation({5.f, -2.f, -5.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(10.f, 2.f, 1.f) , tileVAO);//right
+        drawTile(textureID2 , baseMVP, make_translation({-5.f, -2.f, -5.f}) * make_scaling(10.f, 2.f, 1.f) , tileVAO);//front
+
+        //OUTSIDE FENCES
+        drawTile(textureID2 , baseMVP, make_translation({-5.f, -2.f, -5.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(10.f, 2.f, 1.f) , tileVAO);//left
+        drawTile(textureID2 , baseMVP, make_translation({5.f, -2.f, 5.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(10.f, 2.f, 1.f), tileVAO);//right
+        drawTile(textureID2 , baseMVP, make_translation({5.f, -2.f, -5.f}) * make_scaling(10.f, 2.f, 1.f) * make_rotation_y(kPi_), tileVAO);//front
         
-        //drawTile(textureID2 , baseMVP, make_rotation_y(kPi_ / 2.f) * make_translation({-5.f, -2.f, 5.f}) * make_scaling(10.f, 2.f, 1.f) , tileVAO);
-        drawTile(textureID2 , baseMVP, make_rotation_y(-kPi_ / 2.f) * make_translation({-5.f, -2.f, 5.f}) * make_scaling(10.f, 2.f, 1.f) , tileVAO);
-
-        drawTile(textureID2 , baseMVP, make_translation({-5.f, -2.f, -5.f}) * make_scaling(10.f, 2.f, 1.f) , tileVAO);
-        drawTile(textureID2 , baseMVP, make_translation({5.f, -2.f, -5.f}) * make_scaling(10.f, 2.f, 1.f), tileVAO);
-
 
         // reset
         glBindVertexArray( 0 );
