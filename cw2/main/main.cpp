@@ -28,6 +28,7 @@
 #include "bowl.hpp"
 #include "rail.hpp"
 #include "tile.hpp"
+#include "material.hpp"
 
 namespace {
 constexpr char const *kWindowTitle = "COMP3811 - Coursework 2";
@@ -162,7 +163,7 @@ int main() try {
     // Other initialization & loading
     // TODO: load shaders
     ShaderProgram prog( { { GL_VERTEX_SHADER, "assets/default.vert" },
-                          { GL_FRAGMENT_SHADER, "assets/basicBP.frag" } } );
+                          { GL_FRAGMENT_SHADER, "assets/trialLighting.frag" } } );
                         //   { GL_FRAGMENT_SHADER, "assets/default.frag" } } );
 
     state.prog = &prog;
@@ -256,15 +257,43 @@ int main() try {
         float cameraPos[] = { c.cameraPosition.x, c.cameraPosition.y, c.cameraPosition.z };
         glUniform3fv( 2, 1, cameraPos );   // camera position
 
+
+        float trial1[] = { 1.0f, 0.5f, 0.31f };
+        float trial2[] = { 1.0f, 0.5f, 0.31f };
+        float trial3[] = { 0.5f, 0.5f, 0.5f  };
+        float trial4[] = { 0.f, 2.f, 0.f };
+        float trial5[] = { 0.2f, 0.2f, 0.2f};
+        float trial6[] = { 0.2f, 0.2f, 0.2f};
+        float trial7[] = { 1.f, 1.f, 1.f};
+        //testing materials
+
+        Vec3f lightColor;
+        lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0));
+        lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7));
+        lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3));
+
+
+        float diffuse[] = { lightColor.x, lightColor.y, lightColor.z};
+        glUniform3fv(11,1, trial4);
+        
+        glUniform3fv(12,1, trial5);
+        
+        glUniform3fv(13,1, diffuse);
+        
+        glUniform3fv(14,1, trial7);
+
+        setMaterialProperties("shineyMetal");
+
         //-------------------------------------DRAWING-STARTS-HERE-----------------------------------------
 
         //------------------------------------DRAWING-NON-TEXTURED-OBJECTS---------------------------------
         glUniform1i(10, GL_FALSE);
 
-        draw_lamp( lightVAO, postVAO, baseMVP, make_translation({0.f, 3.f, 0.f}) );
-
+        draw_lamp( lightVAO, postVAO, baseMVP, make_translation({0.f, 0.f, 0.f}) );
+        setMaterialProperties("yellowRubber");
         draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}));
 
+        setMaterialProperties("shineyMetal");
         draw_rail( railVAO, baseMVP, make_translation({-3.f, 0.f, -4.f}), rail.positions.size() );
 
         draw_cube( cubeVAO, baseMVP, kIdentity44f );
@@ -275,10 +304,11 @@ int main() try {
         //---------------------------------------DRAWING-TEXTURED-OBJECTS------------------------------
         glUniform1i(10, GL_TRUE); // Set to TRUE
 
-
+        setMaterialProperties("concrete");
         drawTile(textureID1 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(sizeOfFloor, sizeOfFloor, 1.f) , tileVAO);
 
-
+        
+        setMaterialProperties("shinyMetal");
         // INSIDE FENCES
         drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f), tileVAO);//left
         drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f) , tileVAO);//right
@@ -289,7 +319,6 @@ int main() try {
         drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f), tileVAO);//right
         drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_scaling(sizeOfFloor, 2.f, 1.f) * make_rotation_y(kPi_), tileVAO);//front
         
-
         // reset
         glBindVertexArray( 0 );
         glUseProgram( 0 );
