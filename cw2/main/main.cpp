@@ -18,7 +18,8 @@
 #include "defaults.hpp"
 // TAKE OUT
 #include "cube.hpp"
-#include "../extra/camera.hpp"
+//#include "../extra/camera.hpp"
+#include "../extra/newCamera.hpp"
 #include "../extra/textures.hpp"
 #include "floor.hpp"
 #include "cylinder.hpp"
@@ -37,8 +38,9 @@ constexpr float kPi_ = 3.1415926f;
 struct State_ {
     ShaderProgram *prog;
 
-    camera c;
 };
+
+camera c;
 
 float startX = 640, startY = 360;
 float yaw = -90.f, pitch = 0.f;
@@ -236,12 +238,15 @@ int main() try {
             glViewport( 0, 0, nwidth, nheight );
         }
 
+        c.updatePosition();
+
+
         // compute MVP matrix
         Mat44f projection = make_perspective_projection(
             45.f * 3.1415926f / 180.f,   // Yes, a proper π would be useful. (
                                          // C++20: mathematical constants)
             fbwidth / float( fbheight ), 0.1f, 100.0f );
-        Mat44f view = camMat( state.c.cameraPosition, state.c.cameraPosition + state.c.cameraFront, state.c.cameraUp );
+        Mat44f view = camMat( c.cameraPosition, c.cameraPosition + c.cameraFront, c.cameraUp );
 
         Mat44f baseMVP = projection * view;
 
@@ -251,8 +256,9 @@ int main() try {
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram( prog.programId() );
 
+
         // UNIFORMS
-        float cameraPos[] = { state.c.cameraPosition.x, state.c.cameraPosition.y, state.c.cameraPosition.z };
+        float cameraPos[] = { c.cameraPosition.x, c.cameraPosition.y, c.cameraPosition.z };
         glUniform3fv( 2, 1, cameraPos );   // camera position
 
         //-------------------------------------DRAWING-STARTS-HERE-----------------------------------------
@@ -324,7 +330,13 @@ void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction,
         glfwSetWindowShouldClose( aWindow, GLFW_TRUE );
         return;
     }
-    move( aWindow, state );
+
+    c.movement(aKey, aAction);
+
+
+
+    
+    //move( aWindow, state );
 }
 
 void mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
@@ -348,11 +360,12 @@ void mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
         pitch = -89.0f;
 
     Vec3f dir;
-    dir.x = cosf( toRadians( yaw ) ) * cosf( toRadians( pitch ) );
-    dir.y = sinf( toRadians( pitch ) );
-    dir.z = sinf( toRadians( yaw ) ) * cosf( toRadians( pitch ) );
+    dir.x = cosf( yaw * 0.01745329251 ) * cosf( pitch * 0.01745329251 );
+    dir.y = sinf( pitch * 0.01745329251 );
+    dir.z = sinf( yaw * 0.01745329251 ) * cosf( pitch * 0.01745329251 );
 
-    state->c.cameraFront = normalize( dir );
+    //state->c.cameraFront = normalize( dir );
+    c.cameraFront = normalize( dir );
 }
 }   // namespace
 
