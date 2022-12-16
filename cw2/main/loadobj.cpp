@@ -40,11 +40,40 @@ SimpleMeshData load_wavefront_obj( char const *aPath ) {
     }
 
     // add texture coordinates to SimpleMeshData
-    for ( std::size_t i = 0; i < result.attributes.texcoords.size(); i += 2 ) {
+    for ( auto const &shape : result.shapes ) {
+        for ( std::size_t i = 0; i < shape.mesh.indices.size(); ++i ) {
 
-        Vec2f uv{ result.attributes.texcoords[i], result.attributes.texcoords[i+1] };
-        ret.textures.emplace_back( uv );
+            auto const &idx = shape.mesh.indices[i];
+
+            Vec2f uv{ 
+                result.attributes.texcoords[idx.texcoord_index * 2 ], 
+                result.attributes.texcoords[idx.texcoord_index * 2 +1 ] };
+
+            ret.textures.emplace_back( uv );
+        }
     }
+
+    // add normals to SimpleMeshData
+    for ( auto const &shape : result.shapes ) {
+        for ( std::size_t i = 0; i < shape.mesh.indices.size(); ++i ) {
+
+            auto const &idx = shape.mesh.indices[i];
+
+            Vec3f norm{ 
+                - result.attributes.normals[idx.normal_index*3 + 0 ], 
+                - result.attributes.normals[idx.normal_index*3 + 1 ],
+                - result.attributes.normals[idx.normal_index*3 + 2 ] };
+
+            ret.normals.emplace_back( norm );
+        }
+    }
+
+    // for ( std::size_t i = 0; i < result.attributes.texcoords.size(); i += 2 ) {
+
+    //         Vec2f uv{ result.attributes.texcoords[i], result.attributes.texcoords[i+1] };
+    //         ret.textures.emplace_back( uv );
+    //     }
+
 
     return ret;
 }

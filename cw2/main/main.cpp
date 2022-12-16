@@ -28,6 +28,7 @@
 #include "rail.hpp"
 #include "tile.hpp"
 #include "loadobj.hpp"
+#include "skateboard.hpp"
 
 namespace {
 constexpr char const *kWindowTitle = "COMP3811 - Coursework 2";
@@ -195,6 +196,8 @@ int main() try {
     // GLuint textureID2 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/fence.png");
     GLuint textureID1 = createTexture("/home/cserv1_a/soc_ug/sc19ldbm/coursework/graphics/cw2/cw2/extra/concrete.png");
     GLuint textureID2 = createTexture("/home/cserv1_a/soc_ug/sc19ldbm/coursework/graphics/cw2/cw2/extra/fence.png");
+    // GLuint textureID3 = createTexture("/home/cserv1_a/soc_ug/sc19ldbm/coursework/graphics/cw2/cw2/assets/skateboard/skateboard_diffuse.png");
+    GLuint textureID3 = createTexture("/home/cserv1_a/soc_ug/sc19ldbm/coursework/graphics/cw2/cw2/assets/skateboard/skateboard_diffuse.jpg");
 
 
     glActiveTexture( GL_TEXTURE0 );
@@ -215,13 +218,11 @@ int main() try {
 
     // SKATEBOARD
     auto skateboardMesh = load_wavefront_obj("assets/skateboard/11703_skateboard_v1_L3.obj");
-    GLuint skateboardVAO = create_vao(skateboardMesh);
+    GLuint skateboardVAO = create_new_vao(skateboardMesh);
     size_t skateboardVertexCount = skateboardMesh.positions.size();
     Mat44f skateboardModel = make_translation({0.f, -2.f, 0.f}) * make_rotation_x( 3* kPi_ / 2 ) * make_scaling(0.02f, 0.02f, 0.02f);
 
-    // for ( std::size_t i = 0; i < skateboardMesh.textures.size(); i += 2 ) 
-    //     printf( "\n %f, %f \n", skateboardMesh.textures[i].x,skateboardMesh.textures[i].y );
-
+    printf( "\n %ld, %ld  \n", skateboardMesh.positions.size(), skateboardMesh.textures.size());
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -284,13 +285,6 @@ int main() try {
 
         draw_cube( cubeVAO, baseMVP, cubeModel );
 
-        // SKATEBOARD
-        glBindVertexArray( skateboardVAO );
-        glUniformMatrix4fv( 0, 1, GL_TRUE, skateboardMVP.v );
-        glUniformMatrix4fv( 1, 1, GL_TRUE, skateboardModel.v );
-        float const sbColor [] = { 0.6f, 0.2f, 0.6f };
-        glUniform3fv( 5, 1, sbColor );    // object color
-        glDrawArrays( GL_TRIANGLES, 0, skateboardVertexCount );
 
         //-------------------------------------------------------------------------------------------------
         
@@ -299,6 +293,8 @@ int main() try {
         //---------------------------------------DRAWING-TEXTURED-OBJECTS------------------------------
         glUniform1i(10, GL_TRUE); // Set to TRUE
         drawTile(textureID1 , baseMVP, make_translation({-5.f, -2.f, 5.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(10.f, 10.f, 1.f) , tileVAO);
+
+        draw_skateboard( textureID3, skateboardVertexCount, skateboardVAO, baseMVP, skateboardModel );
 
 
         // INSIDE FENCES
