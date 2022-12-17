@@ -2,7 +2,34 @@
 #include <cstdio>
 #include <iostream>
 
-SimpleMeshData createSphere(){
+SimpleMeshData createSphere(Mat44f preTransform){
+    tri triangle1;
+    triangle1.a = Vec3f{0.f, 0.f, 1.f};
+    triangle1.b = Vec3f{0.f, -1.f, 0.f};
+    triangle1.c = Vec3f{1.f, 0.f, 0.f};
+
+    SimpleMeshData dome1 = createDome(triangle1, kIdentity44f);
+    SimpleMeshData dome2 = createDome(triangle1, make_rotation_z( PI / 2.f));
+    SimpleMeshData dome3 = createDome(triangle1, make_rotation_z( PI ));
+    SimpleMeshData dome4 = createDome(triangle1, make_rotation_z( -PI / 2.f));
+
+    SimpleMeshData dome5 = createDome(triangle1, make_rotation_x( PI / 2.f));
+    SimpleMeshData dome6 = createDome(triangle1, make_rotation_z( PI / 2.f) * make_rotation_x( PI / 2.f));
+    SimpleMeshData dome7 = createDome(triangle1, make_rotation_z( PI ) * make_rotation_x( PI / 2.f));
+    SimpleMeshData dome8 = createDome(triangle1, make_rotation_z( -PI / 2.f) * make_rotation_x( PI / 2.f));
+
+    SimpleMeshData ret1 = concatenate(concatenate(dome1, dome2), concatenate(dome3, dome4));
+    SimpleMeshData ret2 = concatenate(concatenate(dome5, dome6), concatenate(dome7, dome8));
+
+    SimpleMeshData final_ret = concatenate(ret1, ret2);
+
+    final_ret.positions = transformPoints(final_ret.positions, preTransform);
+
+    return final_ret;
+};
+
+
+SimpleMeshData createQuarterSphere(){
     
     
     //outward facing sphere
@@ -157,7 +184,7 @@ Vec3f normalizePoints(Vec3f center, Vec3f point, float radius){
 
 SimpleMeshData createFloor(Mat44f preTransform){
     
-    SimpleMeshData a = createSphere();
+    SimpleMeshData a = createQuarterSphere();
 
     Vec3f corner1 = {2.f, 2.f, 0.f};
     Vec3f corner2 = {2.f, -2.f, 0.f};
@@ -362,3 +389,8 @@ void draw_bowl(std::size_t size, GLuint vao, Mat44f MVP, Mat44f transform){
     glBindVertexArray( vao );
     glDrawArrays( GL_TRIANGLES, 0, size );
 }
+
+
+
+
+

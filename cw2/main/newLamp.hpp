@@ -1,0 +1,94 @@
+#ifndef newLamp
+#define newLamp
+
+#include "cube.hpp"
+#include "cylinder.hpp"
+#include "bowl.hpp"
+#include "material.hpp"
+
+
+class lamp{
+    public:
+        GLuint postVAO;
+        GLuint sphereVAO;
+        float height;
+        float sphereScalar = 0.3f;
+        Vec3f lightPosition = { 0.f, 0.f, 0.f };
+        Vec3f lightAmbient = { 0.5f, 0.5f, 0.5f};
+        Vec3f lightDiffuse = { 0.2f, 0.2f, 0.2f};
+        Vec3f lightSpecular = { 0.2f, 0.2f, 0.2f};
+        SimpleMeshData post;
+        SimpleMeshData sphereLight;
+
+
+        void createLamp(float height, Vec3f lightAmbient, Vec3f lightDiffuse, Vec3f lightSpecular );
+        void drawLamp(Mat44f MVP, Mat44f transform, int ID, std::string a);
+
+};
+
+void lamp::createLamp(float height, Vec3f ambientinput, Vec3f diffuseinput, Vec3f specularinput ){
+    lightPosition.y = height;
+    lightAmbient = ambientinput;
+    lightDiffuse = diffuseinput;
+    lightSpecular = specularinput;
+
+    post = make_cylinder( true, 100, { 1.f, 0.f, 0.f }, make_scaling(0.25f, height, 0.25f) * make_rotation_z(PI/2.f) );
+    postVAO = create_vao(post);
+    sphereLight = createSphere( make_translation({0.f,height - (2.f * sphereScalar),0.f}) * make_scaling(sphereScalar, sphereScalar, sphereScalar) * make_translation({0.f,2.f,0.f} ));
+    sphereVAO = reversedNormalsVAO(sphereLight);
+}
+
+void lamp::drawLamp(Mat44f MVP, Mat44f transform, int ID, std::string a){
+    Mat44f newMVP = MVP * transform;
+    
+    //update Light Position with transform
+    Vec4f updateLightPos = transform * Vec4f{lightPosition.x, lightPosition.y, lightPosition.z, 1.f};
+    updateLightPos /= updateLightPos.w;
+
+    //create float arrays from vec3s
+    float new_lightPosition[] = { updateLightPos.x, updateLightPos.y, updateLightPos.z };
+    float new_lightAmbient[] = { lightAmbient.x, lightAmbient.y, lightAmbient.z};
+    float new_lightDiffuse[] = { lightDiffuse.x, lightDiffuse.y, lightDiffuse.z};
+    float new_lightSpecular[] = { lightSpecular.x, lightSpecular.y, lightSpecular.z};
+
+    GLuint loc;
+    std::string input;
+
+    input = a + "position";
+    loc = glGetUniformLocation(ID, input.c_str());
+    glUniform3fv(loc, 1, new_lightPosition);
+
+    input = a + "ambient";
+    loc = glGetUniformLocation(ID, input.c_str());
+    glUniform3fv(loc, 1, new_lightAmbient);
+
+    input = a + "diffuse";
+    loc = glGetUniformLocation(ID, input.c_str());
+    glUniform3fv(loc, 1, new_lightDiffuse);
+
+    input = a + "specular";
+    loc = glGetUniformLocation(ID, input.c_str());
+    glUniform3fv(loc, 1, new_lightSpecular);
+
+    
+    //glUniform3fv(11,1, new_lightPosition );    
+    //glUniform3fv(12,1, new_lightAmbient ); 
+    //glUniform3fv( 13, 1, new_lightDiffuse );
+    //glUniform3fv(14,1, new_lightSpecular);
+    
+    //draw sphere light
+    setMaterialProperties("lampMaterial");
+    glBindVertexArray( sphereVAO );
+    glUniformMatrix4fv( 0, 1, GL_TRUE, newMVP.v );
+    glUniformMatrix4fv( 1, 1, GL_TRUE, transform.v );
+    glDrawArrays( GL_TRIANGLES, 0, sphereLight.positions.size() );
+
+    //draw Post
+    setMaterialProperties("concrete");
+    glBindVertexArray( postVAO );
+    glUniformMatrix4fv( 0, 1, GL_TRUE, newMVP.v );
+    glUniformMatrix4fv( 1, 1, GL_TRUE, transform.v );
+    glDrawArrays( GL_TRIANGLES, 0, post.positions.size() );
+}
+
+#endif

@@ -29,6 +29,7 @@
 #include "rail.hpp"
 #include "tile.hpp"
 #include "material.hpp"
+#include "newLamp.hpp"
 
 namespace {
 constexpr char const *kWindowTitle = "COMP3811 - Coursework 2";
@@ -137,10 +138,9 @@ int main() try {
     setup_gl_debug_output();
 #endif   // ~ !NDEBUG
 
-    // Global GL state
+    //-----------GLOBAL-GL-SETUP-------------------------
     OGL_CHECKPOINT_ALWAYS();
 
-    // TODO: global GL setup goes here
     glEnable( GL_FRAMEBUFFER_SRGB );
     glEnable( GL_CULL_FACE );
     glClearColor( 0.26f, 0.75f, 0.98f, 0.0f );
@@ -150,6 +150,9 @@ int main() try {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     OGL_CHECKPOINT_ALWAYS();
+    //-----------------------------------------------------
+
+
 
     // Get actual framebuffer size.
     // This can be different from the window size, as standard window
@@ -163,39 +166,46 @@ int main() try {
     // Other initialization & loading
     // TODO: load shaders
     ShaderProgram prog( { { GL_VERTEX_SHADER, "assets/default.vert" },
-                          { GL_FRAGMENT_SHADER, "assets/trialLighting.frag" } } );
+                          { GL_FRAGMENT_SHADER, "assets/workingThreeLights.frag" } } );
                         //   { GL_FRAGMENT_SHADER, "assets/default.frag" } } );
 
     state.prog = &prog;
 
     OGL_CHECKPOINT_ALWAYS();
 
-    // TODO: VBO AND VAO setup
 
-    // light position
-    GLuint lightVAO = create_light_vao();
-
-    auto post = make_cylinder( true, 100, { 1.f, 0.f, 0.f }, make_rotation_z( kPi_ / 2 ) * make_scaling( 2.f, 0.05f, 0.05f ) );
-    GLuint postVAO = create_vao( post );
-
-    // RAIL
+    //--------------------RAIL----------------------------------------------------
     auto rail = make_rail( 100, {0.f,0.f,0.f}, kIdentity44f);
     GLuint railVAO = create_vao( rail );
-
+    //----------------------------------------------------------------------------
 
 
     // CUBE
     GLuint cubeVAO = create_cube_vao();
     
     //--------------------------TEXTURES-------------------------------------------
+    // REMEMBER TO CHANGE THIS TO RELATIVE PATH
     GLuint textureID1 = createTexture("C:\\Users\\mikey\\Documents\\graphics\\graphics_cw2\\cw2\\extra\\concrete.png"); //file paths for windows
     GLuint textureID2 = createTexture("C:\\Users\\mikey\\Documents\\graphics\\graphics_cw2\\cw2\\extra\\fence.png"); //file paths for windows
-
-
     glActiveTexture( GL_TEXTURE0 );
-
     //-----------------------------------------------------------------------------
 
+    //-----------------------------------------------------------------------------
+    
+
+
+    //--------------------------------LIGHTS---------------------------------------
+    lamp l1;
+    l1.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f}, { 0.2f, 0.2f, 0.2f});
+    lamp l2;
+    l2.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f}, { 0.5f, 0.5f, 0.5f});
+    lamp l3;
+    l3.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f}, { 1.f, 1.f, 1.f});
+
+    int animationCounter = 0;
+    float zLoc = 0.f;
+    float sign = 1.f;
+    //-----------------------------------------------------------------------------
 
     //--------------------------FLOOR----------------------------------------------
     GLuint tileVAO = createTextureTileVao();
@@ -237,72 +247,54 @@ int main() try {
         c.updatePosition();
 
 
-        // compute MVP matrix
-        Mat44f projection = make_perspective_projection(
-            45.f * 3.1415926f / 180.f,   // Yes, a proper π would be useful. (
-                                         // C++20: mathematical constants)
-            fbwidth / float( fbheight ), 0.1f, 100.0f );
+        // compute baseMVP matrix i.e Proj * view
+        Mat44f projection = make_perspective_projection(60.f * 3.1415926f / 180.f, fbwidth / float( fbheight ), 0.1f, 100.0f );
+
         Mat44f view = camMat( c.cameraPosition, c.cameraPosition + c.cameraFront, c.cameraUp );
 
         Mat44f baseMVP = projection * view;
 
         OGL_CHECKPOINT_DEBUG();
 
-        
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
         glUseProgram( prog.programId() );
 
-
-        // UNIFORMS
+        //Passing Camera Position Through
         float cameraPos[] = { c.cameraPosition.x, c.cameraPosition.y, c.cameraPosition.z };
-        glUniform3fv( 2, 1, cameraPos );   // camera position
-
-
-        float trial1[] = { 1.0f, 0.5f, 0.31f };
-        float trial2[] = { 1.0f, 0.5f, 0.31f };
-        float trial3[] = { 0.5f, 0.5f, 0.5f  };
-        float trial4[] = { 0.f, 2.f, 0.f };
-        float trial5[] = { 0.2f, 0.2f, 0.2f};
-        float trial6[] = { 0.2f, 0.2f, 0.2f};
-        float trial7[] = { 1.f, 1.f, 1.f};
-        //testing materials
-
-        Vec3f lightColor;
-        lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0));
-        lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7));
-        lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3));
-
-
-        float diffuse[] = { lightColor.x, lightColor.y, lightColor.z};
-        glUniform3fv(11,1, trial4);
-        
-        glUniform3fv(12,1, trial5);
-        
-        glUniform3fv( 13, 1, trial6 );
-        
-        glUniform3fv(14,1, trial7);
-
-        setMaterialProperties("shineyMetal");
+        glUniform3fv( 2, 1, cameraPos );
 
         //-------------------------------------DRAWING-STARTS-HERE-----------------------------------------
 
         //------------------------------------DRAWING-NON-TEXTURED-OBJECTS---------------------------------
-        glUniform1i(10, GL_FALSE);
+        glUniform1i(10, GL_FALSE);  // flag for drawing textures
 
-        draw_lamp( lightVAO, postVAO, baseMVP, make_translation({0.f, 0.f, 0.f}) );
-        setMaterialProperties("yellowRubber");
+        
+        l1.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}), prog.programId(), "light[0]." );
+        l2.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}), prog.programId(), "light[1]." );
+
+        if (animationCounter % 1000 == 0){
+            sign *= -1.f;
+        }
+        animationCounter += 1;
+        
+        zLoc += sign * (sizeOfFloor/2000.f);
+        
+        l2.drawLamp(baseMVP, make_translation({0.f, 0.f, zLoc}), prog.programId(), "light[2]." );
+
+        
+        setMaterialProperties("concrete");
         draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}));
 
         setMaterialProperties("shineyMetal");
         draw_rail( railVAO, baseMVP, make_translation({-3.f, 0.f, -4.f}), rail.positions.size() );
 
-        draw_cube( cubeVAO, baseMVP, kIdentity44f );
+        draw_cube( cubeVAO, baseMVP, make_translation({2.f, 0.5f, -3.f}) );
+
         //-------------------------------------------------------------------------------------------------
         
-
-
         //---------------------------------------DRAWING-TEXTURED-OBJECTS------------------------------
-        glUniform1i(10, GL_TRUE); // Set to TRUE
+        glUniform1i(10, GL_TRUE);   // flag for drawing textures
 
         setMaterialProperties("concrete");
         drawTile(textureID1 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(sizeOfFloor, sizeOfFloor, 1.f) , tileVAO);
@@ -355,11 +347,12 @@ void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction, int ) 
         return;
     }
 
-    c.movement(aKey, aAction);
+    c.movement(aKey, aAction); //camera movement
 }
 
 void mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
     
+    //Maybe move this to camera class ???
     float xoffset = xP - startX;
     float yoffset = startY - yP;
     startX = xP;
@@ -378,11 +371,12 @@ void mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
         pitch = -89.0f;
 
     Vec3f dir;
+
+    // 0.01745329251 is degrees to radians conversion
     dir.x = cosf( yaw * 0.01745329251 ) * cosf( pitch * 0.01745329251 );
     dir.y = sinf( pitch * 0.01745329251 );
     dir.z = sinf( yaw * 0.01745329251 ) * cosf( pitch * 0.01745329251 );
 
-    //state->c.cameraFront = normalize( dir );
     c.cameraFront = normalize( dir );
 }
 }   // namespace
