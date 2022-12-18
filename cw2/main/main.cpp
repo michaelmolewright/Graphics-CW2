@@ -209,6 +209,8 @@ int main() try {
 
     //--------------------------FLOOR----------------------------------------------
     GLuint tileVAO = createTextureTileVao();
+    plane p1;
+    p1.createBox(textureID1);
     //-----------------------------------------------------------------------------
 
     // ----------------------------BOWL---------------------------------------------
@@ -273,13 +275,15 @@ int main() try {
         l1.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}), prog.programId(), "light[0]." );
         l2.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}), prog.programId(), "light[1]." );
 
+
+        //very simple animation
         if (animationCounter % 1000 == 0){
             sign *= -1.f;
         }
         animationCounter += 1;
         
         zLoc += sign * (sizeOfFloor/2000.f);
-        
+
         l2.drawLamp(baseMVP, make_translation({0.f, 0.f, zLoc}), prog.programId(), "light[2]." );
 
         
@@ -299,7 +303,8 @@ int main() try {
         setMaterialProperties("concrete");
         drawTile(textureID1 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(sizeOfFloor, sizeOfFloor, 1.f) , tileVAO);
 
-        
+        p1.drawBox(baseMVP, make_translation({0.f,0.f,0.f}));
+
         setMaterialProperties("shinyMetal");
         // INSIDE FENCES
         drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f), tileVAO);//left
