@@ -7,53 +7,53 @@
 
 // vertices and normals
 constexpr float const cubePositions[] = {
-     0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f, 
-     0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f, 
-    -0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f, 
+     0.5f,  0.5f, -0.5f,   // 0.0f,  0.0f, -1.0f, 
+     0.5f, -0.5f, -0.5f,   // 0.0f,  0.0f, -1.0f, 
+    -0.5f, -0.5f, -0.5f,  //  0.0f,  0.0f, -1.0f, 
 
-    -0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f, 
-    -0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f, 
-     0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f, 
+    -0.5f, -0.5f, -0.5f,  //  0.0f,  0.0f, -1.0f, 
+    -0.5f,  0.5f, -0.5f,   // 0.0f,  0.0f, -1.0f, 
+     0.5f,  0.5f, -0.5f,   // 0.0f,  0.0f, -1.0f, 
     // Front face
-     0.5f, -0.5f,  0.5f,    0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,    0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,    0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  //  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  //  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  //  0.0f,  0.0f, 1.0f,
 
-    -0.5f,  0.5f,  0.5f,    0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,    0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,    0.0f,  0.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  //  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  //  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  //  0.0f,  0.0f, 1.0f,
     // Left face
-    -0.5f,  0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f,  //  -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,  //  -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f,  //  -1.0f,  0.0f,  0.0f,
 
-    -0.5f, -0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f,    -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f,    -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f,   // -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f,  //  -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,   // -1.0f,  0.0f,  0.0f,
     // Right face
-     0.5f, -0.5f, -0.5f,    1.0f,  0.0f,  0.0f,
-     0.5f,  0.5f, -0.5f,    1.0f,  0.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,    1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  //  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  //  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  //  1.0f,  0.0f,  0.0f,
 
-     0.5f,  0.5f,  0.5f,    1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,    1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,    1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  //  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  //  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f, //   1.0f,  0.0f,  0.0f,
     // Bottom face          
-     0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f, -0.5f, //   0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  //  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,  //  0.0f, -1.0f,  0.0f,
 
-    -0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f,    0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,    0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f,  //  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,  //  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  //  0.0f, -1.0f,  0.0f,
     // Top face
-     0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  //  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  //  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f,   // 0.0f,  1.0f,  0.0f,
 
-    -0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f,  //  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f,  //  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f, //   0.0f,  1.0f,  0.0f,
 };
 
 // CUBE 1 material colour data
@@ -62,23 +62,17 @@ static float const cubeAmb[] = { 0.25f, 0.20725f, 0.20725f };
 static float const cubeDiff[] = { 1.f, 0.829f, 0.829f };
 static float const cubeSpec[] = { 0.296648f, 0.296648f, 0.296648f };
 static float const cubeShin = 0.088f * 128;
-Mat44f cube1Model = make_translation( { 2.f, 0.5f, 0.f } );
-
-// CUBE 2
-static float const cube2Amb[] = { 0.f, 0.f, 0.f };
-static float const cube2Diff[] = { 0.01f, 0.01f, 0.01f };
-static float const cube2Spec[] = { 0.5f, 0.5f, 0.5f };
-static float const cube2Shin = 16.f;
-Mat44f cube2Model = make_translation( { 4.f, 0.5f, 0.f } );
+Mat44f cubeBaseModel = make_translation( { 0.f, 0.5f, 0.f } );
 
 
 
-SimpleMeshData make_cube( Mat44f aPreTransform, Vec3f aColor ) { 
+
+SimpleMeshData make_cube( Mat44f aPreTransform ) { 
 
     std::vector<Vec3f> pos;
 
     // add each triangle from cube positions to pos
-    for (size_t i = 0; i < sizeof(cubePositions); i += 6 ) {
+    for (size_t i = 0; i < sizeof(cubePositions); i += 3 ) {
         Vec3f tri = { cubePositions[i], cubePositions[i+1], cubePositions[i+2] };
 
         pos.emplace_back( tri );
@@ -87,15 +81,14 @@ SimpleMeshData make_cube( Mat44f aPreTransform, Vec3f aColor ) {
     // pre transform each point
     for ( auto &p : pos ) {
         Vec4f p4{ p.x, p.y, p.z, 1.f };
-        Vec4f t = aPreTransform * p4;
+        Vec4f t = aPreTransform * cubeBaseModel * p4;
         t /= t.w;
 
         p = Vec3f{ t.x, t.y, t.z };
     }
 
-    std::vector col( pos.size(), aColor );
 
-    return SimpleMeshData{ std::move( pos ), std::move( col ) };
+    return SimpleMeshData{ std::move( pos ) };
 }
 
 
@@ -114,7 +107,7 @@ GLuint create_cube_vao() {
 
     glBindBuffer( GL_ARRAY_BUFFER, cubeVBO );
     // positions
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof( float ),
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof( float ),
                            (void *)0 );
     glEnableVertexAttribArray( 0 );
     // normals
@@ -150,18 +143,6 @@ void draw_cube( GLuint vao, Mat44f baseMVP, Mat44f model ) {
     glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 }
 
-void draw_cube2( GLuint vao, Mat44f MVP ) {
-    glUniformMatrix4fv( 0, 1, GL_TRUE, MVP.v );
-    glUniformMatrix4fv( 1, 1, GL_TRUE, cube2Model.v );   // model matrix
 
-    // material props
-    glUniform3fv( 6, 1, cube2Amb );    // amb
-    glUniform3fv( 7, 1, cube2Diff );   // diff
-    glUniform3fv( 8, 1, cube2Spec );   // spec
-    glUniform1f( 9, cube2Shin );      // shin
-
-    glBindVertexArray( vao );
-    glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
-}
 
 #endif   // CUBE_HPP_6874B39C_112D_4D34_BD85_AB81A730955B

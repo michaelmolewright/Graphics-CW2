@@ -28,6 +28,7 @@
 #include "bowl.hpp"
 #include "rail.hpp"
 #include "tile.hpp"
+#include "ramp.hpp"
 
 namespace {
 constexpr char const *kWindowTitle = "COMP3811 - Coursework 2";
@@ -181,10 +182,16 @@ int main() try {
     auto rail = make_rail( 100, {0.f,0.f,0.f}, kIdentity44f);
     GLuint railVAO = create_vao( rail );
 
-
-
     // CUBE
     GLuint cubeVAO = create_cube_vao();
+
+    // RAMP
+    auto ramp = make_ramp( kIdentity44f );
+    GLuint rampVAO = create_vao( ramp );
+
+    // RAMP BOX
+    auto rampBox = make_ramp_box( kIdentity44f );
+    GLuint rampBoxVAO = create_vao( rampBox );
     
     //--------------------------TEXTURES-------------------------------------------
     // GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/concrete.png");
@@ -266,11 +273,14 @@ int main() try {
 
         draw_lamp( lightVAO, postVAO, baseMVP, make_translation({0.f, 0.f, 0.f}) );
 
-        draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}));
+        draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f})  * make_scaling(1.f, 1.6f, 1.f) );
 
         draw_rail( railVAO, baseMVP, make_translation({-3.f, 0.f, -4.f}), rail.positions.size() );
 
-        draw_cube( cubeVAO, baseMVP, kIdentity44f );
+
+        draw_ramp( rampVAO, baseMVP, make_translation({10.f, 0.f, 10.f}) * make_scaling(20.f, 1.92f, 6.f) * make_rotation_y( kPi_ ) );
+
+        // draw_ramp_box( rampBoxVAO, baseMVP, kIdentity44f );
         //-------------------------------------------------------------------------------------------------
         
 
