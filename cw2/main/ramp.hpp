@@ -38,9 +38,9 @@ constexpr float const rampPositions[] = {
 
 // material data
 static float const rampAmb[] = { 0.25f, 0.20725f, 0.20725f };
-static float const rampDiff[] = { 1.f, 0.829f, 0.829f };
+static float const rampDiff[] = { 0.1f, 0.1f, 0.1f };
 static float const rampSpec[] = { 0.296648f, 0.296648f, 0.296648f };
-static float const rampShin = 0.088f * 128;
+static float const rampShin = 4.f;
 
 
 SimpleMeshData make_ramp( Mat44f aPreTransform ) { 

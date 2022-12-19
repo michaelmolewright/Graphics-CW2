@@ -193,8 +193,7 @@ int main() try {
     // RAMP
     auto ramp = make_ramp( kIdentity44f );
     GLuint rampVAO = create_vao( ramp );
-    Mat44f rampModel = kIdentity44f;
-    
+
     //--------------------------TEXTURES-------------------------------------------
     // GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/concrete.png");
     // GLuint textureID2 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/fence.png");
@@ -275,9 +274,9 @@ int main() try {
 
         draw_rail( railVAO, baseMVP, make_translation({-3.f, -2.f, -4.f}), rail.positions.size() );
 
-        draw_cube( cubeVAO, baseMVP, cubeModel );
+        // draw_cube( cubeVAO, baseMVP, cubeModel );
 
-        draw_ramp( rampVAO, baseMVP, rampModel );
+        draw_ramp( rampVAO, baseMVP, make_translation({2.f, -2.f, 3.f}) * make_scaling(4.5f, 0.6f, 2.f) * make_rotation_y( kPi_ ) );
 
         //-------------------------------------------------------------------------------------------------
         
