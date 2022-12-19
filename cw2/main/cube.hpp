@@ -59,7 +59,7 @@ constexpr float const cubePositions[] = {
 // CUBE 1 material colour data
 // http://devernay.free.fr/cours/opengl/materials.html
 static float const cubeAmb[] = { 0.25f, 0.20725f, 0.20725f };
-static float const cubeDiff[] = { 1.f, 0.829f, 0.829f };
+static float const cubeDiff[] = { 0.1f, 0.1f, 0.1f };
 static float const cubeSpec[] = { 0.296648f, 0.296648f, 0.296648f };
 static float const cubeShin = 0.088f * 128;
 Mat44f cubeBaseModel = make_translation( { 0.f, 0.5f, 0.f } );
@@ -87,40 +87,7 @@ SimpleMeshData make_cube( Mat44f aPreTransform ) {
         p = Vec3f{ t.x, t.y, t.z };
     }
 
-
     return SimpleMeshData{ std::move( pos ) };
-}
-
-
-
-GLuint create_cube_vao() {
-    // CUBE - now contains positions and normals
-    GLuint cubeVBO = 0;
-    glGenBuffers( 1, &cubeVBO );
-    glBindBuffer( GL_ARRAY_BUFFER, cubeVBO );
-    glBufferData( GL_ARRAY_BUFFER, sizeof( cubePositions ), cubePositions,
-                  GL_STATIC_DRAW );
-
-    GLuint cubeVAO = 0;
-    glGenVertexArrays( 1, &cubeVAO );
-    glBindVertexArray( cubeVAO );
-
-    glBindBuffer( GL_ARRAY_BUFFER, cubeVBO );
-    // positions
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof( float ),
-                           (void *)0 );
-    glEnableVertexAttribArray( 0 );
-    // normals
-    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof( float ),
-                           (void *)( 3 * sizeof( float ) ) );
-    glEnableVertexAttribArray( 1 );
-
-    // reset and delete buffers
-    glBindVertexArray( 0 );
-    glBindBuffer( GL_ARRAY_BUFFER, 0 );
-    glDeleteBuffers( 1, &cubeVBO );
-
-    return cubeVAO;
 }
 
 
@@ -136,8 +103,8 @@ void draw_cube( GLuint vao, Mat44f baseMVP, Mat44f model ) {
     // glUniform3fv( 8, 1, cubeSpec );   // spec
     // glUniform1f( 9, cubeShin );      // shin
 
-    float const cubeColor [] = { 1.0f, 0.5f, 0.31f };
-    glUniform3fv( 5, 1, cubeColor );    // object color
+    glUniform3fv( 5, 1, cubeDiff );    // object color
+    glUniform1f( 7, 1.f );
 
     glBindVertexArray( vao );
     glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );

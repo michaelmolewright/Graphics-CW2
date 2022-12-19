@@ -110,7 +110,7 @@ int main() try {
     // Set up event handling
     State_ state{};
     glfwSetWindowUserPointer( window, &state );
-    glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
+    // glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
 
     // Set up event handling
     glfwSetKeyCallback( window, &glfw_callback_key_ );
@@ -183,7 +183,8 @@ int main() try {
     GLuint railVAO = create_vao( rail );
 
     // CUBE
-    GLuint cubeVAO = create_cube_vao();
+    auto cube = make_cube( kIdentity44f );
+    GLuint cubeVAO = create_vao( cube );
 
     // RAMP
     auto ramp = make_ramp( kIdentity44f );
@@ -192,6 +193,7 @@ int main() try {
     // RAMP BOX
     auto rampBox = make_ramp_box( kIdentity44f );
     GLuint rampBoxVAO = create_vao( rampBox );
+
     
     //--------------------------TEXTURES-------------------------------------------
     // GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/concrete.png");
@@ -281,10 +283,12 @@ int main() try {
 
         draw_rail( railVAO, baseMVP, make_translation({-3.f, 0.f, -4.f}), rail.positions.size() );
 
+        // draw_cube( cubeVAO, baseMVP, kIdentity44f );
 
         draw_ramp( rampVAO, baseMVP, make_translation({10.f, 0.f, 10.f}) * make_scaling(20.f, 1.92f, 6.f) * make_rotation_y( kPi_ ) );
 
-        // draw_ramp_box( rampBoxVAO, baseMVP, kIdentity44f );
+        draw_ramp_box( rampBoxVAO, baseMVP, kIdentity44f, rampBox.positions.size() );
+
         //-------------------------------------------------------------------------------------------------
         
 
