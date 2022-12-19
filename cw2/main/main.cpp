@@ -185,8 +185,11 @@ int main() try {
     
     //--------------------------TEXTURES-------------------------------------------
     // REMEMBER TO CHANGE THIS TO RELATIVE PATH
-    GLuint textureID1 = createTexture("C:\\Users\\mikey\\Documents\\graphics\\graphics_cw2\\cw2\\extra\\concrete.png"); //file paths for windows
-    GLuint textureID2 = createTexture("C:\\Users\\mikey\\Documents\\graphics\\graphics_cw2\\cw2\\extra\\fence.png"); //file paths for windows
+    // GLuint textureID1 = createTexture("C:\\Users\\mikey\\Documents\\graphics\\graphics_cw2\\cw2\\extra\\concrete.png"); //file paths for windows
+    // GLuint textureID2 = createTexture("C:\\Users\\mikey\\Documents\\graphics\\graphics_cw2\\cw2\\extra\\fence.png"); //file paths for windows
+    // RELATIVE PATHS - YET TO TEST FOR MIKEY
+    GLuint textureID1 = createTexture("./extra/concrete.png"); //file paths for windows
+    GLuint textureID2 = createTexture("./extra/fence.png"); //file paths for windows
     glActiveTexture( GL_TEXTURE0 );
     //-----------------------------------------------------------------------------
 
