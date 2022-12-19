@@ -187,8 +187,11 @@ int main() try {
     GLuint cubeVAO = create_cube_vao();
     
     //--------------------------TEXTURES-------------------------------------------
-    GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/concrete.png");
-    GLuint textureID2 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/fence.png");
+    // GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/concrete.png");
+    // GLuint textureID2 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/fence.png");
+    // relative paths - test for mikey
+    GLuint textureID1 = createTexture("./extra/concrete.png");
+    GLuint textureID2 = createTexture("./extra/fence.png");
 
 
     glActiveTexture( GL_TEXTURE0 );
@@ -261,7 +264,7 @@ int main() try {
         //------------------------------------DRAWING-NON-TEXTURED-OBJECTS---------------------------------
         glUniform1i(10, GL_FALSE);
 
-        draw_lamp( lightVAO, postVAO, baseMVP, make_translation({0.f, 3.f, 0.f}) );
+        draw_lamp( lightVAO, postVAO, baseMVP, make_translation({0.f, 0.f, 0.f}) );
 
         draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}));
 
