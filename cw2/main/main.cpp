@@ -27,6 +27,7 @@
 #include "bowl.hpp"
 #include "rail.hpp"
 #include "tile.hpp"
+#include "ramp.hpp"
 
 namespace {
 constexpr char const *kWindowTitle = "COMP3811 - Coursework 2";
@@ -188,10 +189,18 @@ int main() try {
     // CUBE
     GLuint cubeVAO = create_cube_vao();
     Mat44f cubeModel = make_translation({2.f, -2.f, 1.f});
+
+    // RAMP
+    auto ramp = make_ramp( kIdentity44f );
+    GLuint rampVAO = create_vao( ramp );
+    Mat44f rampModel = kIdentity44f;
     
     //--------------------------TEXTURES-------------------------------------------
-    GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/concrete.png");
-    GLuint textureID2 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/fence.png");
+    // GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/concrete.png");
+    // GLuint textureID2 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/fence.png");
+    // relative
+    GLuint textureID1 = createTexture("./extra/concrete.png");
+    GLuint textureID2 = createTexture("./extra/fence.png");
 
 
     glActiveTexture( GL_TEXTURE0 );
@@ -267,6 +276,9 @@ int main() try {
         draw_rail( railVAO, baseMVP, make_translation({-3.f, -2.f, -4.f}), rail.positions.size() );
 
         draw_cube( cubeVAO, baseMVP, cubeModel );
+
+        draw_ramp( rampVAO, baseMVP, rampModel );
+
         //-------------------------------------------------------------------------------------------------
         
 
