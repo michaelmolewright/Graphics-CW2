@@ -109,7 +109,7 @@ int main() try {
     // Set up event handling
     State_ state{};
     glfwSetWindowUserPointer( window, &state );
-    // glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
+    glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
 
     // Set up event handling
     glfwSetKeyCallback( window, &glfw_callback_key_ );
