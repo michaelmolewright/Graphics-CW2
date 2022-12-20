@@ -13,18 +13,29 @@ class plane{
     public:
         SimpleMeshData planeMesh;
         SimpleMeshData boxMesh;
+        SimpleMeshData rampMesh;
+        SimpleMeshData complexRampMesh;
+        SimpleMeshData triangleMesh;
+        SimpleMeshData rampCornerMesh;
+
         GLuint textureID;
         GLuint vao;
 
 
-        void createTile(GLuint ID);
-        void createBox(GLuint ID);
-        void drawBox(Mat44f baseMVP, Mat44f translation);
+        void createTile();
+        void createBox();
+        void createRamp();
+        void createComplexRamp();
+        void createTriangle();
+        void createRampCorner();
+        void drawBox(GLuint ID, Mat44f baseMVP, Mat44f translation);
+        void drawTile(GLuint ID, Mat44f baseMVP, Mat44f translation);
+        void drawRamp(GLuint ID, Mat44f baseMVP, Mat44f translation);
+        void drawComplexRamp(GLuint ID, Mat44f baseMVP, Mat44f translation);
 
 };
 
-void plane::createTile(GLuint ID ){
-    textureID = ID;
+void plane::createTile(){
     std::vector<Vec3f> positions;
     std::vector<Vec3f> normals;
     std::vector<Vec2f> textureCoord;
@@ -54,8 +65,30 @@ void plane::createTile(GLuint ID ){
     planeMesh = SimpleMeshData{ std::move( positions ), std::move( normals ), std::move( textureCoord )};
 }
 
-void plane::createBox(GLuint ID){
-    createTile(ID);
+void plane::createTriangle(){
+    std::vector<Vec3f> positions;
+    std::vector<Vec3f> normals;
+    std::vector<Vec2f> textureCoord;
+
+    positions.emplace_back(Vec3f{0.f, 1.f, 0.f});
+    positions.emplace_back(Vec3f{0.f, 0.f, 0.f});
+    positions.emplace_back(Vec3f{1.f, 0.f, 0.f});
+
+    normals.emplace_back(Vec3f{0.f, 0.f, 1.f});
+    normals.emplace_back(Vec3f{0.f, 0.f, 1.f});
+    normals.emplace_back(Vec3f{0.f, 0.f, 1.f});
+
+    textureCoord.emplace_back(Vec2f{0.f, 1.f});
+    textureCoord.emplace_back(Vec2f{0.f, 0.f});
+    textureCoord.emplace_back(Vec2f{1.f, 0.f});
+
+
+    triangleMesh = SimpleMeshData{ std::move( positions ), std::move( normals ), std::move( textureCoord )};
+}
+
+void plane::createBox(){
+    createTile();
+    
     SimpleMeshData plane1 = planeMesh;
     SimpleMeshData plane2 = transformPositions(plane1, make_translation({1.f,0.f,0.f}) * make_rotation_y(PI/2.f));
 
@@ -71,11 +104,102 @@ void plane::createBox(GLuint ID){
     SimpleMeshData res3 = concatenate(plane5, plane6);
 
     boxMesh = concatenate(concatenate(res1, res2), res3);
-    //boxMesh = concatenate(planeMesh, boxMesh);
 
 }
 
-void plane::drawBox( Mat44f baseMVP, Mat44f translation){
+void plane::createRamp(){
+    createTile();
+    createTriangle();
+
+    SimpleMeshData plane1 = transformPositions(planeMesh, make_rotation_x(-PI/4.f) * make_scaling(1.f,1.414213562f,1.f));
+    SimpleMeshData plane2 = transformPositions(planeMesh, make_translation({0.f,1.f,-1.f}) * make_rotation_x(-PI));
+    SimpleMeshData plane3 = transformPositions(planeMesh, make_translation({0.f,0.f,-1.f}) * make_rotation_x(PI/2.f));
+
+    rampMesh = concatenate(concatenate(plane1,plane2), plane3);
+
+    SimpleMeshData tri1 = transformPositions(triangleMesh, make_translation({0.f,0.f,-1.f}) *  make_rotation_y(-PI/2.f));
+
+    SimpleMeshData tri2 = transformPositions(triangleMesh, make_translation({1.f,0.f,-1.f}) * make_rotation_x(PI/2.f) *  make_rotation_y(PI/2.f));
+
+    rampMesh = concatenate(concatenate(rampMesh,tri1), tri2);
+}
+
+void plane::createRampCorner(){
+    std::vector<Vec3f> positions;
+    std::vector<Vec3f> normals;
+    std::vector<Vec2f> textureCoord;
+
+    positions.emplace_back(Vec3f{0.f, 0.f, 1.f});
+    positions.emplace_back(Vec3f{1.f, 0.f, 0.f});
+    positions.emplace_back(Vec3f{0.f, 1.f, 0.f});
+    positions.emplace_back(Vec3f{0.f, 1.f, 0.f});
+    positions.emplace_back(Vec3f{0.f, 0.f, 0.f});
+    positions.emplace_back(Vec3f{0.f, 0.f, 1.f});
+    positions.emplace_back(Vec3f{0.f, 1.f, 0.f});
+    positions.emplace_back(Vec3f{1.f, 0.f, 0.f});
+    positions.emplace_back(Vec3f{0.f, 0.f, 0.f});
+    positions.emplace_back(Vec3f{0.f, 0.f, 0.f});
+    positions.emplace_back(Vec3f{1.f, 0.f, 0.f});
+    positions.emplace_back(Vec3f{0.f, 0.f, 1.f});
+
+
+    normals.emplace_back(Vec3f{0.f, 0.f, 1.f});
+    normals.emplace_back(Vec3f{0.f, 0.f, 1.f});
+    normals.emplace_back(Vec3f{0.f, 0.f, 1.f});
+    normals.emplace_back(Vec3f{0.f, 0.f, 1.f});
+    normals.emplace_back(Vec3f{0.f, 0.f, 1.f});
+    normals.emplace_back(Vec3f{0.f, 0.f, 1.f});
+    normals.emplace_back(Vec3f{0.f, 0.f, 1.f});
+    normals.emplace_back(Vec3f{0.f, 0.f, 1.f});
+    normals.emplace_back(Vec3f{0.f, 0.f, 1.f});
+    normals.emplace_back(Vec3f{0.f, 0.f, 1.f});
+    normals.emplace_back(Vec3f{0.f, 0.f, 1.f});
+    normals.emplace_back(Vec3f{0.f, 0.f, 1.f});
+
+    textureCoord.emplace_back(Vec2f{0.f, 0.f});
+    textureCoord.emplace_back(Vec2f{1.f, 0.f});
+    textureCoord.emplace_back(Vec2f{0.5f, 1.f});
+    textureCoord.emplace_back(Vec2f{0.f, 0.f});
+    textureCoord.emplace_back(Vec2f{1.f, 0.f});
+    textureCoord.emplace_back(Vec2f{0.5f, 1.f});
+    textureCoord.emplace_back(Vec2f{0.f, 0.f});
+    textureCoord.emplace_back(Vec2f{1.f, 0.f});
+    textureCoord.emplace_back(Vec2f{0.5f, 1.f});
+    textureCoord.emplace_back(Vec2f{0.f, 0.f});
+    textureCoord.emplace_back(Vec2f{1.f, 0.f});
+    textureCoord.emplace_back(Vec2f{0.5f, 1.f});
+
+    rampCornerMesh = SimpleMeshData{ std::move( positions ), std::move( normals ), std::move( textureCoord )};
+}   
+
+void plane::createComplexRamp(){
+    createRampCorner();
+    SimpleMeshData ramp1 = transformPositions(rampMesh, kIdentity44f);
+    SimpleMeshData ramp2 = transformPositions(rampMesh, make_translation({-1.f,0.f,-2.f}) * make_rotation_y(-PI/2.f));
+    SimpleMeshData ramp3 = transformPositions(rampMesh, make_translation({2.f,0.f,-1.f}) * make_rotation_y(PI/2.f));
+    SimpleMeshData ramp4 = transformPositions(rampMesh, make_translation({1.f,0.f,-3.f}) * make_rotation_y(-PI));
+    
+    SimpleMeshData rampRes1 = concatenate(ramp1, ramp2);
+    SimpleMeshData rampRes2 = concatenate(ramp3, ramp4);
+
+    SimpleMeshData rampResult = concatenate(rampRes1,rampRes2);
+
+    SimpleMeshData corner1 = transformPositions(rampCornerMesh, make_translation({0.f,0.f,-1.f}) * make_rotation_y(-PI/2.f));
+    SimpleMeshData corner2 = transformPositions(rampCornerMesh, make_translation({1.f,0.f,-1.f}));
+    SimpleMeshData corner3 = transformPositions(rampCornerMesh, make_translation({0.f,0.f,-2.f}) * make_rotation_y(PI));
+    SimpleMeshData corner4 = transformPositions(rampCornerMesh, make_translation({1.f,0.f,-2.f}) * make_rotation_y(PI/2.f));
+
+    SimpleMeshData cornerRes1 = concatenate(corner1, corner2);
+    SimpleMeshData cornerRes2 = concatenate(corner3, corner4);
+
+    SimpleMeshData cornerResult = concatenate(cornerRes1,cornerRes2);
+
+    complexRampMesh = concatenate(rampResult,cornerResult);
+    complexRampMesh = transformPositions(complexRampMesh, make_translation({0.f,0.f,1.f}));
+}
+
+void plane::drawBox(GLuint ID, Mat44f baseMVP, Mat44f translation){
+    textureID = ID;
     vao = create_full_vao(boxMesh);
 
     glBindTexture(GL_TEXTURE_2D, textureID);
@@ -89,63 +213,11 @@ void plane::drawBox( Mat44f baseMVP, Mat44f translation){
     glDrawArrays( GL_TRIANGLES, 0, boxMesh.positions.size() );
 }
 
-float const concreteCol[] ={ 0.52f, 0.51f, 0.6f };
-float const concreteShine(10.f);
-
-
-
-constexpr float const tileValues[] = {
-    //positions         //normals           //texture co-ordinates
-    0.f, 1.f, 0.f,      0.f, 0.f, 1.f,      0.f, 1.f, 
-    0.f, 0.f, 0.f,      0.f, 0.f, 1.f,      0.f, 0.f,
-    1.f, 0.f, 0.f,      0.f, 0.f, 1.f,      1.f, 0.f,
-
-    0.f, 1.f, 0.f,      0.f, 0.f, 1.f,      0.f, 1.f,              
-    1.f, 0.f, 0.f,      0.f, 0.f, 1.f,      1.f, 0.f,
-    1.f, 1.f, 0.f,      0.f, 0.f, 1.f,      1.f, 1.f
-};
-
-
-
-
-
-GLuint createTextureTileVao(){
-    GLuint valuesVBO = 0;
-    glGenBuffers( 1, &valuesVBO );
-    glBindBuffer( GL_ARRAY_BUFFER, valuesVBO );
-    glBufferData( GL_ARRAY_BUFFER, sizeof( tileValues ), tileValues, GL_STATIC_DRAW );
-
-    GLuint tileVao = 0;
-    glGenVertexArrays( 1, &tileVao );
-    glBindVertexArray( tileVao );
-
-    glBindBuffer( GL_ARRAY_BUFFER, valuesVBO );
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, (8 * sizeof(float)), 0 );
-    glEnableVertexAttribArray( 0 );
-
-    glBindBuffer( GL_ARRAY_BUFFER, valuesVBO );
-    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, (8 * sizeof(float)), (void*)(3 * sizeof(float)) );
-    glEnableVertexAttribArray( 1 );
-
-	glBindBuffer( GL_ARRAY_BUFFER, valuesVBO );
-    glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, (8 * sizeof(float)), (void*)(6 * sizeof(float)) );
-    glEnableVertexAttribArray( 2 );
-
-    glBindVertexArray( 0 );
-    glBindBuffer( GL_ARRAY_BUFFER, 0 );
-    glDeleteBuffers( 1, &valuesVBO );
-
-    return tileVao;
-}   
-
-void drawTile(GLuint textureID, Mat44f baseMVP, Mat44f translation, GLuint vao){
-
+void plane::drawTile(GLuint ID, Mat44f baseMVP, Mat44f translation){
+    textureID = ID;
+    vao = create_full_vao(planeMesh);
 
     glBindTexture(GL_TEXTURE_2D, textureID);
-
-    
-    glUniform3fv( 5, 1, concreteCol );    
-    glUniform1f( 7, concreteShine );
 
     Mat44f MVP = baseMVP * translation;
 
@@ -153,8 +225,38 @@ void drawTile(GLuint textureID, Mat44f baseMVP, Mat44f translation, GLuint vao){
     glUniformMatrix4fv( 1, 1, GL_TRUE, translation.v );
     glBindVertexArray( vao );
 
-    glDrawArrays( GL_TRIANGLES, 0, 6 );
-
+    glDrawArrays( GL_TRIANGLES, 0, planeMesh.positions.size() );
 }
+
+void plane::drawRamp(GLuint ID, Mat44f baseMVP, Mat44f translation){
+    textureID = ID;
+    vao = create_full_vao(rampMesh);
+
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    Mat44f MVP = baseMVP * translation;
+
+    glUniformMatrix4fv( 0, 1, GL_TRUE, MVP.v );
+    glUniformMatrix4fv( 1, 1, GL_TRUE, translation.v );
+    glBindVertexArray( vao );
+
+    glDrawArrays( GL_TRIANGLES, 0, rampMesh.positions.size() );
+}
+
+void plane::drawComplexRamp(GLuint ID, Mat44f baseMVP, Mat44f translation){
+    textureID = ID;
+    vao = create_full_vao(complexRampMesh);
+
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    Mat44f MVP = baseMVP * translation;
+
+    glUniformMatrix4fv( 0, 1, GL_TRUE, MVP.v );
+    glUniformMatrix4fv( 1, 1, GL_TRUE, translation.v );
+    glBindVertexArray( vao );
+
+    glDrawArrays( GL_TRIANGLES, 0, complexRampMesh.positions.size() );
+}
+
 
 #endif

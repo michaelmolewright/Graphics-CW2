@@ -190,6 +190,7 @@ int main() try {
     // RELATIVE PATHS - YET TO TEST FOR MIKEY
     GLuint textureID1 = createTexture("./extra/concrete.png"); //file paths for windows
     GLuint textureID2 = createTexture("./extra/fence.png"); //file paths for windows
+    GLuint textureID3 = createTexture("./extra/wood.jpg");
     glActiveTexture( GL_TEXTURE0 );
     //-----------------------------------------------------------------------------
 
@@ -211,15 +212,14 @@ int main() try {
     //-----------------------------------------------------------------------------
 
     //--------------------------FLOOR----------------------------------------------
-    GLuint tileVAO = createTextureTileVao();
     plane p1;
-    p1.createBox(textureID1);
+    p1.createBox();
+    p1.createRamp();
+    p1.createComplexRamp();
     //-----------------------------------------------------------------------------
 
     // ----------------------------BOWL---------------------------------------------
-    auto bowl = createFinalForm(
-        make_scaling( sizeOfFloor / 9.f, 0.6f, 1.75f ) *
-        make_translation( { -2.f, 2.f, 2.f } ) * make_rotation_x( PI / 2.f ) );
+    auto bowl = createFinalForm( make_translation( { 1.f, -1.f, 0.f } ) * make_scaling(0.25f, 0.5f, 0.11111f) * make_rotation_y(-PI/2.f ) * make_translation( { -2.f, 2.f, 2.f } ) * make_rotation_x( PI / 2.f ) );
     GLuint bowl_vao = create_vao( bowl );
     std::size_t vertexCount = bowl.positions.size();
     // -----------------------------------------------------------------------------
@@ -300,32 +300,32 @@ int main() try {
         }
         animationCounter += 1;
         
-        zLoc += sign * (sizeOfFloor/2000.f);
+        zLoc += sign * (sizeOfFloor/1000.f);
 
-        l2.drawLamp(baseMVP, make_translation({0.f, 0.f, zLoc}), prog.programId(), "light[2]." );
+        l3.drawLamp(baseMVP, make_translation({0.f, 0.f, zLoc}) * make_translation({0.f, 0.f, sizeOfFloor/2.f}), prog.programId(), "light[2]." );
 
         
         setMaterialProperties("concrete");
-        draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}));
+        draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({-5.f,0.f,sizeOfFloor/2.f}) * make_scaling(10.f,1.25f,5.f) * make_rotation_y(-PI/2.f));
 
        //draw_lamp( lightVAO, postVAO, baseMVP,
         //           make_translation( { 0.f, 0.f, 0.f } ) );
 
-        draw_bowl(
-            vertexCount, bowl_vao, baseMVP,
-            make_translation( { sizeOfFloor / 2.f, 0.f, sizeOfFloor / 2.f } ) *
-                make_scaling( 1.f, 1.6f, 1.f ) );
+        //draw_bowl(
+           // vertexCount, bowl_vao, baseMVP,
+          //  make_translation( { sizeOfFloor / 2.f, 0.f, sizeOfFloor / 2.f } ) *
+           //     make_scaling( 1.f, 1.6f, 1.f ) );
 
         draw_rail( railVAO, baseMVP, make_translation( { -1.5f, 0.f, -8.f } ),
                    rail.positions.size() );
 
         // RAMP BOX
         //draw_cube( cubeVAO, baseMVP, rampBoxModel );
-        draw_ramp( rampVAO, baseMVP,
-                   rampBoxModel * make_translation( { 1.f, 0.f, 0.f } ) *
-                       make_rotation_y( kPi_ ) );
-        draw_ramp( rampVAO, baseMVP,
-                   rampBoxModel * make_translation( { 0.f, 0.f, 1.f } ) );
+        //draw_ramp( rampVAO, baseMVP,
+        //           rampBoxModel * make_translation( { 1.f, 0.f, 0.f } ) *
+        //               make_rotation_y( kPi_ ) );
+       // draw_ramp( rampVAO, baseMVP,
+       //            rampBoxModel * make_translation( { 0.f, 0.f, 1.f } ) );
 
         // BOX
         //draw_cube( cubeVAO, baseMVP,
@@ -335,10 +335,10 @@ int main() try {
         setMaterialProperties("shineyMetal");
         draw_rail( railVAO, baseMVP, make_translation({-3.f, 0.f, -4.f}), rail.positions.size() );
         // BIG RAMP
-        draw_ramp( rampVAO, baseMVP,
-                   make_translation( { 10.f, 0.f, 10.f } ) *
-                       make_scaling( 20.f, 1.92f, 6.f ) *
-                       make_rotation_y( kPi_ ) );
+        //draw_ramp( rampVAO, baseMVP,
+       //            make_translation( { 10.f, 0.f, 10.f } ) *
+         //              make_scaling( 20.f, 1.92f, 6.f ) *
+       //               make_rotation_y( kPi_ ) );
 
         //draw_cube( cubeVAO, baseMVP, make_translation({2.f, 0.5f, -3.f}) );
 
@@ -348,22 +348,34 @@ int main() try {
 
         //---------------------------------------DRAWING-TEXTURED-OBJECTS------------------------------
         glUniform1i(10, GL_TRUE);   // flag for drawing textures
+        setMaterialProperties("wood");
+        //p1.drawRamp(textureID1, baseMVP, make_translation({0.f,10.f,0.f}));
+
+
+        p1.drawComplexRamp(textureID3, baseMVP, make_translation({5.f,0.f,0.f}) * make_scaling(2.f,0.5f,2.f));
+
+        p1.drawBox(textureID3, baseMVP, make_translation({5.f,0.f,0.f}) * make_scaling(2.f,0.5f,2.f));
+
+        p1.drawComplexRamp(textureID3, baseMVP, make_translation({-8.f,0.f,4.f}) * make_scaling(2.f,1.f,2.f));
+
+        p1.drawBox(textureID3, baseMVP, make_translation({-8.f,0.f,4.f}) * make_scaling(2.f,1.f,2.f));
+
+
 
         setMaterialProperties("concrete");
-        drawTile(textureID1 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(sizeOfFloor, sizeOfFloor, 1.f) , tileVAO);
 
-        p1.drawBox(baseMVP, make_translation({0.f,0.f,0.f}));
+        p1.drawBox(textureID1, baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(sizeOfFloor, sizeOfFloor, 1.f));
 
         setMaterialProperties("shinyMetal");
         // INSIDE FENCES
-        drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f), tileVAO);//left
-        drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f) , tileVAO);//right
-        drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_scaling(sizeOfFloor, 2.f, 1.f) , tileVAO);//front
+        p1.drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f));//left
+        p1.drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f));//right
+        p1.drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_scaling(sizeOfFloor, 2.f, 1.f));//front
 
         //OUTSIDE FENCES
-        drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f) , tileVAO);//left
-        drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f), tileVAO);//right
-        drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_scaling(sizeOfFloor, 2.f, 1.f) * make_rotation_y(kPi_), tileVAO);//front
+        p1.drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f));//left
+        p1.drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f));//right
+        p1.drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_scaling(sizeOfFloor, 2.f, 1.f) * make_rotation_y(kPi_));//front
         
         // reset
         glBindVertexArray( 0 );

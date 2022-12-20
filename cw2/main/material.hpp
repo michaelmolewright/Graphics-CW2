@@ -35,6 +35,13 @@ float lamp_specular[] = {0.774597f, 0.774597f, 0.774597f};
 float lamp_shine = 100.f;
 //---------------------------------
 
+//-----------wood-----------------
+float wood_ambient[] = {0.2f, 0.2f, 0.2f };
+float wood_diffuse[] = {0.6f, 0.45f, 0.2f };
+float wood_specular[] = {0.34f, 0.34f, 0.34f};
+float wood_shine = 2.f;
+//---------------------------------
+
 void setMaterialProperties(std::string material){
     if (material == "concrete"){
         glUniform3fv(15,1, concrete_ambient);
@@ -59,6 +66,12 @@ void setMaterialProperties(std::string material){
         glUniform3fv(16,1, lamp_diffuse);
         glUniform3fv(17,1, lamp_specular);
         glUniform1f(18, lamp_shine);
+    }
+    else if (material == "wood"){
+        glUniform3fv(15,1, wood_ambient);
+        glUniform3fv(16,1, wood_diffuse);
+        glUniform3fv(17,1, wood_specular);
+        glUniform1f(18, wood_shine);
     }
 }
 
