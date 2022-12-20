@@ -111,7 +111,7 @@ int main() try {
     // Set up event handling
     State_ state{};
     glfwSetWindowUserPointer( window, &state );
-    // glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
+    glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
 
     // Set up event handling
     glfwSetKeyCallback( window, &glfw_callback_key_ );
@@ -181,7 +181,7 @@ int main() try {
 
 
     // CUBE
-    GLuint cubeVAO = create_cube_vao();
+   // GLuint cubeVAO = create_cube_vao();
     
     //--------------------------TEXTURES-------------------------------------------
     // REMEMBER TO CHANGE THIS TO RELATIVE PATH
@@ -224,12 +224,12 @@ int main() try {
     std::size_t vertexCount = bowl.positions.size();
     // -----------------------------------------------------------------------------
     // RAIL
-    auto rail = make_rail( 100, { 0.f, 0.f, 0.f }, kIdentity44f );
-    GLuint railVAO = create_vao( rail );
+    //auto rail = make_rail( 100, { 0.f, 0.f, 0.f }, kIdentity44f );
+   // GLuint railVAO = create_vao( rail );
 
     // CUBE
-    auto cube = make_cube( kIdentity44f );
-    GLuint cubeVAO = create_vao( cube );
+    //auto cube = make_cube( kIdentity44f );
+   // GLuint cubeVAO = create_vao( cube );
 
     // RAMP
     auto ramp = make_ramp( kIdentity44f );
@@ -307,10 +307,9 @@ int main() try {
         
         setMaterialProperties("concrete");
         draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}));
-        glUniform1i( 10, GL_FALSE );
 
-        draw_lamp( lightVAO, postVAO, baseMVP,
-                   make_translation( { 0.f, 0.f, 0.f } ) );
+       //draw_lamp( lightVAO, postVAO, baseMVP,
+        //           make_translation( { 0.f, 0.f, 0.f } ) );
 
         draw_bowl(
             vertexCount, bowl_vao, baseMVP,
@@ -321,7 +320,7 @@ int main() try {
                    rail.positions.size() );
 
         // RAMP BOX
-        draw_cube( cubeVAO, baseMVP, rampBoxModel );
+        //draw_cube( cubeVAO, baseMVP, rampBoxModel );
         draw_ramp( rampVAO, baseMVP,
                    rampBoxModel * make_translation( { 1.f, 0.f, 0.f } ) *
                        make_rotation_y( kPi_ ) );
@@ -329,9 +328,9 @@ int main() try {
                    rampBoxModel * make_translation( { 0.f, 0.f, 1.f } ) );
 
         // BOX
-        draw_cube( cubeVAO, baseMVP,
-                   make_translation( { -8.f, 0.f, -6.f } ) *
-                       make_scaling( 4.f, 0.25f, 3.f ) );
+        //draw_cube( cubeVAO, baseMVP,
+             //      make_translation( { -8.f, 0.f, -6.f } ) *
+                   //    make_scaling( 4.f, 0.25f, 3.f ) );
 
         setMaterialProperties("shineyMetal");
         draw_rail( railVAO, baseMVP, make_translation({-3.f, 0.f, -4.f}), rail.positions.size() );
@@ -341,7 +340,7 @@ int main() try {
                        make_scaling( 20.f, 1.92f, 6.f ) *
                        make_rotation_y( kPi_ ) );
 
-        draw_cube( cubeVAO, baseMVP, make_translation({2.f, 0.5f, -3.f}) );
+        //draw_cube( cubeVAO, baseMVP, make_translation({2.f, 0.5f, -3.f}) );
 
         //-------------------------------------------------------------------------------------------------
         
