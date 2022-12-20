@@ -33,7 +33,7 @@ constexpr float const rampPositions[] = {
 
     1.f, 0.f, 1.f,
     1.f, 1.f, 0.f,
-    0.f, 1.f, 0.f,
+    0.f, 1.f, 0.f, 
 };
 
 // material data
@@ -66,33 +66,6 @@ SimpleMeshData make_ramp( Mat44f aPreTransform ) {
     return SimpleMeshData{ std::move( pos ) };
 }
 
-SimpleMeshData make_ramp_box( Mat44f aPreTransform ) { 
-
-    auto firstRamp = make_ramp( make_translation({ 1.f, 0.f, 0.f }) );
-
-    auto box = make_cube( kIdentity44f );
- 
-    // auto secondRamp = make_ramp( make_translation({ -1.f, 0.f, 0.f }) * make_rotation_y( 3.1415926f ) );
-
-    // auto halfRampBox = concatenate( std::move(firstRamp), std::move(box) );
-    // auto rampBox = concatenate( std::move(halfRampBox), std::move(secondRamp) );
-    auto rampBox = concatenate( std::move(firstRamp), std::move(box) );
-
-    // pre transform each point
-    for ( auto &p : rampBox.positions ) {
-        Vec4f p4{ p.x, p.y, p.z, 1.f };
-        Vec4f t = aPreTransform * p4;
-        t /= t.w;
-
-        p = Vec3f{ t.x, t.y, t.z };
-    }
-
-    return SimpleMeshData{ std::move( rampBox.positions ) };
-}
-
-
-
-
 void draw_ramp( GLuint vao, Mat44f baseMVP, Mat44f model ) {
     Mat44f rampMVP = baseMVP * model;
 
@@ -110,26 +83,6 @@ void draw_ramp( GLuint vao, Mat44f baseMVP, Mat44f model ) {
 
     glBindVertexArray( vao );
     glDrawArrays( GL_TRIANGLES, 0, 24);
-}
-
-void draw_ramp_box( GLuint vao, Mat44f baseMVP, Mat44f model, float size ) {
-    Mat44f rampMVP = baseMVP * model;
-
-    glUniformMatrix4fv( 0, 1, GL_TRUE, rampMVP.v );
-    glUniformMatrix4fv( 1, 1, GL_TRUE, model.v );   // model matrix
-
-    glUniform3fv( 5, 1, rampDiff );    
-    glUniform1f( 7, rampShin );
-
-    // material props
-    // glUniform3fv( 6, 1, cubeAmb );    // amb
-    // glUniform3fv( 7, 1, cubeDiff );   // diff
-    // glUniform3fv( 8, 1, cubeSpec );   // spec
-    // glUniform1f( 9, cubeShin );      // shin
-
-    glBindVertexArray( vao );
-    // for some reason doesnt work dynamically with positions.size
-    glDrawArrays( GL_TRIANGLES, 0, 24 + 36 );
 }
 
 

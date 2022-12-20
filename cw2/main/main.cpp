@@ -38,7 +38,6 @@ constexpr float kPi_ = 3.1415926f;
 // STATE FROM G3
 struct State_ {
     ShaderProgram *prog;
-
 };
 
 camera c;
@@ -146,8 +145,8 @@ int main() try {
     glClearColor( 0.26f, 0.75f, 0.98f, 0.0f );
     glEnable( GL_DEPTH_TEST );
     // glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable( GL_BLEND );
+    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -164,7 +163,7 @@ int main() try {
     // TODO: load shaders
     ShaderProgram prog( { { GL_VERTEX_SHADER, "assets/default.vert" },
                           { GL_FRAGMENT_SHADER, "assets/basicBP.frag" } } );
-                        //   { GL_FRAGMENT_SHADER, "assets/default.frag" } } );
+    //   { GL_FRAGMENT_SHADER, "assets/default.frag" } } );
 
     state.prog = &prog;
 
@@ -175,11 +174,43 @@ int main() try {
     // light position
     GLuint lightVAO = create_light_vao();
 
-    auto post = make_cylinder( true, 100, { 1.f, 0.f, 0.f }, make_rotation_z( kPi_ / 2 ) * make_scaling( 2.f, 0.05f, 0.05f ) );
+    auto post = make_cylinder( true, 100, { 1.f, 0.f, 0.f },
+                               make_rotation_z( kPi_ / 2 ) *
+                                   make_scaling( 2.f, 0.05f, 0.05f ) );
     GLuint postVAO = create_vao( post );
 
+    //--------------------------TEXTURES-------------------------------------------
+    // GLuint textureID1 =
+    // createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/concrete.png");
+    // GLuint textureID2 =
+    // createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/fence.png");
+    // luke
+    // GLuint textureID1 =
+    // createTexture("/home/cserv1_a/soc_ug/sc19ldbm/coursework/graphics/cw2/cw2/extra/concrete.png");
+    // GLuint textureID2 =
+    // createTexture("/home/cserv1_a/soc_ug/sc19ldbm/coursework/graphics/cw2/cw2/extra/fence.png");
+
+    // relative paths
+    GLuint textureID1 = createTexture( "./extra/concrete.png" );
+    GLuint textureID2 = createTexture( "./extra/fence.png" );
+
+    glActiveTexture( GL_TEXTURE0 );
+
+    //-----------------------------------------------------------------------------
+
+    //--------------------------FLOOR----------------------------------------------
+    GLuint tileVAO = createTextureTileVao();
+    //-----------------------------------------------------------------------------
+
+    // ----------------------------BOWL---------------------------------------------
+    auto bowl = createFinalForm(
+        make_scaling( sizeOfFloor / 9.f, 0.6f, 1.75f ) *
+        make_translation( { -2.f, 2.f, 2.f } ) * make_rotation_x( PI / 2.f ) );
+    GLuint bowl_vao = create_vao( bowl );
+    std::size_t vertexCount = bowl.positions.size();
+    // -----------------------------------------------------------------------------
     // RAIL
-    auto rail = make_rail( 100, {0.f,0.f,0.f}, kIdentity44f);
+    auto rail = make_rail( 100, { 0.f, 0.f, 0.f }, kIdentity44f );
     GLuint railVAO = create_vao( rail );
 
     // CUBE
@@ -189,38 +220,8 @@ int main() try {
     // RAMP
     auto ramp = make_ramp( kIdentity44f );
     GLuint rampVAO = create_vao( ramp );
-
-    // RAMP BOX
-    auto rampBox = make_ramp_box( kIdentity44f );
-    GLuint rampBoxVAO = create_vao( rampBox );
-
-    
-    //--------------------------TEXTURES-------------------------------------------
-    // GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/concrete.png");
-    // GLuint textureID2 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/fence.png");
-    // luke
-    // GLuint textureID1 = createTexture("/home/cserv1_a/soc_ug/sc19ldbm/coursework/graphics/cw2/cw2/extra/concrete.png");
-    // GLuint textureID2 = createTexture("/home/cserv1_a/soc_ug/sc19ldbm/coursework/graphics/cw2/cw2/extra/fence.png");
-    
-    // relative paths
-    GLuint textureID1 = createTexture("./extra/concrete.png");
-    GLuint textureID2 = createTexture("./extra/fence.png");
-
-
-    glActiveTexture( GL_TEXTURE0 );
-
-    //-----------------------------------------------------------------------------
-
-
-    //--------------------------FLOOR----------------------------------------------
-    GLuint tileVAO = createTextureTileVao();
-    //-----------------------------------------------------------------------------
-
-    // ----------------------------BOWL---------------------------------------------
-    auto bowl = createFinalForm( make_scaling(sizeOfFloor/9.f, 0.6f, 1.75f) * make_translation({-2.f,2.f,2.f}) * make_rotation_x(PI/2.f) );
-    GLuint bowl_vao = create_vao( bowl );
-    std::size_t vertexCount = bowl.positions.size();
-    // -----------------------------------------------------------------------------
+    Mat44f rampBoxModel =
+        make_translation( { 4.f, 0.f, -6.f } ) * make_scaling( 4.f, 0.5f, 1.f );
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -251,65 +252,110 @@ int main() try {
 
         c.updatePosition();
 
-
         // compute MVP matrix
         Mat44f projection = make_perspective_projection(
             45.f * 3.1415926f / 180.f,   // Yes, a proper π would be useful. (
                                          // C++20: mathematical constants)
             fbwidth / float( fbheight ), 0.1f, 100.0f );
-        Mat44f view = camMat( c.cameraPosition, c.cameraPosition + c.cameraFront, c.cameraUp );
+        Mat44f view = camMat( c.cameraPosition,
+                              c.cameraPosition + c.cameraFront, c.cameraUp );
 
         Mat44f baseMVP = projection * view;
 
         OGL_CHECKPOINT_DEBUG();
 
-        
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glUseProgram( prog.programId() );
 
-
         // UNIFORMS
-        float cameraPos[] = { c.cameraPosition.x, c.cameraPosition.y, c.cameraPosition.z };
+        float cameraPos[] = { c.cameraPosition.x, c.cameraPosition.y,
+                              c.cameraPosition.z };
         glUniform3fv( 2, 1, cameraPos );   // camera position
 
         //-------------------------------------DRAWING-STARTS-HERE-----------------------------------------
 
         //------------------------------------DRAWING-NON-TEXTURED-OBJECTS---------------------------------
-        glUniform1i(10, GL_FALSE);
+        glUniform1i( 10, GL_FALSE );
 
-        draw_lamp( lightVAO, postVAO, baseMVP, make_translation({0.f, 0.f, 0.f}) );
+        draw_lamp( lightVAO, postVAO, baseMVP,
+                   make_translation( { 0.f, 0.f, 0.f } ) );
 
-        draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f})  * make_scaling(1.f, 1.6f, 1.f) );
+        draw_bowl(
+            vertexCount, bowl_vao, baseMVP,
+            make_translation( { sizeOfFloor / 2.f, 0.f, sizeOfFloor / 2.f } ) *
+                make_scaling( 1.f, 1.6f, 1.f ) );
 
-        draw_rail( railVAO, baseMVP, make_translation({-3.f, 0.f, -4.f}), rail.positions.size() );
+        draw_rail( railVAO, baseMVP, make_translation( { -1.5f, 0.f, -8.f } ),
+                   rail.positions.size() );
 
-        // draw_cube( cubeVAO, baseMVP, kIdentity44f );
+        // RAMP BOX
+        draw_cube( cubeVAO, baseMVP, rampBoxModel );
+        draw_ramp( rampVAO, baseMVP,
+                   rampBoxModel * make_translation( { 1.f, 0.f, 0.f } ) *
+                       make_rotation_y( kPi_ ) );
+        draw_ramp( rampVAO, baseMVP,
+                   rampBoxModel * make_translation( { 0.f, 0.f, 1.f } ) );
 
-        draw_ramp( rampVAO, baseMVP, make_translation({10.f, 0.f, 10.f}) * make_scaling(20.f, 1.92f, 6.f) * make_rotation_y( kPi_ ) );
+        // BOX
+        draw_cube( cubeVAO, baseMVP,
+                   make_translation( { -8.f, 0.f, -6.f } ) *
+                       make_scaling( 4.f, 0.25f, 3.f ) );
 
-        draw_ramp_box( rampBoxVAO, baseMVP, kIdentity44f, rampBox.positions.size() );
+        // BIG RAMP
+        draw_ramp( rampVAO, baseMVP,
+                   make_translation( { 10.f, 0.f, 10.f } ) *
+                       make_scaling( 20.f, 1.92f, 6.f ) *
+                       make_rotation_y( kPi_ ) );
 
         //-------------------------------------------------------------------------------------------------
-        
-
 
         //---------------------------------------DRAWING-TEXTURED-OBJECTS------------------------------
-        glUniform1i(10, GL_TRUE); // Set to TRUE
+        glUniform1i( 10, GL_TRUE );   // Set to TRUE
 
-
-        drawTile(textureID1 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(sizeOfFloor, sizeOfFloor, 1.f) , tileVAO);
-
+        drawTile(
+            textureID1, baseMVP,
+            make_translation( { -sizeOfFloor / 2.f, 0.f, sizeOfFloor / 2.f } ) *
+                make_rotation_x( -kPi_ / 2.f ) *
+                make_scaling( sizeOfFloor, sizeOfFloor, 1.f ),
+            tileVAO );
 
         // INSIDE FENCES
-        drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f), tileVAO);//left
-        drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f) , tileVAO);//right
-        drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_scaling(sizeOfFloor, 2.f, 1.f) , tileVAO);//front
+        drawTile(
+            textureID2, baseMVP,
+            make_translation( { -sizeOfFloor / 2.f, 0.f, sizeOfFloor / 2.f } ) *
+                make_rotation_y( kPi_ / 2.f ) *
+                make_scaling( sizeOfFloor, 2.f, 1.f ),
+            tileVAO );   // left
+        drawTile(
+            textureID2, baseMVP,
+            make_translation( { sizeOfFloor / 2.f, 0.f, -sizeOfFloor / 2.f } ) *
+                make_rotation_y( -kPi_ / 2.f ) *
+                make_scaling( sizeOfFloor, 2.f, 1.f ),
+            tileVAO );   // right
+        drawTile( textureID2, baseMVP,
+                  make_translation(
+                      { -sizeOfFloor / 2.f, 0.f, -sizeOfFloor / 2.f } ) *
+                      make_scaling( sizeOfFloor, 2.f, 1.f ),
+                  tileVAO );   // front
 
-        //OUTSIDE FENCES
-        drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f) , tileVAO);//left
-        drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f), tileVAO);//right
-        drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_scaling(sizeOfFloor, 2.f, 1.f) * make_rotation_y(kPi_), tileVAO);//front
-        
+        // OUTSIDE FENCES
+        drawTile( textureID2, baseMVP,
+                  make_translation(
+                      { -sizeOfFloor / 2.f, 0.f, -sizeOfFloor / 2.f } ) *
+                      make_rotation_y( -kPi_ / 2.f ) *
+                      make_scaling( sizeOfFloor, 2.f, 1.f ),
+                  tileVAO );   // left
+        drawTile(
+            textureID2, baseMVP,
+            make_translation( { sizeOfFloor / 2.f, 0.f, sizeOfFloor / 2.f } ) *
+                make_rotation_y( kPi_ / 2.f ) *
+                make_scaling( sizeOfFloor, 2.f, 1.f ),
+            tileVAO );   // right
+        drawTile(
+            textureID2, baseMVP,
+            make_translation( { sizeOfFloor / 2.f, 0.f, -sizeOfFloor / 2.f } ) *
+                make_scaling( sizeOfFloor, 2.f, 1.f ) * make_rotation_y( kPi_ ),
+            tileVAO );   // front
 
         // reset
         glBindVertexArray( 0 );
@@ -340,18 +386,19 @@ void glfw_callback_error_( int aErrNum, char const *aErrDesc ) {
     std::fprintf( stderr, "GLFW error: %s (%d)\n", aErrDesc, aErrNum );
 }
 
-void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction, int ) {
+void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction,
+                         int ) {
 
     if ( GLFW_KEY_ESCAPE == aKey && GLFW_PRESS == aAction ) {
         glfwSetWindowShouldClose( aWindow, GLFW_TRUE );
         return;
     }
 
-    c.movement(aKey, aAction);
+    c.movement( aKey, aAction );
 }
 
 void mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
-    
+
     float xoffset = xP - startX;
     float yoffset = startY - yP;
     startX = xP;
@@ -374,7 +421,7 @@ void mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
     dir.y = sinf( pitch * 0.01745329251 );
     dir.z = sinf( yaw * 0.01745329251 ) * cosf( pitch * 0.01745329251 );
 
-    //state->c.cameraFront = normalize( dir );
+    // state->c.cameraFront = normalize( dir );
     c.cameraFront = normalize( dir );
 }
 }   // namespace
