@@ -39,11 +39,6 @@ GLuint create_vao( SimpleMeshData const &aMeshData ) {
     glBufferData( GL_ARRAY_BUFFER, aMeshData.positions.size() * sizeof( Vec3f ),
                   aMeshData.positions.data(), GL_STATIC_DRAW );
 
-    // GLuint colorVBO = 0;
-    // glGenBuffers( 1, &colorVBO );
-    // glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
-    // glBufferData( GL_ARRAY_BUFFER, aMeshData.colors.size() * sizeof( Vec3f ),
-    //               aMeshData.colors.data(), GL_STATIC_DRAW );
 
     std::vector<Vec3f> normals = calculate_normals( aMeshData );
     GLuint normalVBO = 0;
@@ -51,11 +46,7 @@ GLuint create_vao( SimpleMeshData const &aMeshData ) {
     glBindBuffer( GL_ARRAY_BUFFER, normalVBO );
     glBufferData( GL_ARRAY_BUFFER, normals.size() * sizeof( Vec3f ),
                   normals.data(), GL_STATIC_DRAW );
-    // GLuint colorVBO = 0;
-    // glGenBuffers( 1, &colorVBO );
-    // glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
-    // glBufferData( GL_ARRAY_BUFFER, aMeshData.colors.size() * sizeof( Vec3f ),
-    //               aMeshData.colors.data(), GL_STATIC_DRAW );
+
 
     GLuint vao = 0;
     glGenVertexArrays( 1, &vao );
@@ -65,13 +56,9 @@ GLuint create_vao( SimpleMeshData const &aMeshData ) {
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
     glEnableVertexAttribArray( 0 );
 
-    // glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
-    // glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, 0 );
-    // glEnableVertexAttribArray( 1 );
 
     // NORMALS
     glBindBuffer( GL_ARRAY_BUFFER, normalVBO );
-    // glBindBuffer( GL_ARRAY_BUFFER, colorVBO );
     glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 0, 0 );
     glEnableVertexAttribArray( 1 );
 
@@ -80,8 +67,6 @@ GLuint create_vao( SimpleMeshData const &aMeshData ) {
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
     glDeleteBuffers( 1, &positionVBO );
     glDeleteBuffers( 1, &normalVBO );
-    // glDeleteBuffers( 1, &colorVBO );
-    // glDeleteBuffers( 1, &colorVBO );
 
     return vao;
 }

@@ -7,6 +7,7 @@
 
 // vertices and normals
 constexpr float const cubePositions[] = {
+    // Back Face
      0.5f,  0.5f, -0.5f,    0.0f,  0.0f, -1.0f, 
      0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f, 
     -0.5f, -0.5f, -0.5f,    0.0f,  0.0f, -1.0f, 
