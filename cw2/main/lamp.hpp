@@ -1,6 +1,10 @@
 #include "cube.hpp"
 #include "cylinder.hpp"
+#include "bowl.hpp"
 
+
+
+float const mypi = 3.1415926f;
 // POST UNIFORMS
 float const postAmb[] =  { 0.f, 0.f, 0.f };
 float const postDiff[] = { 0.01f, 0.01f, 0.01f };
@@ -18,6 +22,14 @@ float const lightIncoming[] = { 1.0f, 1.f, 1.0f };
 
 Mat44f basicLightModel = make_translation( lightPositionVector )
                         * make_scaling( 0.2f, 0.2f, 0.2f );
+
+SimpleMeshData createLamp(float height){
+    SimpleMeshData post = make_cylinder( true, 100, { 1.f, 0.f, 0.f }, make_scaling(0.25f, height, 0.25f) * make_rotation_z(mypi/2.f) );
+    SimpleMeshData sphereLight = createSphere( make_translation({0.f,height,0.f}) * make_scaling(0.4f, 0.4f, 0.4f) * make_translation({0.f,2.f,0.f} ));
+    SimpleMeshData finalLamp = concatenate(post, sphereLight);
+    return finalLamp;
+}
+
 
 GLuint create_light_vao() {
     // LIGHT CUBE
@@ -96,4 +108,29 @@ void draw_lamp( GLuint lightVAO, GLuint postVAO, Mat44f MVP, Mat44f aPreTransfor
     glDrawArrays( GL_TRIANGLES, 0, 1200 );
 
 }
+
+void draw_lamp_new( int vertexCount ,GLuint postVAO, Mat44f MVP, Mat44f aPreTransform ){
+    
+    
+    float lightPosition[] = { 0.f, 10.8f, 0.f };
+    float lightAmbient[] = { 1.f, 1.f, 1.f};
+    float lightDiffuse[] = { 0.2f, 0.2f, 0.2f};
+    float lightSpecular[] = { 1.f, 1.f, 1.f};
+
+    glUniform3fv(11,1, lightPosition);
+        
+    glUniform3fv(12,1, lightAmbient);
+    
+    glUniform3fv( 13, 1, lightDiffuse );
+    
+    glUniform3fv(14,1, lightSpecular);
+
+    Mat44f newMVP = MVP * aPreTransform;
+    glBindVertexArray( postVAO );
+    glUniformMatrix4fv( 0, 1, GL_TRUE, newMVP.v );
+    glUniformMatrix4fv( 1, 1, GL_TRUE, aPreTransform.v );
+    glDrawArrays( GL_TRIANGLES, 0, vertexCount );
+}
+
+
 

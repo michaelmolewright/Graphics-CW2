@@ -9,9 +9,9 @@ class camera{
         Vec3f cameraPosition = {0.f, 5.f, 20.f};
         Vec3f cameraFront = {0.f,0.f,-1.f};
         Vec3f cameraUp = {0.f,1.f,0.f};
-        float fastSpeed = 0.5f;
-        float slowSpeed = 0.09f;
-        float normalSpeed = 0.175f;
+        float fastSpeed = 0.2f;
+        float slowSpeed = 0.03f;
+        float normalSpeed = 0.1f;
         float cameraSpeed = normalSpeed;
 
 

@@ -1,3 +1,5 @@
+#ifndef Bowl
+#define Bowl
 
 #include <vector>
 
@@ -8,6 +10,7 @@
 
 #include "../vmlib/vec3.hpp"
 #include "../vmlib/mat44.hpp"
+
 static Vec3f const middleOfSphere = {0.f, 0.f, 0.f};
 static float const bowlAmb[] = { 0.25f, 0.20725f, 0.20725f };
 static float const bowlDiff[] = { 1.f, 0.829f, 0.829f };
@@ -25,8 +28,9 @@ struct tri{
 
 const float PI = 3.1415926f;
 
+SimpleMeshData createSphere(Mat44f preTransform);
 
-SimpleMeshData createSphere();
+SimpleMeshData createQuarterSphere();
 
 SimpleMeshData createDome( 
     tri startingTri,
@@ -67,3 +71,5 @@ void draw_bowl(std::size_t size, GLuint vao, Mat44f MVP, Mat44f transform);
 std::vector<Vec3f> transformPoints(std::vector<Vec3f> input, Mat44f transform);
 
 std::vector<Vec3f> transformNormals(std::vector<Vec3f> input, Mat44f transform);
+
+#endif

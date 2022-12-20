@@ -28,6 +28,8 @@
 #include "bowl.hpp"
 #include "rail.hpp"
 #include "tile.hpp"
+#include "material.hpp"
+#include "newLamp.hpp"
 #include "ramp.hpp"
 
 namespace {
@@ -136,10 +138,9 @@ int main() try {
     setup_gl_debug_output();
 #endif   // ~ !NDEBUG
 
-    // Global GL state
+    //-----------GLOBAL-GL-SETUP-------------------------
     OGL_CHECKPOINT_ALWAYS();
 
-    // TODO: global GL setup goes here
     glEnable( GL_FRAMEBUFFER_SRGB );
     glEnable( GL_CULL_FACE );
     glClearColor( 0.26f, 0.75f, 0.98f, 0.0f );
@@ -149,6 +150,9 @@ int main() try {
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
     OGL_CHECKPOINT_ALWAYS();
+    //-----------------------------------------------------
+
+
 
     // Get actual framebuffer size.
     // This can be different from the window size, as standard window
@@ -162,44 +166,54 @@ int main() try {
     // Other initialization & loading
     // TODO: load shaders
     ShaderProgram prog( { { GL_VERTEX_SHADER, "assets/default.vert" },
-                          { GL_FRAGMENT_SHADER, "assets/basicBP.frag" } } );
-    //   { GL_FRAGMENT_SHADER, "assets/default.frag" } } );
+                          { GL_FRAGMENT_SHADER, "assets/workingThreeLights.frag" } } );
+                        //   { GL_FRAGMENT_SHADER, "assets/default.frag" } } );
 
     state.prog = &prog;
 
     OGL_CHECKPOINT_ALWAYS();
 
-    // TODO: VBO AND VAO setup
 
-    // light position
-    GLuint lightVAO = create_light_vao();
+    //--------------------RAIL----------------------------------------------------
+    auto rail = make_rail( 100, {0.f,0.f,0.f}, kIdentity44f);
+    GLuint railVAO = create_vao( rail );
+    //----------------------------------------------------------------------------
 
-    auto post = make_cylinder( true, 100, { 1.f, 0.f, 0.f },
-                               make_rotation_z( kPi_ / 2 ) *
-                                   make_scaling( 2.f, 0.05f, 0.05f ) );
-    GLuint postVAO = create_vao( post );
 
+    // CUBE
+    GLuint cubeVAO = create_cube_vao();
+    
     //--------------------------TEXTURES-------------------------------------------
-    // GLuint textureID1 =
-    // createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/concrete.png");
-    // GLuint textureID2 =
-    // createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/fence.png");
-    // luke
-    // GLuint textureID1 =
-    // createTexture("/home/cserv1_a/soc_ug/sc19ldbm/coursework/graphics/cw2/cw2/extra/concrete.png");
-    // GLuint textureID2 =
-    // createTexture("/home/cserv1_a/soc_ug/sc19ldbm/coursework/graphics/cw2/cw2/extra/fence.png");
-
-    // relative paths
-    GLuint textureID1 = createTexture( "./extra/concrete.png" );
-    GLuint textureID2 = createTexture( "./extra/fence.png" );
-
+    // REMEMBER TO CHANGE THIS TO RELATIVE PATH
+    // GLuint textureID1 = createTexture("C:\\Users\\mikey\\Documents\\graphics\\graphics_cw2\\cw2\\extra\\concrete.png"); //file paths for windows
+    // GLuint textureID2 = createTexture("C:\\Users\\mikey\\Documents\\graphics\\graphics_cw2\\cw2\\extra\\fence.png"); //file paths for windows
+    // RELATIVE PATHS - YET TO TEST FOR MIKEY
+    GLuint textureID1 = createTexture("./extra/concrete.png"); //file paths for windows
+    GLuint textureID2 = createTexture("./extra/fence.png"); //file paths for windows
     glActiveTexture( GL_TEXTURE0 );
+    //-----------------------------------------------------------------------------
 
+    //-----------------------------------------------------------------------------
+    
+
+
+    //--------------------------------LIGHTS---------------------------------------
+    lamp l1;
+    l1.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f}, { 0.2f, 0.2f, 0.2f});
+    lamp l2;
+    l2.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f}, { 0.5f, 0.5f, 0.5f});
+    lamp l3;
+    l3.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f}, { 1.f, 1.f, 1.f});
+
+    int animationCounter = 0;
+    float zLoc = 0.f;
+    float sign = 1.f;
     //-----------------------------------------------------------------------------
 
     //--------------------------FLOOR----------------------------------------------
     GLuint tileVAO = createTextureTileVao();
+    plane p1;
+    p1.createBox(textureID1);
     //-----------------------------------------------------------------------------
 
     // ----------------------------BOWL---------------------------------------------
@@ -252,19 +266,17 @@ int main() try {
 
         c.updatePosition();
 
-        // compute MVP matrix
-        Mat44f projection = make_perspective_projection(
-            45.f * 3.1415926f / 180.f,   // Yes, a proper π would be useful. (
-                                         // C++20: mathematical constants)
-            fbwidth / float( fbheight ), 0.1f, 100.0f );
-        Mat44f view = camMat( c.cameraPosition,
-                              c.cameraPosition + c.cameraFront, c.cameraUp );
+        // compute baseMVP matrix i.e Proj * view
+        Mat44f projection = make_perspective_projection(60.f * 3.1415926f / 180.f, fbwidth / float( fbheight ), 0.1f, 100.0f );
+
+        Mat44f view = camMat( c.cameraPosition, c.cameraPosition + c.cameraFront, c.cameraUp );
 
         Mat44f baseMVP = projection * view;
 
         OGL_CHECKPOINT_DEBUG();
 
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
         glUseProgram( prog.programId() );
 
         // UNIFORMS
@@ -275,6 +287,26 @@ int main() try {
         //-------------------------------------DRAWING-STARTS-HERE-----------------------------------------
 
         //------------------------------------DRAWING-NON-TEXTURED-OBJECTS---------------------------------
+        glUniform1i(10, GL_FALSE);  // flag for drawing textures
+
+        
+        l1.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}), prog.programId(), "light[0]." );
+        l2.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}), prog.programId(), "light[1]." );
+
+
+        //very simple animation
+        if (animationCounter % 1000 == 0){
+            sign *= -1.f;
+        }
+        animationCounter += 1;
+        
+        zLoc += sign * (sizeOfFloor/2000.f);
+
+        l2.drawLamp(baseMVP, make_translation({0.f, 0.f, zLoc}), prog.programId(), "light[2]." );
+
+        
+        setMaterialProperties("concrete");
+        draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}));
         glUniform1i( 10, GL_FALSE );
 
         draw_lamp( lightVAO, postVAO, baseMVP,
@@ -301,62 +333,39 @@ int main() try {
                    make_translation( { -8.f, 0.f, -6.f } ) *
                        make_scaling( 4.f, 0.25f, 3.f ) );
 
+        setMaterialProperties("shineyMetal");
+        draw_rail( railVAO, baseMVP, make_translation({-3.f, 0.f, -4.f}), rail.positions.size() );
         // BIG RAMP
         draw_ramp( rampVAO, baseMVP,
                    make_translation( { 10.f, 0.f, 10.f } ) *
                        make_scaling( 20.f, 1.92f, 6.f ) *
                        make_rotation_y( kPi_ ) );
 
+        draw_cube( cubeVAO, baseMVP, make_translation({2.f, 0.5f, -3.f}) );
+
         //-------------------------------------------------------------------------------------------------
+        
+
 
         //---------------------------------------DRAWING-TEXTURED-OBJECTS------------------------------
-        glUniform1i( 10, GL_TRUE );   // Set to TRUE
+        glUniform1i(10, GL_TRUE);   // flag for drawing textures
 
-        drawTile(
-            textureID1, baseMVP,
-            make_translation( { -sizeOfFloor / 2.f, 0.f, sizeOfFloor / 2.f } ) *
-                make_rotation_x( -kPi_ / 2.f ) *
-                make_scaling( sizeOfFloor, sizeOfFloor, 1.f ),
-            tileVAO );
+        setMaterialProperties("concrete");
+        drawTile(textureID1 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(sizeOfFloor, sizeOfFloor, 1.f) , tileVAO);
 
+        p1.drawBox(baseMVP, make_translation({0.f,0.f,0.f}));
+
+        setMaterialProperties("shinyMetal");
         // INSIDE FENCES
-        drawTile(
-            textureID2, baseMVP,
-            make_translation( { -sizeOfFloor / 2.f, 0.f, sizeOfFloor / 2.f } ) *
-                make_rotation_y( kPi_ / 2.f ) *
-                make_scaling( sizeOfFloor, 2.f, 1.f ),
-            tileVAO );   // left
-        drawTile(
-            textureID2, baseMVP,
-            make_translation( { sizeOfFloor / 2.f, 0.f, -sizeOfFloor / 2.f } ) *
-                make_rotation_y( -kPi_ / 2.f ) *
-                make_scaling( sizeOfFloor, 2.f, 1.f ),
-            tileVAO );   // right
-        drawTile( textureID2, baseMVP,
-                  make_translation(
-                      { -sizeOfFloor / 2.f, 0.f, -sizeOfFloor / 2.f } ) *
-                      make_scaling( sizeOfFloor, 2.f, 1.f ),
-                  tileVAO );   // front
+        drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f), tileVAO);//left
+        drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f) , tileVAO);//right
+        drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_scaling(sizeOfFloor, 2.f, 1.f) , tileVAO);//front
 
-        // OUTSIDE FENCES
-        drawTile( textureID2, baseMVP,
-                  make_translation(
-                      { -sizeOfFloor / 2.f, 0.f, -sizeOfFloor / 2.f } ) *
-                      make_rotation_y( -kPi_ / 2.f ) *
-                      make_scaling( sizeOfFloor, 2.f, 1.f ),
-                  tileVAO );   // left
-        drawTile(
-            textureID2, baseMVP,
-            make_translation( { sizeOfFloor / 2.f, 0.f, sizeOfFloor / 2.f } ) *
-                make_rotation_y( kPi_ / 2.f ) *
-                make_scaling( sizeOfFloor, 2.f, 1.f ),
-            tileVAO );   // right
-        drawTile(
-            textureID2, baseMVP,
-            make_translation( { sizeOfFloor / 2.f, 0.f, -sizeOfFloor / 2.f } ) *
-                make_scaling( sizeOfFloor, 2.f, 1.f ) * make_rotation_y( kPi_ ),
-            tileVAO );   // front
-
+        //OUTSIDE FENCES
+        drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f) , tileVAO);//left
+        drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f), tileVAO);//right
+        drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_scaling(sizeOfFloor, 2.f, 1.f) * make_rotation_y(kPi_), tileVAO);//front
+        
         // reset
         glBindVertexArray( 0 );
         glUseProgram( 0 );
@@ -394,11 +403,11 @@ void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction,
         return;
     }
 
-    c.movement( aKey, aAction );
+    c.movement(aKey, aAction); //camera movement
 }
 
 void mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
-
+    
     float xoffset = xP - startX;
     float yoffset = startY - yP;
     startX = xP;
@@ -417,11 +426,13 @@ void mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
         pitch = -89.0f;
 
     Vec3f dir;
+
+    // 0.01745329251 is degrees to radians conversion
     dir.x = cosf( yaw * 0.01745329251 ) * cosf( pitch * 0.01745329251 );
     dir.y = sinf( pitch * 0.01745329251 );
     dir.z = sinf( yaw * 0.01745329251 ) * cosf( pitch * 0.01745329251 );
 
-    // state->c.cameraFront = normalize( dir );
+    //state->c.cameraFront = normalize( dir );
     c.cameraFront = normalize( dir );
 }
 }   // namespace
