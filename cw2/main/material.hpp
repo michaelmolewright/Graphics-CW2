@@ -1,5 +1,5 @@
-#ifndef materials
-#define materials
+#ifndef MATERIALS_HEADER_GUARD
+#define MATERIALS_HEADER_GUARD
 
 #include <cstdlib>
 #include <cstdio>

@@ -8,6 +8,7 @@
 #include "../vmlib/vec3.hpp"
 #include "../vmlib/vec4.hpp"
 #include "../vmlib/mat44.hpp"
+#include "../vmlib/vec2.hpp"
 
 struct SimpleMeshData {
     std::vector<Vec3f> positions;
@@ -25,6 +26,7 @@ GLuint create_full_vao( SimpleMeshData const & );
 
 SimpleMeshData transformPositions(SimpleMeshData, Mat44f transform);
 
+GLuint create_obj_vao( SimpleMeshData const & );
 
 
 #endif   // SIMPLE_MESH_HPP_C6B749D6_C83B_434C_9E58_F05FC27FEFC9

@@ -34,6 +34,8 @@
 #include "material.hpp"
 #include "newLamp.hpp"
 #include "ramp.hpp"
+#include "loadobj.hpp"
+#include "skateboard.hpp"
 
 namespace {
 constexpr char const *kWindowTitle = "COMP3811 - Coursework 2";
@@ -206,6 +208,9 @@ int main() try {
     GLuint textureID1 = createTexture("./extra/concrete.png"); //file paths for windows
     GLuint textureID2 = createTexture("./extra/fence.png"); //file paths for windows
     GLuint textureID3 = createTexture("./extra/wood.jpg");
+    GLuint textureID4 = createTexture("./assets/skateboard/texture.jpg");
+
+
     glActiveTexture( GL_TEXTURE0 );
     //-----------------------------------------------------------------------------
 
@@ -254,6 +259,14 @@ int main() try {
     Mat44f rampBoxModel =
         make_translation( { 4.f, 0.f, -6.f } ) * make_scaling( 4.f, 0.5f, 1.f );
 
+
+
+    // SKATEBOARD
+    auto skateboardMesh = load_wavefront_obj("./assets/skateboard/skateboard.obj");
+    GLuint skateboardVAO = create_obj_vao(skateboardMesh);
+    size_t skateboardVertexCount = skateboardMesh.positions.size();
+    Mat44f skateboardModel = make_translation({0.f, 0.5f, 0.f}); 
+    Mat44f secondSkateBoardModel = make_translation({0.f, 0.5f, 1.f}) * make_rotation_x( kPi_ ); 
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -312,6 +325,7 @@ int main() try {
         Mat44f view = camMat( c.cameraPosition, c.cameraPosition + c.cameraFront, c.cameraUp );
 
         Mat44f baseMVP = projection * view;
+
 
         OGL_CHECKPOINT_DEBUG();
 
@@ -400,6 +414,11 @@ int main() try {
         p1.drawComplexRamp(textureID3, baseMVP, make_translation({-8.f,0.f,4.f}) * make_scaling(2.f,1.f,2.f));
 
         p1.drawBox(textureID3, baseMVP, make_translation({-8.f,0.f,4.f}) * make_scaling(2.f,1.f,2.f));
+
+
+        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, skateboardModel );
+        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, secondSkateBoardModel );
+
 
 
 
