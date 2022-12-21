@@ -447,10 +447,14 @@ void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction,
 
     if ( GLFW_KEY_M == aKey && GLFW_PRESS == aAction ) {
         show_demo_window = !show_demo_window;
-        glfwSetInputMode( aWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL );
+        if (show_demo_window){
+            glfwSetInputMode( aWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL );
+        }
+        else{
+            glfwSetInputMode( aWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
+        }
         return;
     }
-
 
     c.movement(aKey, aAction); //camera movement
 }
@@ -482,7 +486,9 @@ void mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
     dir.z = sinf( yaw * 0.01745329251f ) * cosf( pitch * 0.01745329251f );
 
     //state->c.cameraFront = normalize( dir );
-    c.cameraFront = normalize( dir );
+    if (!show_demo_window){
+        c.cameraFront = normalize( dir );
+    }
 }
 }   // namespace
 
