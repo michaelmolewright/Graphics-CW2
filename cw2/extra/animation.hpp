@@ -12,14 +12,15 @@ Mat44f linearMotion(float distance, size_t aniLen, size_t counter, Vec3f directi
 }
 
 Mat44f ollie(float distance, float height, size_t aniLen, size_t counter){
+    float length = 1.f;
     float rotAmount = -newPI/4.f;
     float stepDist = distance / aniLen;
     float stepHeight = height / aniLen;
     float stepRot = rotAmount / aniLen;
     if (counter < (aniLen/2))
-        return make_translation({0.f,stepHeight * counter ,stepDist * counter}) * make_rotation_x(stepRot * (counter*2));
+        return make_translation({0.f,stepHeight * counter ,stepDist * counter}) * make_translation({0.f,0.f,-length}) * make_rotation_x(stepRot * (counter*2)) * make_translation({0.f,0.f,length});
     else
-        return make_translation({0.f,stepHeight * counter ,stepDist * counter}) * make_rotation_x(rotAmount -  (stepRot * ( (counter - (aniLen/2)) * 2)));
+        return make_translation({0.f,stepHeight * counter ,stepDist * counter}) * make_translation({0.f,0.f,-length}) * make_rotation_x(rotAmount -  (stepRot * ( (counter - (aniLen/2)) * 2))) * make_translation({0.f,0.f,length});
 }
 
 Mat44f kickflip(float distance, float fall, size_t aniLen, size_t counter){
