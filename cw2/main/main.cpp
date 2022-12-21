@@ -24,6 +24,7 @@
 //#include "../extra/camera.hpp"
 #include "../extra/newCamera.hpp"
 #include "../extra/textures.hpp"
+#include "../extra/animation.hpp"
 #include "floor.hpp"
 #include "cylinder.hpp"
 #include "half_pipe.hpp"
@@ -192,7 +193,7 @@ int main() try {
 
 
     //--------------------RAIL----------------------------------------------------
-    auto rail = make_rail( 100, {0.f,0.f,0.f}, kIdentity44f);
+    auto rail = make_rail( 100, {0.f,0.f,0.f}, make_scaling(0.3333f, 0.75f,1.f));
     GLuint railVAO = create_vao( rail );
     //----------------------------------------------------------------------------
 
@@ -349,14 +350,14 @@ int main() try {
 
 
         //very simple animation
-        if (animationCounter % 1000 == 0){
+        /*if (animationCounter % 1000 == 0){
             sign *= -1.f;
         }
         animationCounter += 1;
         
-        zLoc += sign * (sizeOfFloor/1000.f);
+        zLoc += sign * (sizeOfFloor/1000.f);*/
 
-        l3.drawLamp(baseMVP, make_translation({0.f, 0.f, zLoc}) * make_translation({0.f, 0.f, sizeOfFloor/2.f}), prog.programId(), "light[2]." );
+        l3.drawLamp(baseMVP, make_translation({-8.f, 0.f, 3}) * make_translation({0.f, 0.f, sizeOfFloor/2.f}), prog.programId(), "light[2]." );
 
         
         setMaterialProperties("concrete");
@@ -388,7 +389,7 @@ int main() try {
                    //    make_scaling( 4.f, 0.25f, 3.f ) );
 
         setMaterialProperties("shineyMetal");
-        draw_rail( railVAO, baseMVP, make_translation({-3.f, 0.f, -4.f}), rail.positions.size() );
+        draw_rail( railVAO, baseMVP,make_translation({0.f,0.f,-5.f}) * make_translation({0.5f, 0.f, 5.5f}) * make_rotation_y(-PI/2.f)* make_scaling(3.f,1.75f, 1.f) , rail.positions.size() );
         // BIG RAMP
         //draw_ramp( rampVAO, baseMVP,
        //            make_translation( { 10.f, 0.f, 10.f } ) *
@@ -414,6 +415,11 @@ int main() try {
         p1.drawComplexRamp(textureID3, baseMVP, make_translation({-8.f,0.f,4.f}) * make_scaling(2.f,1.f,2.f));
 
         p1.drawBox(textureID3, baseMVP, make_translation({-8.f,0.f,4.f}) * make_scaling(2.f,1.f,2.f));
+
+        //animation space
+        Mat44f animationTranslation = skateboardAimation(animationCounter);
+        p1.drawBox(textureID3, baseMVP, make_translation({0.f,0.f,-5.f}) * animationTranslation);
+        animationCounter += 2;
 
 
         draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, skateboardModel );

@@ -62,7 +62,7 @@ vec3 calcThreeLights(Light light, vec3 normal, vec3 fragPos, vec3 camDir){
     float dist = length(light.position - fragPos);
 
     // inverse square law
-    light.color = light.color / (0.02 * dist * dist);
+    light.color = light.color / (0.01 * dist * dist);
 
     //diffuse Prep
     vec3 norm = normalize(normal);
