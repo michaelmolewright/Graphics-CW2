@@ -418,13 +418,12 @@ int main() try {
 
         //animation space
         Mat44f animationTranslation = skateboardAimation(animationCounter);
-        p1.drawBox(textureID3, baseMVP, make_translation({0.f,0.f,-5.f}) * animationTranslation);
+        //p1.drawBox(textureID3, baseMVP, kIdentity44f);
+
+
+        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({0.f,0.f,-5.f}) * animationTranslation * make_scaling(0.64f, 0.391f, 2.5f) * make_translation({0.5f,0.5f,-0.5f}) * make_rotation_y(PI/2.f ) * make_scaling(1.f/2.5f, 1.f/0.391f, 1.f/0.64f));
+        //draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, secondSkateBoardModel );
         animationCounter += 2;
-
-
-        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, skateboardModel );
-        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, secondSkateBoardModel );
-
 
 
 
