@@ -252,9 +252,6 @@ int main() try {
     Mat44f rampBoxModel =
         make_translation( { 4.f, 0.f, -6.f } ) * make_scaling( 4.f, 0.5f, 1.f );
 
-    float aR1= 0.2f, aG1= 0.2f, aB1= 0.2f, dR1= 0.2f, dG1= 0.2f, dB1= 0.2f, sR1= 0.2f, sG1= 0.2f, sB1 = 0.2f;
-    float aR2, aG2, aB2, dR2, dG2, dB2, sR2, sG2, sB2 = 0.2f;
-    float aR3, aG3, aB3, dR3, dG3, dB3, sR3, sG3, sB3 = 0.2f;
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -291,14 +288,20 @@ int main() try {
 
         if (show_window)
         {
-            ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+            ImGui::Begin("Light Control Menu");
 
-            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
 
             ImGui::ColorEdit3("Light 1 ambient", (float*)&l1.lightAmbient);
             ImGui::ColorEdit3("Light 1 diffuse", (float*)&l1.lightDiffuse);
             ImGui::ColorEdit3("Light 1 specular", (float*)&l1.lightSpecular);
-            //ImGui::SliderFloat("Specular Channel B", &sB1, 0.0f, 1.0f);
+
+            ImGui::ColorEdit3("Light 2 ambient", (float*)&l2.lightAmbient);
+            ImGui::ColorEdit3("Light 2 diffuse", (float*)&l2.lightDiffuse);
+            ImGui::ColorEdit3("Light 2 specular", (float*)&l2.lightSpecular);
+
+            ImGui::ColorEdit3("Light 3 ambient", (float*)&l3.lightAmbient);
+            ImGui::ColorEdit3("Light 3 diffuse", (float*)&l3.lightDiffuse);
+            ImGui::ColorEdit3("Light 3 specular", (float*)&l3.lightSpecular);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
             ImGui::End();

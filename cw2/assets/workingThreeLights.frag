@@ -66,7 +66,7 @@ void main()
 
 
     vec3 camDir = normalize(cameraPos - fragPos);
-    vec3 result;
+    vec3 result = {0.f, 0.f, 0.f};
 
     for(int i = 0; i < 3; i++){
         result += calcThreeLights(light[i], normal, fragPos, camDir);
