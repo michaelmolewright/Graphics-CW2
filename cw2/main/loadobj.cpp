@@ -1,10 +1,12 @@
 #include "loadobj.hpp"
 #include "../support/error.hpp"
+#include <iostream>
 
-// function taken from exG4
+// function originally taken from exG4
 SimpleMeshData load_wavefront_obj( char const *aPath ) {
     // Ask rapidobj to load the requested file
-    auto result = rapidobj::ParseFile( aPath );
+    // ignore MTL file (as obj doesn't have one)
+    auto result = rapidobj::ParseFile( aPath, rapidobj::MaterialLibrary::Ignore() );
     if ( result.error )
         throw Error( "Unable to load OBJ file ’%s’: %s", aPath,
                      result.error.code.message().c_str() );
@@ -31,7 +33,6 @@ SimpleMeshData load_wavefront_obj( char const *aPath ) {
                 result.attributes.positions[idx.position_index * 3 + 2] } );
 
             // normals
-            // normal_index or position_index
             ret.normals.emplace_back( Vec3f{ 
                 result.attributes.normals[idx.normal_index * 3 + 0],
                 result.attributes.normals[idx.normal_index * 3 + 1],
@@ -54,6 +55,5 @@ SimpleMeshData load_wavefront_obj( char const *aPath ) {
             //     Vec3f{ mat.ambient[0], mat.ambient[1], mat.ambient[2] } );
         }
     }
-
     return ret;
 }

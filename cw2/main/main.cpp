@@ -192,17 +192,9 @@ int main() try {
     Mat44f cubeModel = make_translation({2.f, -2.f, 1.f});
     
     //--------------------------TEXTURES-------------------------------------------
-    // GLuint textureID1 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/concrete.png");
-    // GLuint textureID2 = createTexture("/home/csunix/sc19mw/Documents/Graphics/graphics_cw2/cw2/extra/fence.png");
-    // GLuint textureID1 = createTexture("/home/cserv1_a/soc_ug/sc19ldbm/coursework/graphics/cw2/cw2/extra/concrete.png");
-    // GLuint textureID2 = createTexture("/home/cserv1_a/soc_ug/sc19ldbm/coursework/graphics/cw2/cw2/extra/fence.png");
-    // // GLuint textureID3 = createTexture("/home/cserv1_a/soc_ug/sc19ldbm/coursework/graphics/cw2/cw2/assets/skateboard/skateboard_diffuse.png");
-    // GLuint textureID3 = createTexture("/home/cserv1_a/soc_ug/sc19ldbm/coursework/graphics/cw2/cw2/assets/skateboard/skateboard_diffuse.jpg");
-
     GLuint textureID1 = createTexture("./extra/concrete.png");
     GLuint textureID2 = createTexture("./extra/fence.png");
-    GLuint textureID3 = createTexture("./assets/skateboard/custom_skateboard.png");
-    // GLuint textureID3 = createTexture("./assets/skateboard/skateboard_diffuse.jpg");
+    GLuint textureID3 = createTexture("./assets/skateboard/texture.jpg");
 
 
     glActiveTexture( GL_TEXTURE0 );
@@ -222,14 +214,11 @@ int main() try {
 
 
     // SKATEBOARD
-    auto skateboardMesh = load_wavefront_obj("assets/skateboard/skateboard.obj");
+    auto skateboardMesh = load_wavefront_obj("./assets/skateboard/skateboard.obj");
     GLuint skateboardVAO = create_obj_vao(skateboardMesh);
     size_t skateboardVertexCount = skateboardMesh.positions.size();
-    Mat44f skateboardModel = make_scaling(0.02f, 0.02f, 0.02f);
-    // Mat44f skateboardModel = make_translation({0.f, -2.f, 0.f}) * make_rotation_x( 3* kPi_ / 2 ) * make_scaling(0.02f, 0.02f, 0.02f);
-
-
-
+    Mat44f skateboardModel = make_translation({0.f, -1.5f, 0.f}); 
+    Mat44f secondSkateBoardModel = make_translation({0.f, -1.5f, 1.f}) * make_rotation_x( kPi_ ); 
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -267,7 +256,6 @@ int main() try {
 
         Mat44f baseMVP = projection * view;
 
-        Mat44f skateboardMVP = baseMVP * skateboardModel;
 
         OGL_CHECKPOINT_DEBUG();
 
@@ -302,6 +290,7 @@ int main() try {
         drawTile(textureID1 , baseMVP, make_translation({-5.f, -2.f, 5.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(10.f, 10.f, 1.f) , tileVAO);
 
         draw_skateboard( textureID3, skateboardVertexCount, skateboardVAO, baseMVP, skateboardModel );
+        draw_skateboard( textureID3, skateboardVertexCount, skateboardVAO, baseMVP, secondSkateBoardModel );
 
 
         // INSIDE FENCES
