@@ -58,3 +58,10 @@ C++17 single header library for loading Wavefront OBJ files. Reasonably fast.
 Uses multithreading to load larger OBJ files.
 
 Note: only includes the actual header, README and LICENSE files.
+
+## imgui
+
+- Where: https://github.com/ocornut/imgui
+- What: used for GUI creation
+- License: MIT
+
