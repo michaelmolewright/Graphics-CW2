@@ -15,25 +15,20 @@ class lamp{
         float sphereScalar = 0.3f;
         Vec3f lightPosition = { 0.f, 0.f, 0.f };
         Vec3f lightAmbient = { 0.5f, 0.5f, 0.5f};
-        Vec3f lightDiffuse = { 0.2f, 0.2f, 0.2f};
-        Vec3f lightSpecular = { 0.2f, 0.2f, 0.2f};
+        Vec3f lightColor = { 0.2f, 0.2f, 0.2f};
         SimpleMeshData post;
         SimpleMeshData sphereLight;
 
 
-        void createLamp(float height, Vec3f lightAmbient, Vec3f lightDiffuse, Vec3f lightSpecular );
+        void createLamp(float height, Vec3f ambientinput, Vec3f colorInput );
         void drawLamp(Mat44f MVP, Mat44f transform, int ID, std::string a);
-        void updateAmbient(float f1, float f2, float f3);
-        void updateDiffuse(float f1, float f2, float f3);
-        void updateSpecular(float f1, float f2, float f3);
 
 };
 
-void lamp::createLamp(float height, Vec3f ambientinput, Vec3f diffuseinput, Vec3f specularinput ){
+void lamp::createLamp(float height, Vec3f ambientinput, Vec3f colorInput ){
     lightPosition.y = height;
     lightAmbient = ambientinput;
-    lightDiffuse = diffuseinput;
-    lightSpecular = specularinput;
+    lightColor = colorInput;
 
     post = make_cylinder( true, 100, { 1.f, 0.f, 0.f }, make_scaling(0.25f, height, 0.25f) * make_rotation_z(PI/2.f) );
     postVAO = create_vao(post);
@@ -51,8 +46,7 @@ void lamp::drawLamp(Mat44f MVP, Mat44f transform, int ID, std::string a){
     //create float arrays from vec3s
     float new_lightPosition[] = { updateLightPos.x, updateLightPos.y, updateLightPos.z };
     float new_lightAmbient[] = { lightAmbient.x, lightAmbient.y, lightAmbient.z};
-    float new_lightDiffuse[] = { lightDiffuse.x, lightDiffuse.y, lightDiffuse.z};
-    float new_lightSpecular[] = { lightSpecular.x, lightSpecular.y, lightSpecular.z};
+    float new_lightColor[] = { lightColor.x, lightColor.y, lightColor.z};
 
     GLuint loc;
     std::string input;
@@ -65,13 +59,9 @@ void lamp::drawLamp(Mat44f MVP, Mat44f transform, int ID, std::string a){
     loc = glGetUniformLocation(ID, input.c_str());
     glUniform3fv(loc, 1, new_lightAmbient);
 
-    input = a + "diffuse";
+    input = a + "color";
     loc = glGetUniformLocation(ID, input.c_str());
-    glUniform3fv(loc, 1, new_lightDiffuse);
-
-    input = a + "specular";
-    loc = glGetUniformLocation(ID, input.c_str());
-    glUniform3fv(loc, 1, new_lightSpecular);
+    glUniform3fv(loc, 1, new_lightColor);
 
     
     //glUniform3fv(11,1, new_lightPosition );    
@@ -92,18 +82,6 @@ void lamp::drawLamp(Mat44f MVP, Mat44f transform, int ID, std::string a){
     glUniformMatrix4fv( 0, 1, GL_TRUE, newMVP.v );
     glUniformMatrix4fv( 1, 1, GL_TRUE, transform.v );
     glDrawArrays( GL_TRIANGLES, 0, post.positions.size() );
-}
-
-void lamp::updateAmbient(float f1, float f2, float f3){
-    lightAmbient = Vec3f{f1,f2,f3};
-}
-
-void lamp::updateDiffuse(float f1, float f2, float f3){
-    lightDiffuse = Vec3f{f1,f2,f3};
-}
-
-void lamp::updateSpecular(float f1, float f2, float f3){
-    lightSpecular = Vec3f{f1,f2,f3};
 }
 
 

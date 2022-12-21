@@ -160,7 +160,7 @@ int main() try {
     glEnable( GL_CULL_FACE );
     glClearColor( 0.26f, 0.75f, 0.98f, 0.0f );
     glEnable( GL_DEPTH_TEST );
-    // glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     glEnable( GL_BLEND );
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
@@ -215,11 +215,11 @@ int main() try {
 
     //--------------------------------LIGHTS---------------------------------------
     lamp l1;
-    l1.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f}, { 0.2f, 0.2f, 0.2f});
+    l1.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
     lamp l2;
-    l2.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f}, { 0.5f, 0.5f, 0.5f});
+    l2.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
     lamp l3;
-    l3.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f}, { 1.f, 1.f, 1.f});
+    l3.createLamp(3.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
 
     int animationCounter = 0;
     float zLoc = 0.f;
@@ -237,6 +237,8 @@ int main() try {
     auto bowl = createFinalForm( make_translation( { 1.f, -1.f, 0.f } ) * make_scaling(0.25f, 0.5f, 0.11111f) * make_rotation_y(-PI/2.f ) * make_translation( { -2.f, 2.f, 2.f } ) * make_rotation_x( PI / 2.f ) );
     GLuint bowl_vao = create_vao( bowl );
     std::size_t vertexCount = bowl.positions.size();
+
+
     // -----------------------------------------------------------------------------
     // RAIL
     //auto rail = make_rail( 100, { 0.f, 0.f, 0.f }, kIdentity44f );
@@ -291,17 +293,11 @@ int main() try {
             ImGui::Begin("Light Control Menu");
 
 
-            ImGui::ColorEdit3("Light 1 ambient", (float*)&l1.lightAmbient);
-            ImGui::ColorEdit3("Light 1 diffuse", (float*)&l1.lightDiffuse);
-            ImGui::ColorEdit3("Light 1 specular", (float*)&l1.lightSpecular);
+            ImGui::ColorEdit3("Light 1 colour", (float*)&l1.lightColor);
 
-            ImGui::ColorEdit3("Light 2 ambient", (float*)&l2.lightAmbient);
-            ImGui::ColorEdit3("Light 2 diffuse", (float*)&l2.lightDiffuse);
-            ImGui::ColorEdit3("Light 2 specular", (float*)&l2.lightSpecular);
+            ImGui::ColorEdit3("Light 2 colour", (float*)&l2.lightColor);
 
-            ImGui::ColorEdit3("Light 3 ambient", (float*)&l3.lightAmbient);
-            ImGui::ColorEdit3("Light 3 diffuse", (float*)&l3.lightDiffuse);
-            ImGui::ColorEdit3("Light 3 specular", (float*)&l3.lightSpecular);
+            ImGui::ColorEdit3("Light 3 colour", (float*)&l3.lightColor);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
             ImGui::End();
@@ -331,7 +327,7 @@ int main() try {
         //-------------------------------------DRAWING-STARTS-HERE-----------------------------------------
 
         //------------------------------------DRAWING-NON-TEXTURED-OBJECTS---------------------------------
-        glUniform1i(10, GL_FALSE);  // flag for drawing textures
+        glUniform1i(8, GL_FALSE);  // flag for drawing textures
 
         
         l1.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}), prog.programId(), "light[0]." );
@@ -350,6 +346,7 @@ int main() try {
 
         
         setMaterialProperties("concrete");
+        
         draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({-5.f,0.f,sizeOfFloor/2.f}) * make_scaling(10.f,1.25f,5.f) * make_rotation_y(-PI/2.f));
 
        //draw_lamp( lightVAO, postVAO, baseMVP,
@@ -391,7 +388,7 @@ int main() try {
 
 
         //---------------------------------------DRAWING-TEXTURED-OBJECTS------------------------------
-        glUniform1i(10, GL_TRUE);   // flag for drawing textures
+        glUniform1i(8, GL_TRUE);   // flag for drawing textures
         setMaterialProperties("wood");
         //p1.drawRamp(textureID1, baseMVP, make_translation({0.f,10.f,0.f}));
 
@@ -504,7 +501,7 @@ void mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
     dir.y = sinf( pitch * 0.01745329251f );
     dir.z = sinf( yaw * 0.01745329251f ) * cosf( pitch * 0.01745329251f );
 
-    //state->c.cameraFront = normalize( dir );
+
     if (!show_window){
         c.cameraFront = normalize( dir );
     }

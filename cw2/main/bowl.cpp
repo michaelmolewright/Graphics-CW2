@@ -65,7 +65,7 @@ SimpleMeshData createDome( tri startingTri, Mat44f preTransform ){
     std::vector<Vec3f> normals;
 
     Vec3f p1;
-    for ( int i=0; i < pos.size(); i++ ) {
+    for ( size_t i=0; i < pos.size(); i++ ) {
 
         p1 = pos.at(i);
         Vec4f p4{ p1.x, p1.y, p1.z, 1.f };
@@ -342,7 +342,7 @@ SimpleMeshData createFinalForm(Mat44f preTransform){
 
     SimpleMeshData floor2 = createFloor(make_rotation_z(PI) * make_translation({length, 0.f, 0.f}));make_scaling(1.f,2.f,2.f) * make_translation({-length, 0.f, 0.f});
 
-    SimpleMeshData cyclinder = make_bowl_cylinder( 200, make_scaling(1.f,2.f,2.f) * make_translation({-length, 0.f, 0.f}), length);
+    SimpleMeshData cyclinder = make_bowl_cylinder( 1000, make_scaling(1.f,2.f,2.f) * make_translation({-length, 0.f, 0.f}), length);
 
     SimpleMeshData ret = concatenate(floor1, floor2);
     ret = concatenate(ret, cyclinder);
@@ -380,9 +380,7 @@ void draw_bowl(std::size_t size, GLuint vao, Mat44f MVP, Mat44f transform){
 
     Mat44f newMVP = MVP * transform;
 
-    glUniform3fv( 5, 1, bowlCol );    
-    glUniform1f( 7, bowlShine );
-
+    
     glUniformMatrix4fv(0, 1, GL_TRUE, newMVP.v);
     glUniformMatrix4fv(1, 1, GL_TRUE, transform.v);
 
