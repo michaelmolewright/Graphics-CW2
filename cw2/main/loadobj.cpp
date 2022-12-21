@@ -36,12 +36,12 @@ SimpleMeshData load_wavefront_obj( char const *aPath ) {
                 result.attributes.normals[idx.normal_index * 3 + 0],
                 result.attributes.normals[idx.normal_index * 3 + 1],
                 result.attributes.normals[idx.normal_index * 3 + 2]
-            });
+            } );
 
             // textures
             ret.textures.emplace_back( Vec2f{
                 result.attributes.texcoords[idx.texcoord_index * 2 + 0],
-                1- result.attributes.texcoords[idx.texcoord_index * 2 + 1]
+                1 - result.attributes.texcoords[idx.texcoord_index * 2 + 1]
             });
 
             // COLOURS CODE FROM EX4

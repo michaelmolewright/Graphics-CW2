@@ -83,7 +83,7 @@ GLuint create_vao( SimpleMeshData const &aMeshData ) {
 }
 
 
-GLuint create_new_vao( SimpleMeshData const &aMeshData ){
+GLuint create_obj_vao( SimpleMeshData const &aMeshData ){
     GLuint positionVBO = 0;
     glGenBuffers( 1, &positionVBO );
     glBindBuffer( GL_ARRAY_BUFFER, positionVBO );

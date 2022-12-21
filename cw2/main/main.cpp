@@ -201,7 +201,8 @@ int main() try {
 
     GLuint textureID1 = createTexture("./extra/concrete.png");
     GLuint textureID2 = createTexture("./extra/fence.png");
-    GLuint textureID3 = createTexture("./assets/skateboard/skateboard_diffuse.jpg");
+    GLuint textureID3 = createTexture("./assets/skateboard/custom_skateboard.png");
+    // GLuint textureID3 = createTexture("./assets/skateboard/skateboard_diffuse.jpg");
 
 
     glActiveTexture( GL_TEXTURE0 );
@@ -221,11 +222,13 @@ int main() try {
 
 
     // SKATEBOARD
-    auto skateboardMesh = load_wavefront_obj("assets/skateboard/11703_skateboard_v1_L3.obj");
-    GLuint skateboardVAO = create_new_vao(skateboardMesh);
+    auto skateboardMesh = load_wavefront_obj("assets/skateboard/skateboard.obj");
+    GLuint skateboardVAO = create_obj_vao(skateboardMesh);
     size_t skateboardVertexCount = skateboardMesh.positions.size();
     Mat44f skateboardModel = make_scaling(0.02f, 0.02f, 0.02f);
     // Mat44f skateboardModel = make_translation({0.f, -2.f, 0.f}) * make_rotation_x( 3* kPi_ / 2 ) * make_scaling(0.02f, 0.02f, 0.02f);
+
+
 
 
     OGL_CHECKPOINT_ALWAYS();

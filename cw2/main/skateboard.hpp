@@ -1,10 +1,10 @@
-float const sbColor [] = { 0.6f, 0.2f, 0.6f };
+float const sbColor [] = { 1.f,1.f,1.f };
 
-void draw_skateboard(GLuint textureID, std::size_t size, GLuint vao, Mat44f MVP, Mat44f model){
+void draw_skateboard(GLuint textureID, std::size_t size, GLuint vao, Mat44f baseMVP, Mat44f model){
 
     glBindTexture(GL_TEXTURE_2D, textureID);    
 
-    Mat44f sbMVP = MVP * model;
+    Mat44f sbMVP = baseMVP * model;
 
     glBindVertexArray( vao );
     glUniformMatrix4fv( 0, 1, GL_TRUE, sbMVP.v );
