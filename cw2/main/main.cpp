@@ -1,5 +1,8 @@
 #include <glad.h>
 #include <GLFW/glfw3.h>
+#include <imgui.h>
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 #include <typeinfo>
 #include <stdexcept>
@@ -42,8 +45,11 @@ struct State_ {
     ShaderProgram *prog;
 };
 
+
+
 camera c;
 
+bool show_window = false;
 float startX = 640, startY = 360;
 float yaw = -90.f, pitch = 0.f;
 
@@ -120,6 +126,15 @@ int main() try {
     // Set up drawing stuff
     glfwMakeContextCurrent( window );
     glfwSwapInterval( 1 );   // V-Sync is on.
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 430");
 
     // Initialize GLAD
     // This will load the OpenGL API. We mustn't make any OpenGL calls before
@@ -237,12 +252,19 @@ int main() try {
     Mat44f rampBoxModel =
         make_translation( { 4.f, 0.f, -6.f } ) * make_scaling( 4.f, 0.5f, 1.f );
 
+
     OGL_CHECKPOINT_ALWAYS();
 
     // Main loop
     while ( !glfwWindowShouldClose( window ) ) {
         // Let GLFW process events
         glfwPollEvents();
+
+
+        // Start the Dear ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
         // Check if window was resized.
         float fbwidth, fbheight;
@@ -263,6 +285,28 @@ int main() try {
             }
             glViewport( 0, 0, nwidth, nheight );
         }
+
+        if (show_window)
+        {
+            ImGui::Begin("Light Control Menu");
+
+
+            ImGui::ColorEdit3("Light 1 ambient", (float*)&l1.lightAmbient);
+            ImGui::ColorEdit3("Light 1 diffuse", (float*)&l1.lightDiffuse);
+            ImGui::ColorEdit3("Light 1 specular", (float*)&l1.lightSpecular);
+
+            ImGui::ColorEdit3("Light 2 ambient", (float*)&l2.lightAmbient);
+            ImGui::ColorEdit3("Light 2 diffuse", (float*)&l2.lightDiffuse);
+            ImGui::ColorEdit3("Light 2 specular", (float*)&l2.lightSpecular);
+
+            ImGui::ColorEdit3("Light 3 ambient", (float*)&l3.lightAmbient);
+            ImGui::ColorEdit3("Light 3 diffuse", (float*)&l3.lightDiffuse);
+            ImGui::ColorEdit3("Light 3 specular", (float*)&l3.lightSpecular);
+
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            ImGui::End();
+        }
+
 
         c.updatePosition();
 
@@ -381,6 +425,9 @@ int main() try {
         glBindVertexArray( 0 );
         glUseProgram( 0 );
 
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         OGL_CHECKPOINT_DEBUG();
 
         // Display results
@@ -389,6 +436,9 @@ int main() try {
     }
 
     // Cleanup.
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     state.prog = nullptr;
     // TODO: additional cleanup
 
@@ -411,6 +461,17 @@ void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction,
 
     if ( GLFW_KEY_ESCAPE == aKey && GLFW_PRESS == aAction ) {
         glfwSetWindowShouldClose( aWindow, GLFW_TRUE );
+        return;
+    }
+
+    if ( GLFW_KEY_M == aKey && GLFW_PRESS == aAction ) {
+        show_window = !show_window;
+        if (show_window){
+            glfwSetInputMode( aWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL );
+        }
+        else{
+            glfwSetInputMode( aWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
+        }
         return;
     }
 
@@ -439,12 +500,14 @@ void mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
     Vec3f dir;
 
     // 0.01745329251 is degrees to radians conversion
-    dir.x = cosf( yaw * 0.01745329251 ) * cosf( pitch * 0.01745329251 );
-    dir.y = sinf( pitch * 0.01745329251 );
-    dir.z = sinf( yaw * 0.01745329251 ) * cosf( pitch * 0.01745329251 );
+    dir.x = cosf( yaw * 0.01745329251f ) * cosf( pitch * 0.01745329251f );
+    dir.y = sinf( pitch * 0.01745329251f );
+    dir.z = sinf( yaw * 0.01745329251f ) * cosf( pitch * 0.01745329251f );
 
     //state->c.cameraFront = normalize( dir );
-    c.cameraFront = normalize( dir );
+    if (!show_window){
+        c.cameraFront = normalize( dir );
+    }
 }
 }   // namespace
 

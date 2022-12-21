@@ -8,4 +8,6 @@ Makefile
 *.vs/
 *.vcxproj
 *.vcxproj.user
+*.vcxproj.filters
 cw2/COMP3811-cw2.sln
+cw2/imgui.ini

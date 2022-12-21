@@ -4,6 +4,7 @@ includedirs( "stb/include" );
 includedirs( "glad/include" );
 includedirs( "glfw/include" );
 includedirs( "rapidobj/include" );
+includedirs( "imgui/include" );
 
 project( "x-stb" )
 	kind "StaticLib"
@@ -95,5 +96,30 @@ project( "x-rapidobj" )
 	location "."
 
 	files( "rapidobj/include/**.h*" )
+
+
+project( "x-imgui" )
+	kind "StaticLib"
+
+	location "."
+
+	files {
+		"imgui/include/imconfig.h",
+		"imgui/include/imgui_demo.cpp",
+		"imgui/include/imgui_draw.cpp",
+		"imgui/include/imgui_impl_glfw.cpp",
+		"imgui/include/imgui_impl_glfw.h",
+		"imgui/include/imgui_impl_opengl3.cpp",
+		"imgui/include/imgui_impl_opengl3.h",
+		"imgui/include/imgui_internal.h",
+		"imgui/include/imgui_tables.cpp",
+		"imgui/include/imgui_widgets.cpp",
+		"imgui/include/imgui.cpp",
+		"imgui/include/imgui.h",
+		"imgui/include/imstb_rectpack.h",
+		"imgui/include/imstb_textedit.h",
+		"imgui/include/imstb_truetype.h",
+		"imgui/include/imgui_impl_opengl3_loader.h"
+	};
 
 --EOF
