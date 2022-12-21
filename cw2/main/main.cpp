@@ -3,12 +3,17 @@
 #include <imgui.h>
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include "stb_image_write.h"
+#include "stb_image.h"
 
 #include <typeinfo>
 #include <stdexcept>
+#include <sys/types.h>
+#include <dirent.h>
 
 #include <cstdio>
 #include <cstdlib>
+#include <string>
 
 #include "../support/error.hpp"
 #include "../support/program.hpp"
@@ -62,6 +67,8 @@ void glfw_callback_error_( int, char const * );
 void glfw_callback_key_( GLFWwindow *, int, int, int, int );
 
 void mouse_movement( GLFWwindow *, double, double );
+
+void screenshot( GLFWwindow * );
 
 struct GLFWCleanupHelper {
     ~GLFWCleanupHelper();
@@ -303,8 +310,9 @@ int main() try {
 
         if (show_window)
         {
-            ImGui::Begin("Light Control Menu");
+            ImGui::Begin("Control Menu");
 
+            ImGui::Text("Press the X key to take a screenshot of the current frame\n\n");
 
             ImGui::ColorEdit3("Light 1 colour", (float*)&l1.lightColor);
 
@@ -313,6 +321,8 @@ int main() try {
             ImGui::ColorEdit3("Light 3 colour", (float*)&l3.lightColor);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+
             ImGui::End();
         }
 
@@ -491,6 +501,10 @@ void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction,
         return;
     }
 
+    if ( GLFW_KEY_X == aKey && GLFW_PRESS == aAction ) {
+        screenshot( aWindow );
+    }
+
     c.movement(aKey, aAction); //camera movement
 }
 
@@ -525,6 +539,56 @@ void mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
         c.cameraFront = normalize( dir );
     }
 }
+
+void screenshot( GLFWwindow *window ) {
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+
+    std::string savePath = "./screenshots/screenshot";
+
+    // get number of files in screenshots
+    DIR *screenshots;
+    size_t i = 0;
+    struct dirent *file;     
+    screenshots = opendir ("./screenshots/");
+
+    if (screenshots != NULL)
+    {
+        while ( (file = readdir(screenshots)) )
+        i++;
+        (void) closedir(screenshots);
+    }
+    else
+        perror ("Couldn't open screenshots folder");
+
+    // take away two (for . and ..)
+    i -= 1;
+    savePath += std::to_string(i) + ".png";
+
+    int numChannels = 3; // rgb
+    int stride = numChannels * width;
+
+    // ensure stride is a multiple of 4 to save image
+    if ( stride % 4 ) {
+        stride += 4 - stride % 4;
+    }
+
+    // store framebuffer pixels into buffer
+    int bufferSize = stride * height;
+    std::vector<char> buffer( bufferSize );
+    glPixelStorei( GL_PACK_ALIGNMENT, 4 );
+    glReadBuffer( GL_FRONT );
+    glReadPixels( 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, buffer.data() );
+
+    // save png
+    stbi_flip_vertically_on_write(true);
+    if ( stbi_write_png(savePath.c_str(), width, height, numChannels, buffer.data(), stride) ) {
+        printf("\nScreenshot saved to %s \n", savePath.c_str());
+        return;
+    }
+    printf("\nError attempting to save screenshot \n");
+}
+
 }   // namespace
 
 namespace {
