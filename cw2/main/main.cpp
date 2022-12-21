@@ -265,8 +265,8 @@ int main() try {
     auto skateboardMesh = load_wavefront_obj("./assets/skateboard/skateboard.obj");
     GLuint skateboardVAO = create_obj_vao(skateboardMesh);
     size_t skateboardVertexCount = skateboardMesh.positions.size();
-    Mat44f skateboardModel = make_translation({0.f, 0.5f, 0.f}); 
-    Mat44f secondSkateBoardModel = make_translation({0.f, 0.5f, 1.f}) * make_rotation_x( kPi_ ); 
+    Mat44f skateboardModel = make_translation({0.f, 0.195f, 0.f}); 
+    Mat44f secondSkateBoardModel = make_translation({0.f, 0.195f, 1.f}) * make_rotation_x( kPi_ ); 
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -415,7 +415,7 @@ int main() try {
 
         p1.drawBox(textureID3, baseMVP, make_translation({-8.f,0.f,4.f}) * make_scaling(2.f,1.f,2.f));
 
-
+        setMaterialProperties("skateboard");
         draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, skateboardModel );
         draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, secondSkateBoardModel );
 

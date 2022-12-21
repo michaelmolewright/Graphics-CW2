@@ -46,6 +46,13 @@ float wood_specular[] = {0.34f, 0.34f, 0.34f};
 float wood_shine = 2.f;
 float wood_emmisive = 0.05f;
 //---------------------------------
+//-----------skateboard-----------------
+float skateboard_ambient[] = { 0.f, 0.f, 0.f };
+float skateboard_diffuse[] = { 0.698039f, 0.698039f, 0.698039f };
+float skateboard_specular[] = { 0.34f, 0.34f, 0.34f };
+float skateboard_shine = 2.f;
+float skateboard_emmisive = 0.05f;
+//---------------------------------
 
 void setMaterialProperties(std::string material){
     if (material == "concrete"){
@@ -82,6 +89,13 @@ void setMaterialProperties(std::string material){
         glUniform3fv(5,1, wood_specular);
         glUniform1f(6, wood_shine);
         glUniform1f(7, wood_emmisive);
+    }
+    else if (material == "skateboard"){
+        glUniform3fv(3,1, skateboard_ambient);
+        glUniform3fv(4,1, skateboard_diffuse);
+        glUniform3fv(5,1, skateboard_specular);
+        glUniform1f(6, skateboard_shine);
+        glUniform1f(7, skateboard_emmisive);
     }
 }
 
