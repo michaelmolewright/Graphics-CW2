@@ -23,6 +23,9 @@ class lamp{
 
         void createLamp(float height, Vec3f lightAmbient, Vec3f lightDiffuse, Vec3f lightSpecular );
         void drawLamp(Mat44f MVP, Mat44f transform, int ID, std::string a);
+        void updateAmbient(float f1, float f2, float f3);
+        void updateDiffuse(float f1, float f2, float f3);
+        void updateSpecular(float f1, float f2, float f3);
 
 };
 
@@ -90,5 +93,19 @@ void lamp::drawLamp(Mat44f MVP, Mat44f transform, int ID, std::string a){
     glUniformMatrix4fv( 1, 1, GL_TRUE, transform.v );
     glDrawArrays( GL_TRIANGLES, 0, post.positions.size() );
 }
+
+void lamp::updateAmbient(float f1, float f2, float f3){
+    lightAmbient = Vec3f{f1,f2,f3};
+}
+
+void lamp::updateDiffuse(float f1, float f2, float f3){
+    lightDiffuse = Vec3f{f1,f2,f3};
+}
+
+void lamp::updateSpecular(float f1, float f2, float f3){
+    lightSpecular = Vec3f{f1,f2,f3};
+}
+
+
 
 #endif
