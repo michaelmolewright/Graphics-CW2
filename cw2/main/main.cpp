@@ -194,7 +194,8 @@ int main() try {
     //--------------------------TEXTURES-------------------------------------------
     GLuint textureID1 = createTexture("./extra/concrete.png");
     GLuint textureID2 = createTexture("./extra/fence.png");
-    GLuint textureID3 = createTexture("./assets/skateboard/texture.jpg");
+
+    GLuint textureID4 = createTexture("./assets/skateboard/texture.jpg");
 
 
     glActiveTexture( GL_TEXTURE0 );
@@ -289,8 +290,8 @@ int main() try {
         glUniform1i(10, GL_TRUE); // Set to TRUE
         drawTile(textureID1 , baseMVP, make_translation({-5.f, -2.f, 5.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(10.f, 10.f, 1.f) , tileVAO);
 
-        draw_skateboard( textureID3, skateboardVertexCount, skateboardVAO, baseMVP, skateboardModel );
-        draw_skateboard( textureID3, skateboardVertexCount, skateboardVAO, baseMVP, secondSkateBoardModel );
+        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, skateboardModel );
+        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, secondSkateBoardModel );
 
 
         // INSIDE FENCES

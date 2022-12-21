@@ -52,8 +52,8 @@ GLuint create_vao( SimpleMeshData const &aMeshData ) {
     GLuint textureVBO = 0;
     glGenBuffers( 1, &textureVBO );
     glBindBuffer( GL_ARRAY_BUFFER, textureVBO );
-    glBufferData( GL_ARRAY_BUFFER, aMeshData.textures.size() * sizeof( Vec2f ),
-                  aMeshData.textures.data(), GL_STATIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, aMeshData.textureCoord.size() * sizeof( Vec2f ),
+                  aMeshData.textureCoord.data(), GL_STATIC_DRAW );
 
 
     GLuint vao = 0;
@@ -99,8 +99,8 @@ GLuint create_obj_vao( SimpleMeshData const &aMeshData ){
     GLuint textureVBO = 0;
     glGenBuffers( 1, &textureVBO );
     glBindBuffer( GL_ARRAY_BUFFER, textureVBO );
-    glBufferData( GL_ARRAY_BUFFER, aMeshData.textures.size() * sizeof( Vec2f ),
-                  aMeshData.textures.data(), GL_STATIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, aMeshData.textureCoord.size() * sizeof( Vec2f ),
+                  aMeshData.textureCoord.data(), GL_STATIC_DRAW );
     
     GLuint vao = 0;
     glGenVertexArrays( 1, &vao );

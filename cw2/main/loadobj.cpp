@@ -40,7 +40,7 @@ SimpleMeshData load_wavefront_obj( char const *aPath ) {
             } );
 
             // textures
-            ret.textures.emplace_back( Vec2f{
+            ret.textureCoord.emplace_back( Vec2f{
                 result.attributes.texcoords[idx.texcoord_index * 2 + 0],
                 1 - result.attributes.texcoords[idx.texcoord_index * 2 + 1]
             });

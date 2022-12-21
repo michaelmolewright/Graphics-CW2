@@ -11,7 +11,7 @@
 struct SimpleMeshData {
     std::vector<Vec3f> positions;
     std::vector<Vec3f> normals;
-    std::vector<Vec2f> textures;
+    std::vector<Vec2f> textureCoord;
 };
 
 SimpleMeshData concatenate( SimpleMeshData, SimpleMeshData const & );
