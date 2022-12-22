@@ -201,10 +201,6 @@ int main() try {
 
     
     //--------------------------TEXTURES-------------------------------------------
-    // REMEMBER TO CHANGE THIS TO RELATIVE PATH
-    // GLuint textureID1 = createTexture("C:\\Users\\mikey\\Documents\\graphics\\graphics_cw2\\cw2\\extra\\concrete.png"); //file paths for windows
-    // GLuint textureID2 = createTexture("C:\\Users\\mikey\\Documents\\graphics\\graphics_cw2\\cw2\\extra\\fence.png"); //file paths for windows
-    // RELATIVE PATHS - YET TO TEST FOR MIKEY
     GLuint textureID1 = createTexture("./extra/concrete.png"); //file paths for windows
     GLuint textureID2 = createTexture("./extra/fence.png"); //file paths for windows
     GLuint textureID3 = createTexture("./extra/wood.jpg");
@@ -239,8 +235,6 @@ int main() try {
     //-----------------------------------------------------------------------------
 
     // ----------------------------BOWL---------------------------------------------
-    // auto bowl = createFinalForm( make_translation( { 1.f, -1.f, 0.f } ) * make_scaling(0.25f, 0.5f, 0.11111f) 
-    //         * make_rotation_y(-PI/2.f ) * make_translation( { -2.f, 2.f, 2.f } ) * make_rotation_x( PI / 2.f ) );
     auto bowl = createFinalForm(
         make_scaling( sizeOfFloor / 9.f, 0.6f, 1.75f ) *
         make_translation( { -2.f, 2.f, 2.f } ) * make_rotation_x( PI / 2.f ) );
@@ -272,7 +266,6 @@ int main() try {
     size_t skateboardVertexCount = skateboardMesh.positions.size();
     Mat44f skateboardModel = make_translation({4.f, 0.195f, 2.f}); 
     Mat44f flippedSBModel = make_translation({14.65f, 1.24f, 3.f})  * make_rotation_x( kPi_ ) * make_rotation_z(  3.2 * kPi_/2 ); 
-    // * make_rotation_x( kPi_ )
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -423,13 +416,10 @@ int main() try {
         p1.drawBox(textureID3, baseMVP, make_translation({-8.f,0.f,4.f}) * make_scaling(2.f,1.f,2.f));
 
         setMaterialProperties("skateboard");
-        // draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, skateboardModel );
         draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, flippedSBModel );
 
         //animation space
         Mat44f animationTranslation = skateboardAimation(animationCounter);
-        //p1.drawBox(textureID3, baseMVP, kIdentity44f);
-
 
         draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({0.f,0.f,-5.f}) * animationTranslation * make_scaling(0.64f, 0.391f, 2.5f) * make_translation({0.5f,0.5f,-0.5f}) * make_rotation_y(PI/2.f ) * make_scaling(1.f/2.5f, 1.f/0.391f, 1.f/0.64f));
         animationCounter += 2;
