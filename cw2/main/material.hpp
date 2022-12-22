@@ -39,8 +39,8 @@ float yellow_rubber_emmisive = 0.1f;
 //-----------------------------------
 
 //-----------lamp-----------------
-float lamp_ambient[] = {0.8f, 0.8f, 0.8f };
-float lamp_diffuse[] = {0.8f, 0.8f, 0.8f };
+float lamp_ambient[] = {0.1f, 0.1f, 0.1f };
+float lamp_diffuse[] = {0.1f, 0.1f, 0.1f };
 float lamp_specular[] = {0.1f, 0.1f, 0.1f};
 float lamp_shine = 100.f;
 float lamp_emmisive = 0.0001f;
@@ -53,12 +53,37 @@ float wood_specular[] = {0.34f, 0.34f, 0.34f};
 float wood_shine = 2.f;
 float wood_emmisive = 0.05f;
 //---------------------------------
+
 //-----------skateboard-----------------
 float skateboard_ambient[] = { 0.f, 0.f, 0.f };
 float skateboard_diffuse[] = { 0.698039f, 0.698039f, 0.698039f };
 float skateboard_specular[] = { 0.34f, 0.34f, 0.34f };
 float skateboard_shine = 2.f;
 float skateboard_emmisive = 0.05f;
+//---------------------------------
+
+//-----------mainlyDif-----------------
+float mainlyDif_ambient[] = { 0.2f, 0.2f, 0.2f };
+float mainlyDif_diffuse[] = { 0.8f, 0.8f, 0.8f };
+float mainlyDif_specular[] = { 0.1f, 0.1f, 0.1f };
+float mainlyDif_shine = 50.f;
+float mainlyDif_emmisive = 0.001f;
+//---------------------------------
+
+//-----------mainlySpec-----------------
+float mainlySpec_ambient[] = { 0.2f, 0.2f, 0.2f };
+float mainlySpec_diffuse[] = { 0.1f, 0.1f, 0.1f };
+float mainlySpec_specular[] = { 0.8f, 0.8f, 0.8f };
+float mainlySpec_shine = 50.f;
+float mainlySpec_emmisive = 0.001f;
+//---------------------------------
+
+//-----------mainlyEmi-----------------
+float mainlyEmi_ambient[] = { 0.2f, 0.2f, 0.2f };
+float mainlyEmi_diffuse[] = { 0.1f, 0.1f, 0.1f };
+float mainlyEmi_specular[] = { 0.1f, 0.1f, 0.1f };
+float mainlyEmi_shine = 50.f;
+float mainlyEmi_emmisive = 0.2f;
 //---------------------------------
 
 void setMaterialProperties(std::string material){
@@ -110,6 +135,27 @@ void setMaterialProperties(std::string material){
         glUniform3fv(5,1, railMetal_specular);
         glUniform1f(6, railMetal_shine);
         glUniform1f(7, railMetal_emmisive);
+    }
+    else if (material == "mainlyDif"){
+        glUniform3fv(3,1, mainlyDif_ambient);
+        glUniform3fv(4,1, mainlyDif_diffuse);
+        glUniform3fv(5,1, mainlyDif_specular);
+        glUniform1f(6, mainlyDif_shine);
+        glUniform1f(7, mainlyDif_emmisive);
+    }
+    else if (material == "mainlySpec"){
+        glUniform3fv(3,1, mainlySpec_ambient);
+        glUniform3fv(4,1, mainlySpec_diffuse);
+        glUniform3fv(5,1, mainlySpec_specular);
+        glUniform1f(6, mainlySpec_shine);
+        glUniform1f(7, mainlySpec_emmisive);
+    }
+    else if (material == "mainlyEmi"){
+        glUniform3fv(3,1, mainlyEmi_ambient);
+        glUniform3fv(4,1, mainlyEmi_diffuse);
+        glUniform3fv(5,1, mainlyEmi_specular);
+        glUniform1f(6, mainlyEmi_shine);
+        glUniform1f(7, mainlyEmi_emmisive);
     }
 }
 

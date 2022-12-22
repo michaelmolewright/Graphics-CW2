@@ -15,6 +15,8 @@
 #include <cstdlib>
 #include <string>
 
+#include <algorithm>
+
 #include "../support/error.hpp"
 #include "../support/program.hpp"
 #include "../support/checkpoint.hpp"
@@ -57,6 +59,8 @@ struct State_ {
 
 camera c;
 
+bool startAni = true;
+size_t aniIncrement = 4;
 bool show_window = false;
 float startX = 640, startY = 360;
 float yaw = -90.f, pitch = 0.f;
@@ -223,6 +227,8 @@ int main() try {
     l3.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
     lamp l4;
     l4.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    lamp l5;
+    l5.createLamp(2.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
 
     int animationCounter = 0;
     float zLoc = 0.f;
@@ -267,6 +273,7 @@ int main() try {
     GLuint skateboardVAO = create_obj_vao(skateboardMesh);
     size_t skateboardVertexCount = skateboardMesh.positions.size();
     Mat44f flippedSBModel = make_translation({14.65f, 1.24f, 3.f})  * make_rotation_x( kPi_ ) * make_rotation_z(  3.2 * kPi_/2 ); 
+
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -315,6 +322,10 @@ int main() try {
 
             ImGui::ColorEdit3("Light 4 colour", (float*)&l4.lightColor);
 
+            ImGui::ColorEdit3("Light 5 colour", (float*)&l5.lightColor);
+
+            //ImGui::Checkbox("stop/start animation", (bool*)&startAni);
+
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 
@@ -353,7 +364,7 @@ int main() try {
         l2.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}), prog.programId(), "light[1]." );
         l3.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}), prog.programId(), "light[2]." );
         l4.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}), prog.programId(), "light[3]." );
-
+        l5.drawLamp(baseMVP, make_translation({-31.f, 0.f, 0.f}), prog.programId(), "light[4]." );
 
         //very simple animation
         /*if (animationCounter % 1000 == 0){
@@ -400,6 +411,15 @@ int main() try {
                    rail.positions.size() );
         // animation rail
         draw_rail( railVAO, baseMVP, make_translation({0.32f, 0.f, -1.f}) * make_rotation_y(-PI/2.f) , rail.positions.size() );
+
+        setMaterialProperties("mainlyDif");
+        p1.drawBox(textureID3, baseMVP, make_translation({-31.f,0.f,4.f}));
+
+        setMaterialProperties("mainlySpec");
+        p1.drawBox(textureID3, baseMVP, make_translation({-31.f,0.f,-3.f}));
+
+        setMaterialProperties("mainlyEmi");
+        p1.drawBox(textureID3, baseMVP, make_translation({-35.f,0.f,0.5f}));
         
 
         //-------------------------------------------------------------------------------------------------
@@ -410,6 +430,10 @@ int main() try {
         glUniform1i(8, GL_TRUE);   // flag for drawing textures
         setMaterialProperties("wood");
         //p1.drawRamp(textureID1, baseMVP, make_translation({0.f,10.f,0.f}));
+
+        setMaterialProperties("concrete");
+
+        p1.drawBox(textureID1, baseMVP, make_translation({-35.f, 0.f, 4.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(8.f, 8.f, 1.f));
 
 
         p1.drawComplexRamp(textureID3, baseMVP, make_translation({5.f,0.f,0.f}) * make_scaling(2.f,0.5f,2.f));
@@ -427,7 +451,9 @@ int main() try {
         Mat44f animationTranslation = skateboardAimation(animationCounter);
 
         draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({0.f,0.f,-5.f}) * animationTranslation * make_scaling(0.64f, 0.391f, 2.5f) * make_translation({0.5f,0.5f,-0.5f}) * make_rotation_y(PI/2.f ) * make_scaling(1.f/2.5f, 1.f/0.391f, 1.f/0.64f));
-        animationCounter += 2;
+        if (startAni){
+            animationCounter += aniIncrement;
+        }
 
 
 
@@ -502,6 +528,24 @@ void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction,
 
     if ( GLFW_KEY_X == aKey && GLFW_PRESS == aAction ) {
         screenshot( aWindow );
+    }
+
+    if ( GLFW_KEY_LEFT == aKey && GLFW_PRESS == aAction ) {
+        aniIncrement -= 1;
+        if (aniIncrement < 1)
+            aniIncrement = 1;
+        return;
+    }
+
+    if ( GLFW_KEY_RIGHT == aKey && GLFW_PRESS == aAction ) {
+        aniIncrement += 1;
+        if(aniIncrement > 10)
+            aniIncrement = 10;
+        return;
+    }
+
+    if ( GLFW_KEY_SPACE == aKey && GLFW_PRESS == aAction ) {
+        startAni = !startAni;
     }
 
     c.movement(aKey, aAction); //camera movement

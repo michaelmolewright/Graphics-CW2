@@ -7,7 +7,7 @@ struct Light{
     vec3 color;
 };
 
-uniform Light light[4];
+uniform Light light[5];
 
 in vec3 normal;
 in vec3 fragPos;
@@ -39,7 +39,7 @@ void main()
     vec3 camDir = normalize(cameraPos - fragPos);
     vec3 result = {0.f, 0.f, 0.f};
 
-    for(int i = 0; i < 4; i++){
+    for(int i = 0; i < 5; i++){
         result += calcLights(light[i], normal, fragPos, camDir);
     }
 
@@ -62,7 +62,7 @@ vec3 calcLights(Light light, vec3 normal, vec3 fragPos, vec3 camDir){
     float dist = length(light.position - fragPos);
 
     // inverse square law
-    light.color = light.color / (0.01 * dist * dist);
+    light.color = 35.f * (light.color / (dist * dist));
 
     //diffuse Prep
     vec3 norm = normalize(normal);
