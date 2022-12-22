@@ -60,7 +60,8 @@ struct State_ {
 camera c;
 
 bool startAni = true;
-size_t aniIncrement = 4;
+float animationTime = 0.f;
+float lengthOfAnimation = 10.f;
 bool show_window = false;
 float startX = 640, startY = 360;
 float yaw = -90.f, pitch = 0.f;
@@ -230,9 +231,6 @@ int main() try {
     lamp l5;
     l5.createLamp(2.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
 
-    int animationCounter = 0;
-    float zLoc = 0.f;
-    float sign = 1.f;
     //-----------------------------------------------------------------------------
 
     //--------------------------FLOOR----------------------------------------------
@@ -251,7 +249,7 @@ int main() try {
 
 
     // -----------------------------------------------------------------------------
-
+    auto last = Clock::now();
     // RAIL
     auto rail = make_rail( 100, { 0.f, 0.f, 0.f }, make_scaling(2.f,1.75f, 2.f) );
     GLuint railVAO = create_vao( rail );
@@ -366,14 +364,6 @@ int main() try {
         l4.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}), prog.programId(), "light[3]." );
         l5.drawLamp(baseMVP, make_translation({-31.f, 0.f, 0.f}), prog.programId(), "light[4]." );
 
-        //very simple animation
-        /*if (animationCounter % 1000 == 0){
-            sign *= -1.f;
-        }
-        animationCounter += 1;
-        
-        zLoc += sign * (sizeOfFloor/1000.f);*/
-
         
 
         
@@ -446,13 +436,20 @@ int main() try {
 
         setMaterialProperties("skateboard");
         draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, flippedSBModel );
+        
+        auto const now = Clock::now();
+        float dt = std::chrono::duration_cast<Secondsf>( now - last ).count();
+        last = now;
+
 
         //animation space
-        Mat44f animationTranslation = skateboardAimation(animationCounter);
+        Mat44f animationTranslation = skateboardAimation(animationTime, lengthOfAnimation);
+
+
 
         draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({0.f,0.f,-5.f}) * animationTranslation * make_scaling(0.64f, 0.391f, 2.5f) * make_translation({0.5f,0.5f,-0.5f}) * make_rotation_y(PI/2.f ) * make_scaling(1.f/2.5f, 1.f/0.391f, 1.f/0.64f));
         if (startAni){
-            animationCounter += aniIncrement;
+            animationTime += dt;
         }
 
 
@@ -531,16 +528,20 @@ void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction,
     }
 
     if ( GLFW_KEY_LEFT == aKey && GLFW_PRESS == aAction ) {
-        aniIncrement -= 1;
-        if (aniIncrement < 1)
-            aniIncrement = 1;
+        float ratio = animationTime / lengthOfAnimation;
+        lengthOfAnimation += 2.f;
+        if (lengthOfAnimation > 20.f)
+            lengthOfAnimation = 20.f;
+        animationTime = ratio * lengthOfAnimation;
         return;
     }
 
     if ( GLFW_KEY_RIGHT == aKey && GLFW_PRESS == aAction ) {
-        aniIncrement += 1;
-        if(aniIncrement > 10)
-            aniIncrement = 10;
+        float ratio = animationTime / lengthOfAnimation;
+        lengthOfAnimation -= 2.f;
+        if(lengthOfAnimation < 2.f)
+            lengthOfAnimation = 2.f;
+        animationTime = ratio * lengthOfAnimation;
         return;
     }
 
