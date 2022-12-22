@@ -373,8 +373,7 @@ int main() try {
            make_translation( { sizeOfFloor / 2.f, -1.f, sizeOfFloor / 2.f } ) *
                make_scaling( 1.f, 2.5f, 2.f ) );
 
-        draw_rail( railVAO, baseMVP, make_translation( { -1.5f, 0.f, -8.f } )  ,
-                   rail.positions.size() );
+        
 
         // RAMP BOX
         draw_cube( cubeVAO, baseMVP, rampBoxModel );
@@ -396,8 +395,10 @@ int main() try {
                      make_rotation_y( kPi_ ) );
 
 
+        setMaterialProperties("railMetal");
+        draw_rail( railVAO, baseMVP, make_translation( { -1.5f, 0.f, -8.f } )  ,
+                   rail.positions.size() );
         // animation rail
-        setMaterialProperties("shineyMetal");
         draw_rail( railVAO, baseMVP, make_translation({0.32f, 0.f, -1.f}) * make_rotation_y(-PI/2.f) , rail.positions.size() );
         
 

@@ -23,6 +23,13 @@ float shinyMetal_shine = 89.6f;
 float shinyMetal_emmisive = 0.001f;
 //---------------------------------
 
+//-----------railMetal--------------
+float railMetal_ambient[] = { 0.01f, 0.01f, 0.01f };
+float railMetal_diffuse[] = { 0.01f, 0.01f, 0.01f };
+float railMetal_specular[] = { 0.632741f, 0.628634f, 0.646435f };
+float railMetal_shine = 100.f;
+float railMetal_emmisive = 0.001f;
+
 //-----------yellow_rubber--------------
 float yellow_rubber_ambient[] ={ 0.05f,0.05f,0.0f,1.0f };
 float yellow_rubber_diffuse[] ={0.5f,0.5f,0.4f,1.0f};
@@ -96,6 +103,13 @@ void setMaterialProperties(std::string material){
         glUniform3fv(5,1, skateboard_specular);
         glUniform1f(6, skateboard_shine);
         glUniform1f(7, skateboard_emmisive);
+    }
+    else if (material == "railMetal"){
+        glUniform3fv(3,1, railMetal_ambient);
+        glUniform3fv(4,1, railMetal_diffuse);
+        glUniform3fv(5,1, railMetal_specular);
+        glUniform1f(6, railMetal_shine);
+        glUniform1f(7, railMetal_emmisive);
     }
 }
 
