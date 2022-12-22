@@ -244,7 +244,7 @@ int main() try {
 
     // ----------------------------BOWL---------------------------------------------
     auto bowl = createFinalForm(
-        make_scaling( sizeOfFloor / 9.f, 0.6f, 1.75f ) *
+        make_scaling( sizeOfFloor / 9.f, 1.f, 1.f ) *
         make_translation( { -2.f, 2.f, 2.f } ) * make_rotation_x( PI / 2.f ) );
     GLuint bowl_vao = create_vao( bowl );
     std::size_t vertexCount = bowl.positions.size();
@@ -273,6 +273,11 @@ int main() try {
     GLuint skateboardVAO = create_obj_vao(skateboardMesh);
     size_t skateboardVertexCount = skateboardMesh.positions.size();
     Mat44f flippedSBModel = make_translation({14.65f, 1.24f, 3.f})  * make_rotation_x( kPi_ ) * make_rotation_z(  3.2 * kPi_/2 ); 
+
+    // Animation state
+	auto last = Clock::now();
+
+	float angle = 0.f;
 
 
     OGL_CHECKPOINT_ALWAYS();
@@ -332,6 +337,16 @@ int main() try {
             ImGui::End();
         }
 
+        // Update animation state
+		auto const now = Clock::now();
+		float dt = std::chrono::duration_cast<Secondsf>(now - last).count();
+		last = now;
+
+		angle += dt * kPi_ * 0.3f;
+		if (angle >= 2.f * kPi_)
+			angle -= 2.f * kPi_;
+
+
 
         c.updatePosition();
 
@@ -374,6 +389,10 @@ int main() try {
         
         zLoc += sign * (sizeOfFloor/1000.f);*/
 
+
+
+        Mat44f bowlSBModel = make_rotation_x( angle ) * make_rotation_y(kPi_/2) ;
+
         
 
         
@@ -382,7 +401,7 @@ int main() try {
         draw_bowl(
            vertexCount, bowl_vao, baseMVP,
            make_translation( { sizeOfFloor / 2.f, -1.f, sizeOfFloor / 2.f } ) *
-               make_scaling( 1.f, 2.5f, 2.f ) );
+               make_scaling( 1.f, 1.5f, 3.5f ) );
 
         
 
@@ -446,6 +465,23 @@ int main() try {
 
         setMaterialProperties("skateboard");
         draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, flippedSBModel );
+
+        draw_cube( cubeVAO, baseMVP,
+                  make_translation( { 2, -5, 12 } ) *
+                      make_scaling( 0.f, 10.f, 20.f ) );
+
+        // SKATEBOARD BOWL ANIMATION - TEMPLATES
+        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({ 0.f, 2.f, 15.f+0.8f }) * make_rotation_y(kPi_/2));
+
+        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({ 0.f, 2.f, 29.f-0.8f }) * make_rotation_y(kPi_/2));
+
+        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({ 0.f, -0.8f, 22.f }) * make_rotation_y(kPi_/2));
+
+        // ANIMATED SKATEBOARD
+        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({ 0.f, 2.f, 22.f }) * bowlSBModel );
+
+
+
 
         //animation space
         Mat44f animationTranslation = skateboardAimation(animationCounter);
