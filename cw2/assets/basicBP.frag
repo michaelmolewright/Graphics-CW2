@@ -66,7 +66,6 @@ void main()
     float spec = pow(max(dot(normal, halfwayDir), 0.0), shineyness);
     vec3 specular = lightColor * spec;
 
-
     vec3 result = (ambient + diffuse + specular + emissive) * objectColor;
 
     if (drawTexture){

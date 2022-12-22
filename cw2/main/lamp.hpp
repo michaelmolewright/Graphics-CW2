@@ -86,14 +86,14 @@ void draw_lamp( GLuint lightVAO, GLuint postVAO, Mat44f MVP, Mat44f aPreTransfor
     // glUniform1f( 10, 0.001f ); // set emissive term
 
 
-    float const railColor [] = { 0.2f, 0.2f, 0.2f };
-    glUniform3fv( 5, 1, railColor );    // object color
+    // float const railColor [] = { 0.2f, 0.2f, 0.2f };
+    // glUniform3fv( 5, 1, railColor );    // object color
 
 
-    glBindVertexArray( postVAO );
-    glUniformMatrix4fv( 0, 1, GL_TRUE, postMVP.v );
-    glUniformMatrix4fv( 1, 1, GL_TRUE, postModel.v );
-    glDrawArrays( GL_TRIANGLES, 0, 1200 );
+    // glBindVertexArray( postVAO );
+    // glUniformMatrix4fv( 0, 1, GL_TRUE, postMVP.v );
+    // glUniformMatrix4fv( 1, 1, GL_TRUE, postModel.v );
+    // glDrawArrays( GL_TRIANGLES, 0, 1200 );
 
 }
 

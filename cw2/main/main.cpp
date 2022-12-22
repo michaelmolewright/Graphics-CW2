@@ -140,7 +140,7 @@ int main() try {
     // TODO: global GL setup goes here
     glEnable( GL_FRAMEBUFFER_SRGB );
     glEnable( GL_CULL_FACE );
-    glClearColor( 0.2f, 0.2f, 0.2f, 0.0f );
+    glClearColor( 0.26f, 0.75f, 0.98f, 0.0f );
     glEnable( GL_DEPTH_TEST );
     // glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     glEnable(GL_BLEND);
@@ -273,11 +273,11 @@ int main() try {
         //------------------------------------DRAWING-NON-TEXTURED-OBJECTS---------------------------------
         glUniform1i(10, GL_FALSE);
 
-        draw_lamp( lightVAO, postVAO, baseMVP, make_translation({-5.f, -2.f, 5.f}) );
+        draw_lamp( lightVAO, postVAO, baseMVP, make_translation({-1.f, -2.f, 1.f}) );
 
-        draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({1.f, -1.35f, 4.f}) * make_scaling(1.f, 0.6f, 1.f) );
+        // draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({1.f, -1.35f, 4.f}) * make_scaling(1.f, 0.6f, 1.f) );
 
-        draw_rail( railVAO, baseMVP, make_translation({-3.f, -2.f, -4.f}), rail.positions.size() );
+        // draw_rail( railVAO, baseMVP, make_translation({-3.f, -2.f, -4.f}), rail.positions.size() );
 
         draw_cube( cubeVAO, baseMVP, cubeModel );
 
@@ -287,22 +287,22 @@ int main() try {
 
 
         //---------------------------------------DRAWING-TEXTURED-OBJECTS------------------------------
-        glUniform1i(10, GL_TRUE); // Set to TRUE
-        drawTile(textureID1 , baseMVP, make_translation({-5.f, -2.f, 5.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(10.f, 10.f, 1.f) , tileVAO);
+        // glUniform1i(10, GL_TRUE); // Set to TRUE
+        // drawTile(textureID1 , baseMVP, make_translation({-5.f, -2.f, 5.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(10.f, 10.f, 1.f) , tileVAO);
 
-        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, skateboardModel );
-        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, secondSkateBoardModel );
+        // draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, skateboardModel );
+        // draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, secondSkateBoardModel );
 
 
-        // INSIDE FENCES
-        drawTile(textureID2 , baseMVP, make_translation({-5.f, -2.f, 5.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(10.f, 2.f, 1.f), tileVAO);//left
-        drawTile(textureID2 , baseMVP, make_translation({5.f, -2.f, -5.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(10.f, 2.f, 1.f) , tileVAO);//right
-        drawTile(textureID2 , baseMVP, make_translation({-5.f, -2.f, -5.f}) * make_scaling(10.f, 2.f, 1.f) , tileVAO);//front
+        // // INSIDE FENCES
+        // drawTile(textureID2 , baseMVP, make_translation({-5.f, -2.f, 5.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(10.f, 2.f, 1.f), tileVAO);//left
+        // drawTile(textureID2 , baseMVP, make_translation({5.f, -2.f, -5.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(10.f, 2.f, 1.f) , tileVAO);//right
+        // drawTile(textureID2 , baseMVP, make_translation({-5.f, -2.f, -5.f}) * make_scaling(10.f, 2.f, 1.f) , tileVAO);//front
 
-        //OUTSIDE FENCES
-        drawTile(textureID2 , baseMVP, make_translation({-5.f, -2.f, -5.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(10.f, 2.f, 1.f) , tileVAO);//left
-        drawTile(textureID2 , baseMVP, make_translation({5.f, -2.f, 5.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(10.f, 2.f, 1.f), tileVAO);//right
-        drawTile(textureID2 , baseMVP, make_translation({5.f, -2.f, -5.f}) * make_scaling(10.f, 2.f, 1.f) * make_rotation_y(kPi_), tileVAO);//front
+        // //OUTSIDE FENCES
+        // drawTile(textureID2 , baseMVP, make_translation({-5.f, -2.f, -5.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(10.f, 2.f, 1.f) , tileVAO);//left
+        // drawTile(textureID2 , baseMVP, make_translation({5.f, -2.f, 5.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(10.f, 2.f, 1.f), tileVAO);//right
+        // drawTile(textureID2 , baseMVP, make_translation({5.f, -2.f, -5.f}) * make_scaling(10.f, 2.f, 1.f) * make_rotation_y(kPi_), tileVAO);//front
         
 
         // reset
