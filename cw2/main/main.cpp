@@ -275,10 +275,17 @@ int main() try {
     Mat44f flippedSBModel = make_translation({14.65f, 1.24f, 3.f})  * make_rotation_x( kPi_ ) * make_rotation_z(  3.2 * kPi_/2 ); 
 
     // Animation state
-	auto last = Clock::now();
+	// auto last = Clock::now();
+	// float angle = 0.f;
+	// float angle2 = 0.f;
+    // int test = 0;
+    // int test2 = 0; 
+    // bool flag = true;
+    // bool flag2 = true;
 
-	float angle = 0.f;
-
+    float inc = 0.005;
+    float angle = 0;    
+    int corr = 0;
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -329,6 +336,8 @@ int main() try {
 
             ImGui::ColorEdit3("Light 5 colour", (float*)&l5.lightColor);
 
+            ImGui::SliderFloat("float", &angle, -2*kPi_, 2*kPi_);
+
             //ImGui::Checkbox("stop/start animation", (bool*)&startAni);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -338,13 +347,13 @@ int main() try {
         }
 
         // Update animation state
-		auto const now = Clock::now();
-		float dt = std::chrono::duration_cast<Secondsf>(now - last).count();
-		last = now;
+		// auto const now = Clock::now();
+		// float dt = std::chrono::duration_cast<Secondsf>(now - last).count();
+		// last = now;
 
-		angle += dt * kPi_ * 0.3f;
-		if (angle >= 2.f * kPi_)
-			angle -= 2.f * kPi_;
+		// angle += dt * kPi_ * 0.3f;
+		// if (angle >= 2.f * kPi_)
+		// 	angle -= 2.f * kPi_;
 
 
 
@@ -381,17 +390,55 @@ int main() try {
         l4.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}), prog.programId(), "light[3]." );
         l5.drawLamp(baseMVP, make_translation({-31.f, 0.f, 0.f}), prog.programId(), "light[4]." );
 
-        //very simple animation
-        /*if (animationCounter % 1000 == 0){
-            sign *= -1.f;
-        }
-        animationCounter += 1;
+
+
+        // float testAngle = kPi_ / 12;
         
-        zLoc += sign * (sizeOfFloor/1000.f);*/
+        // //test
+        // if (test > 300) {
+        //     flag = false;
+        //     // angle = -angle;
+        // }
+        // else if (test < -300) {
+        //     flag = true;
+        //     // angle = -angle;
+        // }
+        
+        // if (flag) {
+        //     test += 1;
+        //     test2 += 1;
+        // }
+        // else {
+        //     test -= 1;
+        //     test2 -= 1;
+        // }
 
 
+        // printf("\n test: %d     test2: %d \n", test, test2);
 
-        Mat44f bowlSBModel = make_rotation_x( angle ) * make_rotation_y(kPi_/2) ;
+        // angleChange * pi * speed
+        // angle += std::cos(test) * kPi_ * 0.005f;
+        // angle2 += test * -kPi_ * 0.000005f;
+        // // printf("\n angle: %ld \n", angle);
+
+        
+
+        if (angle > 0.5) {
+            angle = 0.5;
+            inc = -inc;
+        }
+        if (angle < -0.5) {
+            angle = -0.5;
+            inc = -inc;
+        }
+        angle += inc;
+
+        corr = int( std::sin( 2 * kPi_ * abs(angle) ) );
+        printf("\n corr: %ld \n", angle);
+
+        Mat44f bowlAnimationModel = make_translation({0.f, 5.6 * abs(angle), (13.f * -angle) - corr }) * make_rotation_x( angle );
+
+        // Mat44f bowlSBModel2 = make_rotation_x( angle2 ) * make_rotation_y(kPi_/2) * make_translation({0.f,0.f,-3.f}) ;
 
         
 
@@ -471,14 +518,12 @@ int main() try {
                       make_scaling( 0.f, 10.f, 20.f ) );
 
         // SKATEBOARD BOWL ANIMATION - TEMPLATES
-        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({ 0.f, 2.f, 15.f+0.8f }) * make_rotation_y(kPi_/2));
-
-        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({ 0.f, 2.f, 29.f-0.8f }) * make_rotation_y(kPi_/2));
-
-        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({ 0.f, -0.8f, 22.f }) * make_rotation_y(kPi_/2));
+        // draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({ 0.f, 2.f, 15.f+0.8f }) * make_rotation_y(kPi_/2));
+        // draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({ 0.f, 2.f, 29.f-0.8f }) * make_rotation_y(kPi_/2));
+        // draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({ 0.f, -0.8f, 22.f }) * make_rotation_y(kPi_/2));
 
         // ANIMATED SKATEBOARD
-        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({ 0.f, 2.f, 22.f }) * bowlSBModel );
+        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({ 1.f, -0.8f, 22.f }) * bowlAnimationModel * make_rotation_y(kPi_/2) );
 
 
 
