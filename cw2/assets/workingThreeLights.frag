@@ -7,7 +7,7 @@ struct Light{
     vec3 color;
 };
 
-uniform Light light[3];
+uniform Light light[4];
 
 in vec3 normal;
 in vec3 fragPos;
@@ -27,7 +27,7 @@ uniform sampler2D ourTexture;
 
 
 
-vec3 calcThreeLights(Light light, vec3 normal, vec3 fragPos, vec3 camDir);
+vec3 calcLights(Light light, vec3 normal, vec3 fragPos, vec3 camDir);
 
 layout( location = 0 ) out vec4 oColor;
 
@@ -39,11 +39,11 @@ void main()
     vec3 camDir = normalize(cameraPos - fragPos);
     vec3 result = {0.f, 0.f, 0.f};
 
-    for(int i = 0; i < 3; i++){
-        result += calcThreeLights(light[i], normal, fragPos, camDir);
+    for(int i = 0; i < 4; i++){
+        result += calcLights(light[i], normal, fragPos, camDir);
     }
 
-    //emmisive term added after all 3 lights have been computed 
+    //emmisive term added after all 4 lights have been computed 
     result += materialEmissive;
 
 
@@ -57,7 +57,7 @@ void main()
 
 }
 
-vec3 calcThreeLights(Light light, vec3 normal, vec3 fragPos, vec3 camDir){
+vec3 calcLights(Light light, vec3 normal, vec3 fragPos, vec3 camDir){
     vec3 res;
     float dist = length(light.position - fragPos);
 

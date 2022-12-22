@@ -220,7 +220,9 @@ int main() try {
     lamp l2;
     l2.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
     lamp l3;
-    l3.createLamp(3.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    l3.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    lamp l4;
+    l4.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
 
     int animationCounter = 0;
     float zLoc = 0.f;
@@ -264,7 +266,6 @@ int main() try {
     auto skateboardMesh = load_wavefront_obj("./assets/skateboard/skateboard.obj");
     GLuint skateboardVAO = create_obj_vao(skateboardMesh);
     size_t skateboardVertexCount = skateboardMesh.positions.size();
-    Mat44f skateboardModel = make_translation({4.f, 0.195f, 2.f}); 
     Mat44f flippedSBModel = make_translation({14.65f, 1.24f, 3.f})  * make_rotation_x( kPi_ ) * make_rotation_z(  3.2 * kPi_/2 ); 
 
     OGL_CHECKPOINT_ALWAYS();
@@ -312,6 +313,8 @@ int main() try {
 
             ImGui::ColorEdit3("Light 3 colour", (float*)&l3.lightColor);
 
+            ImGui::ColorEdit3("Light 4 colour", (float*)&l4.lightColor);
+
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 
@@ -349,6 +352,7 @@ int main() try {
         l1.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}), prog.programId(), "light[0]." );
         l2.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}), prog.programId(), "light[1]." );
         l3.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}), prog.programId(), "light[2]." );
+        l4.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}), prog.programId(), "light[3]." );
 
 
         //very simple animation

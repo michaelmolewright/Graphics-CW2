@@ -30,7 +30,7 @@ void lamp::createLamp(float height, Vec3f ambientinput, Vec3f colorInput ){
     lightAmbient = ambientinput;
     lightColor = colorInput;
 
-    post = make_cylinder( true, 100, { 1.f, 0.f, 0.f }, make_scaling(0.25f, height, 0.25f) * make_rotation_z(PI/2.f) );
+    post = make_cylinder( true, 100, { 1.f, 0.f, 0.f }, make_scaling(0.2f, height, 0.2f) * make_rotation_z(PI/2.f) );
     postVAO = create_vao(post);
     sphereLight = createSphere( make_translation({0.f,height - (2.f * sphereScalar),0.f}) * make_scaling(sphereScalar, sphereScalar, sphereScalar) * make_translation({0.f,2.f,0.f} ));
     sphereVAO = reversedNormalsVAO(sphereLight);
