@@ -210,6 +210,7 @@ int main() try {
     GLuint textureID2 = createTexture("./extra/fence.png"); //file paths for windows
     GLuint textureID3 = createTexture("./extra/wood.jpg");
     GLuint textureID4 = createTexture("./assets/skateboard/texture.jpg");
+    GLuint textureID5 = createTexture("./extra/steel.jpg");
 
 
     glActiveTexture( GL_TEXTURE0 );
@@ -221,15 +222,17 @@ int main() try {
 
     //--------------------------------LIGHTS---------------------------------------
     lamp l1;
-    l1.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    l1.createLamp(1.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
     lamp l2;
-    l2.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    l2.createLamp(1.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
     lamp l3;
-    l3.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    l3.createLamp(1.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
     lamp l4;
-    l4.createLamp(5.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    l4.createLamp(1.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
     lamp l5;
     l5.createLamp(2.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    lamp l6;
+    l6.createLamp(2.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
 
     //-----------------------------------------------------------------------------
 
@@ -322,7 +325,8 @@ int main() try {
 
             ImGui::ColorEdit3("Light 5 colour", (float*)&l5.lightColor);
 
-            //ImGui::Checkbox("stop/start animation", (bool*)&startAni);
+            ImGui::ColorEdit3("Light 5 colour", (float*)&l6.lightColor);
+
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
@@ -358,11 +362,12 @@ int main() try {
         glUniform1i(8, GL_FALSE);  // flag for drawing textures
 
         
-        l1.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}), prog.programId(), "light[0]." );
-        l2.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}), prog.programId(), "light[1]." );
-        l3.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}), prog.programId(), "light[2]." );
-        l4.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}), prog.programId(), "light[3]." );
+        l1.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f + 2.f, 0.f, -sizeOfFloor/2.f + 2.f}), prog.programId(), "light[0]." );
+        l2.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f - 1.5f, 2.f, sizeOfFloor/2.f + 1.5f}), prog.programId(), "light[1]." );
+        l3.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f + 1.5f, 2.f, sizeOfFloor/2.f + 1.5f}), prog.programId(), "light[2]." );
+        l4.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f - 2.f, 0.f, -sizeOfFloor/2.f + 2.f}), prog.programId(), "light[3]." );
         l5.drawLamp(baseMVP, make_translation({-31.f, 0.f, 0.f}), prog.programId(), "light[4]." );
+        l6.drawLamp(baseMVP, make_translation({-1.f, 0.f, 0.f}), prog.programId(), "light[5]." );
 
         
 
@@ -384,15 +389,11 @@ int main() try {
         draw_ramp( rampVAO, baseMVP,
                   rampBoxModel * make_translation( { 0.f, 0.f, 1.f } ) );
 
-        // BOX
-        draw_cube( cubeVAO, baseMVP,
-                  make_translation( { -12.f, 0.f, -10.f } ) *
-                      make_scaling( 4.f, 0.25f, 7.f ) );
         
         // BIG RAMP
         draw_ramp( rampVAO, baseMVP,
-                  make_translation( { 15.f, 0.f, 15.f } ) *
-                      make_scaling( 30.f, 2.f, 6.f ) *
+                  make_translation( { 14.95f, 0.f, 15.f } ) *
+                      make_scaling( 29.9f, 2.f, 6.f ) *
                      make_rotation_y( kPi_ ) );
 
 
@@ -418,20 +419,20 @@ int main() try {
 
         //---------------------------------------DRAWING-TEXTURED-OBJECTS------------------------------
         glUniform1i(8, GL_TRUE);   // flag for drawing textures
-        setMaterialProperties("wood");
-        //p1.drawRamp(textureID1, baseMVP, make_translation({0.f,10.f,0.f}));
 
+        //textured box
+        setMaterialProperties("mainlyDif");
+        p1.drawBox(textureID5, baseMVP, make_translation( { -12.f, 0.f, -3.f } ) * make_scaling( 4.f, 0.25f, 7.f ));
+
+        //second platform
         setMaterialProperties("concrete");
-
         p1.drawBox(textureID1, baseMVP, make_translation({-35.f, 0.f, 4.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(8.f, 8.f, 1.f));
 
-
+        // complex ramps
+        setMaterialProperties("wood");
         p1.drawComplexRamp(textureID3, baseMVP, make_translation({5.f,0.f,0.f}) * make_scaling(2.f,0.5f,2.f));
-
         p1.drawBox(textureID3, baseMVP, make_translation({5.f,0.f,0.f}) * make_scaling(2.f,0.5f,2.f));
-
         p1.drawComplexRamp(textureID3, baseMVP, make_translation({-8.f,0.f,4.f}) * make_scaling(2.f,1.f,2.f));
-
         p1.drawBox(textureID3, baseMVP, make_translation({-8.f,0.f,4.f}) * make_scaling(2.f,1.f,2.f));
 
         setMaterialProperties("skateboard");
