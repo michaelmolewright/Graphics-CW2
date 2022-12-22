@@ -68,8 +68,8 @@ void draw_rail( GLuint vao, Mat44f baseMVP, Mat44f model, size_t vertexCount ) {
     glUniformMatrix4fv( 0, 1, GL_TRUE, railMVP.v );
     glUniformMatrix4fv( 1, 1, GL_TRUE, model.v );
 
-    float const railColor [] = { 0.2f, 0.2f, 0.2f };
-    glUniform3fv( 5, 1, railColor );    // object color
+    // float const railColor [] = { 0.2f, 0.2f, 0.2f };
+    // glUniform3fv( 5, 1, railColor );    // object color
     glDrawArrays( GL_TRIANGLES, 0, vertexCount );
 
 }

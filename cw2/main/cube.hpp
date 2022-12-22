@@ -100,8 +100,8 @@ void draw_cube( GLuint vao, Mat44f baseMVP, Mat44f model ) {
     // glUniform3fv( 8, 1, cubeSpec );   // spec
     // glUniform1f( 9, cubeShin );      // shin
 
-    glUniform3fv( 5, 1, cubeDiff );   // object color
-    glUniform1f( 7, cubeShin );
+    // glUniform3fv( 5, 1, cubeDiff );   // object color
+    // glUniform1f( 7, cubeShin );
 
     glBindVertexArray( vao );
     glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );

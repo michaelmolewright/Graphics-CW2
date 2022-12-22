@@ -61,7 +61,7 @@ bool show_window = false;
 float startX = 640, startY = 360;
 float yaw = -90.f, pitch = 0.f;
 
-float sizeOfFloor = 20.f;
+float sizeOfFloor = 30.f;
 
 void glfw_callback_error_( int, char const * );
 
@@ -199,14 +199,6 @@ int main() try {
     OGL_CHECKPOINT_ALWAYS();
 
 
-    //--------------------RAIL----------------------------------------------------
-    auto rail = make_rail( 100, {0.f,0.f,0.f}, make_scaling(0.3333f, 0.75f,1.f));
-    GLuint railVAO = create_vao( rail );
-    //----------------------------------------------------------------------------
-
-
-    // CUBE
-   // GLuint cubeVAO = create_cube_vao();
     
     //--------------------------TEXTURES-------------------------------------------
     // REMEMBER TO CHANGE THIS TO RELATIVE PATH
@@ -247,25 +239,30 @@ int main() try {
     //-----------------------------------------------------------------------------
 
     // ----------------------------BOWL---------------------------------------------
-    auto bowl = createFinalForm( make_translation( { 1.f, -1.f, 0.f } ) * make_scaling(0.25f, 0.5f, 0.11111f) * make_rotation_y(-PI/2.f ) * make_translation( { -2.f, 2.f, 2.f } ) * make_rotation_x( PI / 2.f ) );
+    // auto bowl = createFinalForm( make_translation( { 1.f, -1.f, 0.f } ) * make_scaling(0.25f, 0.5f, 0.11111f) 
+    //         * make_rotation_y(-PI/2.f ) * make_translation( { -2.f, 2.f, 2.f } ) * make_rotation_x( PI / 2.f ) );
+    auto bowl = createFinalForm(
+        make_scaling( sizeOfFloor / 9.f, 0.6f, 1.75f ) *
+        make_translation( { -2.f, 2.f, 2.f } ) * make_rotation_x( PI / 2.f ) );
     GLuint bowl_vao = create_vao( bowl );
     std::size_t vertexCount = bowl.positions.size();
 
 
     // -----------------------------------------------------------------------------
+
     // RAIL
-    //auto rail = make_rail( 100, { 0.f, 0.f, 0.f }, kIdentity44f );
-   // GLuint railVAO = create_vao( rail );
+    auto rail = make_rail( 100, { 0.f, 0.f, 0.f }, make_scaling(2.f,1.75f, 2.f) );
+    GLuint railVAO = create_vao( rail );
 
     // CUBE
-    //auto cube = make_cube( kIdentity44f );
-   // GLuint cubeVAO = create_vao( cube );
+    auto cube = make_cube( kIdentity44f );
+    GLuint cubeVAO = create_vao( cube );
 
     // RAMP
     auto ramp = make_ramp( kIdentity44f );
     GLuint rampVAO = create_vao( ramp );
     Mat44f rampBoxModel =
-        make_translation( { 4.f, 0.f, -6.f } ) * make_scaling( 4.f, 0.5f, 1.f );
+        make_translation( { 6.f, 0.f, -10.f } ) * make_scaling( 6.f, 0.8f, 2.f );
 
 
 
@@ -273,8 +270,9 @@ int main() try {
     auto skateboardMesh = load_wavefront_obj("./assets/skateboard/skateboard.obj");
     GLuint skateboardVAO = create_obj_vao(skateboardMesh);
     size_t skateboardVertexCount = skateboardMesh.positions.size();
-    Mat44f skateboardModel = make_translation({0.f, 0.195f, 0.f}); 
-    Mat44f secondSkateBoardModel = make_translation({0.f, 0.195f, 1.f}) * make_rotation_x( kPi_ ); 
+    Mat44f skateboardModel = make_translation({4.f, 0.195f, 2.f}); 
+    Mat44f flippedSBModel = make_translation({14.65f, 1.24f, 3.f})  * make_rotation_x( kPi_ ) * make_rotation_z(  3.2 * kPi_/2 ); 
+    // * make_rotation_x( kPi_ )
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -357,6 +355,7 @@ int main() try {
         
         l1.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}), prog.programId(), "light[0]." );
         l2.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}), prog.programId(), "light[1]." );
+        l3.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}), prog.programId(), "light[2]." );
 
 
         //very simple animation
@@ -367,46 +366,43 @@ int main() try {
         
         zLoc += sign * (sizeOfFloor/1000.f);*/
 
-        l3.drawLamp(baseMVP, make_translation({-8.f, 0.f, 3}) * make_translation({0.f, 0.f, sizeOfFloor/2.f}), prog.programId(), "light[2]." );
+        
 
         
         setMaterialProperties("concrete");
         
-        draw_bowl( vertexCount, bowl_vao, baseMVP, make_translation({-5.f,0.f,sizeOfFloor/2.f}) * make_scaling(10.f,1.25f,5.f) * make_rotation_y(-PI/2.f));
+        draw_bowl(
+           vertexCount, bowl_vao, baseMVP,
+           make_translation( { sizeOfFloor / 2.f, -1.f, sizeOfFloor / 2.f } ) *
+               make_scaling( 1.f, 2.5f, 2.f ) );
 
-       //draw_lamp( lightVAO, postVAO, baseMVP,
-        //           make_translation( { 0.f, 0.f, 0.f } ) );
-
-        //draw_bowl(
-           // vertexCount, bowl_vao, baseMVP,
-          //  make_translation( { sizeOfFloor / 2.f, 0.f, sizeOfFloor / 2.f } ) *
-           //     make_scaling( 1.f, 1.6f, 1.f ) );
-
-        draw_rail( railVAO, baseMVP, make_translation( { -1.5f, 0.f, -8.f } ),
+        draw_rail( railVAO, baseMVP, make_translation( { -1.5f, 0.f, -8.f } )  ,
                    rail.positions.size() );
 
         // RAMP BOX
-        //draw_cube( cubeVAO, baseMVP, rampBoxModel );
-        //draw_ramp( rampVAO, baseMVP,
-        //           rampBoxModel * make_translation( { 1.f, 0.f, 0.f } ) *
-        //               make_rotation_y( kPi_ ) );
-       // draw_ramp( rampVAO, baseMVP,
-       //            rampBoxModel * make_translation( { 0.f, 0.f, 1.f } ) );
+        draw_cube( cubeVAO, baseMVP, rampBoxModel );
+        draw_ramp( rampVAO, baseMVP,
+                rampBoxModel * make_translation( { 1.f, 0.f, 0.f } ) *
+                      make_rotation_y( kPi_ ) );
+        draw_ramp( rampVAO, baseMVP,
+                  rampBoxModel * make_translation( { 0.f, 0.f, 1.f } ) );
 
         // BOX
-        //draw_cube( cubeVAO, baseMVP,
-             //      make_translation( { -8.f, 0.f, -6.f } ) *
-                   //    make_scaling( 4.f, 0.25f, 3.f ) );
-
-        setMaterialProperties("shineyMetal");
-        draw_rail( railVAO, baseMVP,make_translation({0.f,0.f,-5.f}) * make_translation({0.5f, 0.f, 5.5f}) * make_rotation_y(-PI/2.f)* make_scaling(3.f,1.75f, 1.f) , rail.positions.size() );
+        draw_cube( cubeVAO, baseMVP,
+                  make_translation( { -12.f, 0.f, -10.f } ) *
+                      make_scaling( 4.f, 0.25f, 7.f ) );
+        
         // BIG RAMP
-        //draw_ramp( rampVAO, baseMVP,
-       //            make_translation( { 10.f, 0.f, 10.f } ) *
-         //              make_scaling( 20.f, 1.92f, 6.f ) *
-       //               make_rotation_y( kPi_ ) );
+        draw_ramp( rampVAO, baseMVP,
+                  make_translation( { 15.f, 0.f, 15.f } ) *
+                      make_scaling( 30.f, 2.f, 6.f ) *
+                     make_rotation_y( kPi_ ) );
 
-        //draw_cube( cubeVAO, baseMVP, make_translation({2.f, 0.5f, -3.f}) );
+
+        // animation rail
+        setMaterialProperties("shineyMetal");
+        draw_rail( railVAO, baseMVP, make_translation({0.32f, 0.f, -1.f}) * make_rotation_y(-PI/2.f) , rail.positions.size() );
+        
 
         //-------------------------------------------------------------------------------------------------
         
@@ -427,15 +423,15 @@ int main() try {
         p1.drawBox(textureID3, baseMVP, make_translation({-8.f,0.f,4.f}) * make_scaling(2.f,1.f,2.f));
 
         setMaterialProperties("skateboard");
-        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, skateboardModel );
-        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, secondSkateBoardModel );
+        // draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, skateboardModel );
+        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, flippedSBModel );
+
         //animation space
         Mat44f animationTranslation = skateboardAimation(animationCounter);
         //p1.drawBox(textureID3, baseMVP, kIdentity44f);
 
 
         draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({0.f,0.f,-5.f}) * animationTranslation * make_scaling(0.64f, 0.391f, 2.5f) * make_translation({0.5f,0.5f,-0.5f}) * make_rotation_y(PI/2.f ) * make_scaling(1.f/2.5f, 1.f/0.391f, 1.f/0.64f));
-        //draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, secondSkateBoardModel );
         animationCounter += 2;
 
 

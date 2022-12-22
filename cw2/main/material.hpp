@@ -11,7 +11,7 @@
 float concrete_ambient[] ={ 0.05f,0.05f,0.05f,1.0f };
 float concrete_diffuse[] ={ 0.5f,0.5f,0.5f,1.0f};
 float concrete_specular[] ={ 0.7f,0.7f,0.7f,1.0f};
-float concrete_shine = 6.0f;
+float concrete_shine = 2.0f;
 float concrete_emmisive = 0.1f;
 //---------------------------------
 
