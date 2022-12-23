@@ -42,14 +42,14 @@ static float const rampDiff[] = { 0.1f, 0.1f, 0.1f };
 static float const rampSpec[] = { 0.296648f, 0.296648f, 0.296648f };
 static float const rampShin = 4.f;
 
-
-SimpleMeshData make_ramp( Mat44f aPreTransform ) { 
+SimpleMeshData make_ramp( Mat44f aPreTransform ) {
 
     std::vector<Vec3f> pos;
 
     // add each triangle from cube positions to pos
-    for (size_t i = 0; i < sizeof(rampPositions); i += 3 ) {
-        Vec3f tri = { rampPositions[i], rampPositions[i+1], rampPositions[i+2] };
+    for ( size_t i = 0; i < sizeof( rampPositions ); i += 3 ) {
+        Vec3f tri = { rampPositions[i], rampPositions[i + 1],
+                      rampPositions[i + 2] };
 
         pos.emplace_back( tri );
     }
@@ -72,8 +72,6 @@ void draw_ramp( GLuint vao, Mat44f baseMVP, Mat44f model ) {
     glUniformMatrix4fv( 0, 1, GL_TRUE, rampMVP.v );
     glUniformMatrix4fv( 1, 1, GL_TRUE, model.v );   // model matrix
 
-
     glBindVertexArray( vao );
-    glDrawArrays( GL_TRIANGLES, 0, 24);
+    glDrawArrays( GL_TRIANGLES, 0, 24 );
 }
-

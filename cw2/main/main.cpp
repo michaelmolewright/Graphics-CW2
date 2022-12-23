@@ -49,8 +49,6 @@ struct State_ {
     ShaderProgram *prog;
 };
 
-
-
 camera c;
 
 bool startAni = true;
@@ -138,12 +136,13 @@ int main() try {
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
 
     ImGui::StyleColorsDark();
 
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 430");
+    ImGui_ImplGlfw_InitForOpenGL( window, true );
+    ImGui_ImplOpenGL3_Init( "#version 430" );
 
     // Initialize GLAD
     // This will load the OpenGL API. We mustn't make any OpenGL calls before
@@ -175,8 +174,6 @@ int main() try {
     OGL_CHECKPOINT_ALWAYS();
     //-----------------------------------------------------
 
-
-
     // Get actual framebuffer size.
     // This can be different from the window size, as standard window
     // decorations (title bar, borders, ...) may be included in the window size
@@ -188,45 +185,43 @@ int main() try {
 
     // Other initialization & loading
     // TODO: load shaders
-    ShaderProgram prog( { { GL_VERTEX_SHADER, "assets/default.vert" },
-                          { GL_FRAGMENT_SHADER, "assets/multipleLights.frag" } } );
+    ShaderProgram prog(
+        { { GL_VERTEX_SHADER, "assets/default.vert" },
+          { GL_FRAGMENT_SHADER, "assets/multipleLights.frag" } } );
 
     state.prog = &prog;
 
     OGL_CHECKPOINT_ALWAYS();
 
-
-    
     //--------------------------TEXTURES-------------------------------------------
-    GLuint textureID1 = createTexture("./extra/concrete.png"); //file paths for windows
-    GLuint textureID2 = createTexture("./extra/fence.png"); //file paths for windows
-    GLuint textureID3 = createTexture("./extra/wood.jpg");
-    GLuint textureID4 = createTexture("./assets/skateboard/texture.jpg");
-    GLuint textureID5 = createTexture("./extra/steel.jpg");
-
+    GLuint textureID1 =
+        createTexture( "./extra/concrete.png" );   // file paths for windows
+    GLuint textureID2 =
+        createTexture( "./extra/fence.png" );   // file paths for windows
+    GLuint textureID3 = createTexture( "./extra/wood.jpg" );
+    GLuint textureID4 = createTexture( "./assets/skateboard/texture.jpg" );
+    GLuint textureID5 = createTexture( "./extra/steel.jpg" );
 
     glActiveTexture( GL_TEXTURE0 );
     //-----------------------------------------------------------------------------
 
     //-----------------------------------------------------------------------------
-    
-
 
     //--------------------------------LIGHTS---------------------------------------
     lamp l1;
-    l1.createLamp(1.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    l1.createLamp( 1.f, { 0.5f, 0.5f, 0.5f }, { 0.2f, 0.2f, 0.2f } );
     lamp l2;
-    l2.createLamp(1.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    l2.createLamp( 1.f, { 0.5f, 0.5f, 0.5f }, { 0.2f, 0.2f, 0.2f } );
     lamp l3;
-    l3.createLamp(1.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    l3.createLamp( 1.f, { 0.5f, 0.5f, 0.5f }, { 0.2f, 0.2f, 0.2f } );
     lamp l4;
-    l4.createLamp(1.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    l4.createLamp( 1.f, { 0.5f, 0.5f, 0.5f }, { 0.2f, 0.2f, 0.2f } );
     lamp l5;
-    l5.createLamp(1.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    l5.createLamp( 1.f, { 0.5f, 0.5f, 0.5f }, { 0.2f, 0.2f, 0.2f } );
     lamp l6;
-    l6.createLamp(1.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    l6.createLamp( 1.f, { 0.5f, 0.5f, 0.5f }, { 0.2f, 0.2f, 0.2f } );
     lamp l7;
-    l7.createLamp(4.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    l7.createLamp( 4.f, { 0.5f, 0.5f, 0.5f }, { 0.2f, 0.2f, 0.2f } );
 
     //-----------------------------------------------------------------------------
 
@@ -246,7 +241,8 @@ int main() try {
     // -----------------------------------------------------------------------------
 
     // RAIL
-    auto rail = make_rail( 100, { 0.f, 0.f, 0.f }, make_scaling(2.f,1.75f, 2.f) );
+    auto rail =
+        make_rail( 100, { 0.f, 0.f, 0.f }, make_scaling( 2.f, 1.75f, 2.f ) );
     GLuint railVAO = create_vao( rail );
 
     // CUBE
@@ -256,19 +252,22 @@ int main() try {
     // RAMP
     auto ramp = make_ramp( kIdentity44f );
     GLuint rampVAO = create_vao( ramp );
-    Mat44f rampBoxModel =
-        make_translation( { 6.f, 0.f, -10.f } ) * make_scaling( 6.f, 0.8f, 2.f );
+    Mat44f rampBoxModel = make_translation( { 6.f, 0.f, -10.f } ) *
+                          make_scaling( 6.f, 0.8f, 2.f );
 
     // SKATEBOARD
-    auto skateboardMesh = load_wavefront_obj("./assets/skateboard/skateboard.obj");
-    GLuint skateboardVAO = create_obj_vao(skateboardMesh);
+    auto skateboardMesh =
+        load_wavefront_obj( "./assets/skateboard/skateboard.obj" );
+    GLuint skateboardVAO = create_obj_vao( skateboardMesh );
     size_t skateboardVertexCount = skateboardMesh.positions.size();
-    Mat44f flippedSBModel = make_translation({14.65f, 1.24f, 3.f})  * make_rotation_x( kPi_ ) * make_rotation_z(  3.2 * kPi_/2 ); 
+    Mat44f flippedSBModel = make_translation( { 14.65f, 1.24f, 3.f } ) *
+                            make_rotation_x( kPi_ ) *
+                            make_rotation_z( 3.2 * kPi_ / 2 );
 
     // ANIMATION VARIABLES
     auto last = Clock::now();
-    float inc = 0; //0.008;
-    float angle = 0;    
+    float inc = 0;   // 0.008;
+    float angle = 0;
     float y, z = 0;
     bool rev = false;
 
@@ -278,7 +277,6 @@ int main() try {
     while ( !glfwWindowShouldClose( window ) ) {
         // Let GLFW process events
         glfwPollEvents();
-
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -305,45 +303,49 @@ int main() try {
             glViewport( 0, 0, nwidth, nheight );
         }
 
-        if (show_window)
-        {
-            ImGui::Begin("Control Menu");
+        if ( show_window ) {
+            ImGui::Begin( "Control Menu" );
 
-            ImGui::Text("Press X to take a screenshot of the current frame \n\n");
+            ImGui::Text(
+                "Press X to take a screenshot of the current frame \n\n" );
 
-            ImGui::Text("Press spacebar to play/pause the animations \n\n");
+            ImGui::Text( "Press spacebar to play/pause the animations \n\n" );
 
-            ImGui::Text("Use the arrow keys to control the kickflip animation speed \n\n");
+            ImGui::Text( "Use the arrow keys to control the kickflip animation "
+                         "speed \n\n" );
 
-            ImGui::ColorEdit3("Center light colour", (float*)&l7.lightColor);
+            ImGui::ColorEdit3( "Center light colour", (float *)&l7.lightColor );
 
-            ImGui::ColorEdit3("Floor light 1 colour", (float*)&l1.lightColor);
+            ImGui::ColorEdit3( "Floor light 1 colour",
+                               (float *)&l1.lightColor );
 
-            ImGui::ColorEdit3("Floor light 2 colour", (float*)&l2.lightColor);
+            ImGui::ColorEdit3( "Floor light 2 colour",
+                               (float *)&l2.lightColor );
 
-            ImGui::ColorEdit3("Bowl light 1 colour", (float*)&l3.lightColor);
+            ImGui::ColorEdit3( "Bowl light 1 colour", (float *)&l3.lightColor );
 
-            ImGui::ColorEdit3("Bowl light 2 colour", (float*)&l4.lightColor);
+            ImGui::ColorEdit3( "Bowl light 2 colour", (float *)&l4.lightColor );
 
-            ImGui::ColorEdit3("Bowl light 3 colour", (float*)&l5.lightColor);
+            ImGui::ColorEdit3( "Bowl light 3 colour", (float *)&l5.lightColor );
 
-            ImGui::ColorEdit3("Bowl light 4 colour", (float*)&l6.lightColor);
+            ImGui::ColorEdit3( "Bowl light 4 colour", (float *)&l6.lightColor );
 
-            
-
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
+            ImGui::Text( "Application average %.3f ms/frame (%.1f FPS)",
+                         1000.0f / ImGui::GetIO().Framerate,
+                         ImGui::GetIO().Framerate );
 
             ImGui::End();
         }
 
-
         c.updatePosition();
 
         // compute baseMVP matrix i.e Proj * view
-        Mat44f projection = make_perspective_projection(60.f * 3.1415926f / 180.f, fbwidth / float( fbheight ), 0.1f, 100.0f );
+        Mat44f projection = make_perspective_projection(
+            60.f * 3.1415926f / 180.f, fbwidth / float( fbheight ), 0.1f,
+            100.0f );
 
-        Mat44f view = camMat( c.cameraPosition, c.cameraPosition + c.cameraFront, c.cameraUp );
+        Mat44f view = camMat( c.cameraPosition,
+                              c.cameraPosition + c.cameraFront, c.cameraUp );
 
         Mat44f baseMVP = projection * view;
 
@@ -351,31 +353,33 @@ int main() try {
         auto const now = Clock::now();
         float dt = std::chrono::duration_cast<Secondsf>( now - last ).count();
         last = now;
-        
+
         inc = dt / 2;
-        if (startAni){
+        if ( startAni ) {
             animationTime += dt;
 
-            if (angle > 0.5) {
+            if ( angle > 0.5 ) {
                 angle = 0.5;
                 rev = true;
             }
-            if (angle < -0.5) {
+            if ( angle < -0.5 ) {
                 rev = false;
                 angle = -0.5;
             }
 
-            if (rev)
+            if ( rev )
                 angle -= inc;
-            else    
+            else
                 angle += inc;
         }
 
-        z = (10.f * -angle);
+        z = ( 10.f * -angle );
         y = sqrt( 50 - pow( z, 2 ) ) / 2 - 3.7;
-        Mat44f bowlAnimationTranslation = make_translation({0.f, -y, z }) * make_rotation_x( angle );
+        Mat44f bowlAnimationTranslation =
+            make_translation( { 0.f, -y, z } ) * make_rotation_x( angle );
 
-        Mat44f kickFlipAnimationTranslation = skateboardAimation(animationTime, lengthOfAnimation);
+        Mat44f kickFlipAnimationTranslation =
+            skateboardAimation( animationTime, lengthOfAnimation );
 
         OGL_CHECKPOINT_DEBUG();
 
@@ -391,108 +395,164 @@ int main() try {
         //-------------------------------------DRAWING-STARTS-HERE-----------------------------------------
 
         //------------------------------------DRAWING-NON-TEXTURED-OBJECTS---------------------------------
-        glUniform1i(8, GL_FALSE);  // flag for drawing textures
+        glUniform1i( 8, GL_FALSE );   // flag for drawing textures
 
         // LIGHTS
-        l1.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f + 2.f, 0.f, -sizeOfFloor/2.f + 2.f}), prog.programId(), "light[0]." );
-        l2.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f - 2.f, 0.f, -sizeOfFloor/2.f + 2.f}), prog.programId(), "light[1]." );
+        l1.drawLamp( baseMVP,
+                     make_translation( { -sizeOfFloor / 2.f + 2.f, 0.f,
+                                         -sizeOfFloor / 2.f + 2.f } ),
+                     prog.programId(), "light[0]." );
+        l2.drawLamp( baseMVP,
+                     make_translation( { sizeOfFloor / 2.f - 2.f, 0.f,
+                                         -sizeOfFloor / 2.f + 2.f } ),
+                     prog.programId(), "light[1]." );
 
         // bowl lights
-        l3.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f + 1.5f, 2.f, sizeOfFloor/2.f + 1.5f}), prog.programId(), "light[2]." );
-        l4.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f - 1.5f, 2.f, sizeOfFloor/2.f + 1.5f}), prog.programId(), "light[3]." );
-        l5.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f + 1.5f, 2.f, sizeOfFloor/2.f + 12.5f}), prog.programId(), "light[4]." );
-        l6.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f - 1.5f, 2.f, sizeOfFloor/2.f + 12.5f}), prog.programId(), "light[5]." );
-        
-        l7.drawLamp(baseMVP, make_translation({0.f, 0.f, 0.f}), prog.programId(), "light[6]." ); // center light
+        l3.drawLamp( baseMVP,
+                     make_translation( { -sizeOfFloor / 2.f + 1.5f, 2.f,
+                                         sizeOfFloor / 2.f + 1.5f } ),
+                     prog.programId(), "light[2]." );
+        l4.drawLamp( baseMVP,
+                     make_translation( { sizeOfFloor / 2.f - 1.5f, 2.f,
+                                         sizeOfFloor / 2.f + 1.5f } ),
+                     prog.programId(), "light[3]." );
+        l5.drawLamp( baseMVP,
+                     make_translation( { -sizeOfFloor / 2.f + 1.5f, 2.f,
+                                         sizeOfFloor / 2.f + 12.5f } ),
+                     prog.programId(), "light[4]." );
+        l6.drawLamp( baseMVP,
+                     make_translation( { sizeOfFloor / 2.f - 1.5f, 2.f,
+                                         sizeOfFloor / 2.f + 12.5f } ),
+                     prog.programId(), "light[5]." );
 
- 
+        l7.drawLamp( baseMVP, make_translation( { 0.f, 0.f, 0.f } ),
+                     prog.programId(), "light[6]." );   // center light
 
-        setMaterialProperties("concrete");
-        
+        setMaterialProperties( "concrete" );
+
         draw_bowl(
-           vertexCount, bowl_vao, baseMVP,
-           make_translation( { sizeOfFloor / 2.f, -1.f, sizeOfFloor / 2.f } ) *
-               make_scaling( 1.f, 2.5f, 2.f ) );
-
-        
+            vertexCount, bowl_vao, baseMVP,
+            make_translation( { sizeOfFloor / 2.f, -1.f, sizeOfFloor / 2.f } ) *
+                make_scaling( 1.f, 2.5f, 2.f ) );
 
         // RAMP BOX
         draw_cube( cubeVAO, baseMVP, rampBoxModel );
         draw_ramp( rampVAO, baseMVP,
-                rampBoxModel * make_translation( { 1.f, 0.f, 0.f } ) *
-                      make_rotation_y( kPi_ ) );
+                   rampBoxModel * make_translation( { 1.f, 0.f, 0.f } ) *
+                       make_rotation_y( kPi_ ) );
         draw_ramp( rampVAO, baseMVP,
-                  rampBoxModel * make_translation( { 0.f, 0.f, 1.f } ) );
+                   rampBoxModel * make_translation( { 0.f, 0.f, 1.f } ) );
 
-        
         // BIG RAMP
         draw_ramp( rampVAO, baseMVP,
-                  make_translation( { 14.95f, 0.f, 15.f } ) *
-                      make_scaling( 29.9f, 2.f, 6.f ) *
-                     make_rotation_y( kPi_ ) );
+                   make_translation( { 14.95f, 0.f, 15.f } ) *
+                       make_scaling( 29.9f, 2.f, 6.f ) *
+                       make_rotation_y( kPi_ ) );
 
-
-        setMaterialProperties("railMetal");
-        draw_rail( railVAO, baseMVP, make_translation( { -2.5f, 0.f, -12.f } )  ,
+        setMaterialProperties( "railMetal" );
+        draw_rail( railVAO, baseMVP, make_translation( { -2.5f, 0.f, -12.f } ),
                    rail.positions.size() );
         // animation rail
-        draw_rail( railVAO, baseMVP, make_translation({2.32f, 0.f, -4.f}) * make_rotation_y(-PI/2.f) , rail.positions.size() );
-
+        draw_rail( railVAO, baseMVP,
+                   make_translation( { 2.32f, 0.f, -4.f } ) *
+                       make_rotation_y( -PI / 2.f ),
+                   rail.positions.size() );
 
         //-------------------------------------------------------------------------------------------------
-        
-
 
         //---------------------------------------DRAWING-TEXTURED-OBJECTS------------------------------
-        glUniform1i(8, GL_TRUE);   // flag for drawing textures
+        glUniform1i( 8, GL_TRUE );   // flag for drawing textures
 
-        //textured box
-        setMaterialProperties("mainlyDif");
-        p1.drawBox(textureID5, baseMVP, make_translation( { -12.f, 0.f, -3.f } ) * make_scaling( 4.f, 0.25f, 7.f ));
-
+        // textured box
+        setMaterialProperties( "mainlyDif" );
+        p1.drawBox( textureID5, baseMVP,
+                    make_translation( { -12.f, 0.f, -3.f } ) *
+                        make_scaling( 4.f, 0.25f, 7.f ) );
 
         // complex ramps
-        setMaterialProperties("wood");
-        p1.drawComplexRamp(textureID3, baseMVP, make_translation({8.f,0.f,2.f}) * make_scaling(2.f,0.5f,2.f));
-        p1.drawBox(textureID3, baseMVP, make_translation({8.f,0.f,2.f}) * make_scaling(2.f,0.5f,2.f));
+        setMaterialProperties( "wood" );
+        p1.drawComplexRamp( textureID3, baseMVP,
+                            make_translation( { 8.f, 0.f, 2.f } ) *
+                                make_scaling( 2.f, 0.5f, 2.f ) );
+        p1.drawBox( textureID3, baseMVP,
+                    make_translation( { 8.f, 0.f, 2.f } ) *
+                        make_scaling( 2.f, 0.5f, 2.f ) );
 
-        p1.drawComplexRamp(textureID3, baseMVP, make_translation({-8.f,0.f,4.f}) * make_scaling(2.f,1.f,2.f));
-        p1.drawBox(textureID3, baseMVP, make_translation({-8.f,0.f,4.f}) * make_scaling(2.f,1.f,2.f));
+        p1.drawComplexRamp( textureID3, baseMVP,
+                            make_translation( { -8.f, 0.f, 4.f } ) *
+                                make_scaling( 2.f, 1.f, 2.f ) );
+        p1.drawBox( textureID3, baseMVP,
+                    make_translation( { -8.f, 0.f, 4.f } ) *
+                        make_scaling( 2.f, 1.f, 2.f ) );
 
-
-        setMaterialProperties("skateboard");
+        setMaterialProperties( "skateboard" );
         // flipped skateboards
-        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, flippedSBModel );
+        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO,
+                         baseMVP, flippedSBModel );
 
         // animated skateboards
-        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({ 0.f, -0.9f, 22.f }) * bowlAnimationTranslation * make_rotation_y(kPi_/2) );
+        draw_skateboard(
+            textureID4, skateboardVertexCount, skateboardVAO, baseMVP,
+            make_translation( { 0.f, -0.9f, 22.f } ) *
+                bowlAnimationTranslation * make_rotation_y( kPi_ / 2 ) );
 
-        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({2.f,0.f,-9.f}) * kickFlipAnimationTranslation * make_scaling(0.64f, 0.391f, 2.5f) * make_translation({0.5f,0.5f,-0.5f}) * make_rotation_y(PI/2.f ) * make_scaling(1.f/2.5f, 1.f/0.391f, 1.f/0.64f));
-        
+        draw_skateboard(
+            textureID4, skateboardVertexCount, skateboardVAO, baseMVP,
+            make_translation( { 2.f, 0.f, -9.f } ) *
+                kickFlipAnimationTranslation *
+                make_scaling( 0.64f, 0.391f, 2.5f ) *
+                make_translation( { 0.5f, 0.5f, -0.5f } ) *
+                make_rotation_y( PI / 2.f ) *
+                make_scaling( 1.f / 2.5f, 1.f / 0.391f, 1.f / 0.64f ) );
 
+        setMaterialProperties( "concrete" );
 
+        p1.drawBox(
+            textureID1, baseMVP,
+            make_translation( { -sizeOfFloor / 2.f, 0.f, sizeOfFloor / 2.f } ) *
+                make_rotation_x( -kPi_ / 2.f ) *
+                make_scaling( sizeOfFloor, sizeOfFloor, 1.f ) );
 
-        setMaterialProperties("concrete");
-
-        p1.drawBox(textureID1, baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_x(-kPi_ / 2.f) * make_scaling(sizeOfFloor, sizeOfFloor, 1.f));
-
-        setMaterialProperties("shinyMetal");
+        setMaterialProperties( "shinyMetal" );
         // INSIDE FENCES
-        p1.drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f));//left
-        p1.drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f));//right
-        p1.drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_scaling(sizeOfFloor, 2.f, 1.f));//front
+        p1.drawTile(
+            textureID2, baseMVP,
+            make_translation( { -sizeOfFloor / 2.f, 0.f, sizeOfFloor / 2.f } ) *
+                make_rotation_y( kPi_ / 2.f ) *
+                make_scaling( sizeOfFloor, 2.f, 1.f ) );   // left
+        p1.drawTile(
+            textureID2, baseMVP,
+            make_translation( { sizeOfFloor / 2.f, 0.f, -sizeOfFloor / 2.f } ) *
+                make_rotation_y( -kPi_ / 2.f ) *
+                make_scaling( sizeOfFloor, 2.f, 1.f ) );   // right
+        p1.drawTile( textureID2, baseMVP,
+                     make_translation(
+                         { -sizeOfFloor / 2.f, 0.f, -sizeOfFloor / 2.f } ) *
+                         make_scaling( sizeOfFloor, 2.f, 1.f ) );   // front
 
-        //OUTSIDE FENCES
-        p1.drawTile(textureID2 , baseMVP, make_translation({-sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_rotation_y(-kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f));//left
-        p1.drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, sizeOfFloor/2.f}) * make_rotation_y(kPi_ / 2.f) * make_scaling(sizeOfFloor, 2.f, 1.f));//right
-        p1.drawTile(textureID2 , baseMVP, make_translation({sizeOfFloor/2.f, 0.f, -sizeOfFloor/2.f}) * make_scaling(sizeOfFloor, 2.f, 1.f) * make_rotation_y(kPi_));//front
-        
+        // OUTSIDE FENCES
+        p1.drawTile( textureID2, baseMVP,
+                     make_translation(
+                         { -sizeOfFloor / 2.f, 0.f, -sizeOfFloor / 2.f } ) *
+                         make_rotation_y( -kPi_ / 2.f ) *
+                         make_scaling( sizeOfFloor, 2.f, 1.f ) );   // left
+        p1.drawTile(
+            textureID2, baseMVP,
+            make_translation( { sizeOfFloor / 2.f, 0.f, sizeOfFloor / 2.f } ) *
+                make_rotation_y( kPi_ / 2.f ) *
+                make_scaling( sizeOfFloor, 2.f, 1.f ) );   // right
+        p1.drawTile(
+            textureID2, baseMVP,
+            make_translation( { sizeOfFloor / 2.f, 0.f, -sizeOfFloor / 2.f } ) *
+                make_scaling( sizeOfFloor, 2.f, 1.f ) *
+                make_rotation_y( kPi_ ) );   // front
+
         // reset
         glBindVertexArray( 0 );
         glUseProgram( 0 );
 
         ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
 
         OGL_CHECKPOINT_DEBUG();
 
@@ -532,10 +592,9 @@ void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction,
 
     if ( GLFW_KEY_M == aKey && GLFW_PRESS == aAction ) {
         show_window = !show_window;
-        if (show_window){
+        if ( show_window ) {
             glfwSetInputMode( aWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL );
-        }
-        else{
+        } else {
             glfwSetInputMode( aWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
         }
         return;
@@ -548,7 +607,7 @@ void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction,
     if ( GLFW_KEY_LEFT == aKey && GLFW_PRESS == aAction ) {
         float ratio = animationTime / lengthOfAnimation;
         lengthOfAnimation += 2.f;
-        if (lengthOfAnimation > 20.f)
+        if ( lengthOfAnimation > 20.f )
             lengthOfAnimation = 20.f;
         animationTime = ratio * lengthOfAnimation;
         return;
@@ -557,7 +616,7 @@ void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction,
     if ( GLFW_KEY_RIGHT == aKey && GLFW_PRESS == aAction ) {
         float ratio = animationTime / lengthOfAnimation;
         lengthOfAnimation -= 2.f;
-        if(lengthOfAnimation < 2.f)
+        if ( lengthOfAnimation < 2.f )
             lengthOfAnimation = 2.f;
         animationTime = ratio * lengthOfAnimation;
         return;
@@ -567,11 +626,11 @@ void glfw_callback_key_( GLFWwindow *aWindow, int aKey, int, int aAction,
         startAni = !startAni;
     }
 
-    c.movement(aKey, aAction); //camera movement
+    c.movement( aKey, aAction );   // camera movement
 }
 
 void mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
-    
+
     float xoffset = xP - startX;
     float yoffset = startY - yP;
     startX = xP;
@@ -596,38 +655,35 @@ void mouse_movement( GLFWwindow *aWindow, double xP, double yP ) {
     dir.y = sinf( pitch * 0.01745329251f );
     dir.z = sinf( yaw * 0.01745329251f ) * cosf( pitch * 0.01745329251f );
 
-
-    if (!show_window){
+    if ( !show_window ) {
         c.cameraFront = normalize( dir );
     }
 }
 
 void screenshot( GLFWwindow *window ) {
     int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
+    glfwGetFramebufferSize( window, &width, &height );
 
     std::string savePath = "./screenshots/screenshot";
 
     // get number of files in screenshots
     DIR *screenshots;
     size_t i = 0;
-    struct dirent *file;     
-    screenshots = opendir ("./screenshots/");
+    struct dirent *file;
+    screenshots = opendir( "./screenshots/" );
 
-    if (screenshots != NULL)
-    {
-        while ( (file = readdir(screenshots)) )
-        i++;
-        (void) closedir(screenshots);
-    }
-    else
-        perror ("Couldn't open screenshots folder");
+    if ( screenshots != NULL ) {
+        while ( ( file = readdir( screenshots ) ) )
+            i++;
+        (void)closedir( screenshots );
+    } else
+        perror( "Couldn't open screenshots folder" );
 
     // take away two (for . and ..)
     i -= 1;
-    savePath += std::to_string(i) + ".png";
+    savePath += std::to_string( i ) + ".png";
 
-    int numChannels = 3; // rgb
+    int numChannels = 3;   // rgb
     int stride = numChannels * width;
 
     // ensure stride is a multiple of 4 to save image
@@ -640,15 +696,17 @@ void screenshot( GLFWwindow *window ) {
     std::vector<char> buffer( bufferSize );
     glPixelStorei( GL_PACK_ALIGNMENT, 4 );
     glReadBuffer( GL_FRONT );
-    glReadPixels( 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, buffer.data() );
+    glReadPixels( 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE,
+                  buffer.data() );
 
     // save png
-    stbi_flip_vertically_on_write(true);
-    if ( stbi_write_png(savePath.c_str(), width, height, numChannels, buffer.data(), stride) ) {
-        printf("\nScreenshot saved to %s \n", savePath.c_str());
+    stbi_flip_vertically_on_write( true );
+    if ( stbi_write_png( savePath.c_str(), width, height, numChannels,
+                         buffer.data(), stride ) ) {
+        printf( "\nScreenshot saved to %s \n", savePath.c_str() );
         return;
     }
-    printf("\nError attempting to save screenshot \n");
+    printf( "\nError attempting to save screenshot \n" );
 }
 
 }   // namespace

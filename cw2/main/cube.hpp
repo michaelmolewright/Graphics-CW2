@@ -94,7 +94,6 @@ void draw_cube( GLuint vao, Mat44f baseMVP, Mat44f model ) {
     glUniformMatrix4fv( 0, 1, GL_TRUE, cubeMVP.v );
     glUniformMatrix4fv( 1, 1, GL_TRUE, model.v );   // model matrix
 
-
     glBindVertexArray( vao );
     glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );
 }

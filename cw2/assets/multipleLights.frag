@@ -1,6 +1,5 @@
 #version 430
 
-
 struct Light{
     vec3 position;
     vec3 ambient;
@@ -24,9 +23,6 @@ layout( location = 7 ) uniform float materialEmissive;
 layout( location = 8 ) uniform bool drawTexture;
 uniform sampler2D ourTexture;
 
-
-
-
 vec3 calcLights(Light light, vec3 normal, vec3 fragPos, vec3 camDir);
 
 layout( location = 0 ) out vec4 oColor;
@@ -46,7 +42,6 @@ void main()
     //emmisive term added after all 4 lights have been computed 
     result += materialEmissive;
 
-
     if (drawTexture){
         vec4 textureColour = texture(ourTexture, texCood);
         oColor = textureColour * vec4( result, 1.0 );
@@ -54,7 +49,6 @@ void main()
     else{
         oColor = vec4( result, 1.0 );
     }
-
 }
 
 vec3 calcLights(Light light, vec3 normal, vec3 fragPos, vec3 camDir){
@@ -73,14 +67,12 @@ vec3 calcLights(Light light, vec3 normal, vec3 fragPos, vec3 camDir){
     vec3 reflectDir = reflect(-lightDir, norm);  
     float spec = pow(max(dot(camDir, reflectDir), 0.0), materialShininess);
     
-
     vec3 diffuse, ambient, specular;
 
     //corrected bling phiong as shown in slides
     diffuse = (light.color / PI) * diff * materialDiffuse;
     ambient = light.ambient * materialAmbient;
     specular = ( (materialShininess + 2 ) / 8) * light.color * spec * materialSpecular;
-
 
     res = diffuse + ambient + specular;
     
