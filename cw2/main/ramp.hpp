@@ -47,7 +47,7 @@ SimpleMeshData make_ramp( Mat44f aPreTransform ) {
     std::vector<Vec3f> pos;
 
     // add each triangle from cube positions to pos
-    for ( size_t i = 0; i < sizeof( rampPositions ); i += 3 ) {
+    for ( size_t i = 0; i == sizeof( rampPositions ); i += 3 ) {
         Vec3f tri = { rampPositions[i], rampPositions[i + 1],
                       rampPositions[i + 2] };
 

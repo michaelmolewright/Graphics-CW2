@@ -181,13 +181,16 @@ int main() try {
 
     glViewport( 0, 0, iwidth, iheight );
 
+
     // Other initialization & loading
     // TODO: load shaders
     ShaderProgram prog(
         { { GL_VERTEX_SHADER, "assets/default.vert" },
           { GL_FRAGMENT_SHADER, "assets/multipleLights.frag" } } );
 
+
     state.prog = &prog;
+
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -200,12 +203,15 @@ int main() try {
     GLuint textureID4 = createTexture( "./assets/skateboard/texture.jpg" );
     GLuint textureID5 = createTexture( "./extra/steel.jpg" );
 
+
     glActiveTexture( GL_TEXTURE0 );
     //-----------------------------------------------------------------------------
 
     //-----------------------------------------------------------------------------
 
     //--------------------------------LIGHTS---------------------------------------
+
+
     lamp l1;
     l1.createLamp( 1.f, { 0.5f, 0.5f, 0.5f }, { 0.2f, 0.2f, 0.2f } );
     lamp l2;
@@ -223,6 +229,8 @@ int main() try {
 
     //-----------------------------------------------------------------------------
 
+
+
     //--------------------------FLOOR----------------------------------------------
     plane p1;
     p1.createBox();
@@ -238,6 +246,7 @@ int main() try {
     std::size_t vertexCount = bowl.positions.size();
     // -----------------------------------------------------------------------------
 
+
     // RAIL
     auto rail =
         make_rail( 100, { 0.f, 0.f, 0.f }, make_scaling( 2.f, 1.75f, 2.f ) );
@@ -246,12 +255,13 @@ int main() try {
     // CUBE
     auto cube = make_cube( kIdentity44f );
     GLuint cubeVAO = create_vao( cube );
-
     // RAMP
     auto ramp = make_ramp( kIdentity44f );
     GLuint rampVAO = create_vao( ramp );
     Mat44f rampBoxModel = make_translation( { 6.f, 0.f, -10.f } ) *
                           make_scaling( 6.f, 0.8f, 2.f );
+
+
 
     // SKATEBOARD
     auto skateboardMesh =
@@ -261,6 +271,7 @@ int main() try {
     Mat44f flippedSBModel = make_translation( { 14.65f, 1.24f, 3.f } ) *
                             make_rotation_x( kPi_ ) *
                             make_rotation_z( 3.2 * kPi_ / 2 );
+
 
     // ANIMATION VARIABLES
     auto last = Clock::now();

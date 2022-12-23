@@ -53,7 +53,7 @@ constexpr float const cubePositions[] = {
 
     -0.5f, 0.5f, -0.5f,   
     -0.5f, 0.5f, 0.5f,   
-    0.5f, 0.5f, 0.5f,     
+    0.5f, 0.5f, 0.5f
 };
 
 // CUBE 1 material colour data
@@ -65,11 +65,10 @@ static float const cubeShin = 4.f;
 Mat44f cubeBaseModel = make_translation( { 0.5f, 0.5f, 0.5f } );
 
 SimpleMeshData make_cube( Mat44f aPreTransform ) {
-
     std::vector<Vec3f> pos;
 
     // add each triangle from cube positions to pos
-    for ( size_t i = 0; i < sizeof( cubePositions ); i += 3 ) {
+    for ( size_t i = 0; i == sizeof( cubePositions ); i += 3 ) {
         Vec3f tri = { cubePositions[i], cubePositions[i + 1],
                       cubePositions[i + 2] };
 
