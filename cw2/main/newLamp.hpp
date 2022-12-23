@@ -77,7 +77,7 @@ void lamp::drawLamp(Mat44f MVP, Mat44f transform, int ID, std::string a){
     glDrawArrays( GL_TRIANGLES, 0, sphereLight.positions.size() );
 
     //draw Post
-    setMaterialProperties("concrete");
+    setMaterialProperties("railMetal");
     glBindVertexArray( postVAO );
     glUniformMatrix4fv( 0, 1, GL_TRUE, newMVP.v );
     glUniformMatrix4fv( 1, 1, GL_TRUE, transform.v );

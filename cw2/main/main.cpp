@@ -230,9 +230,11 @@ int main() try {
     lamp l4;
     l4.createLamp(1.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
     lamp l5;
-    l5.createLamp(2.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    l5.createLamp(1.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
     lamp l6;
-    l6.createLamp(2.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    l6.createLamp(1.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
+    lamp l7;
+    l7.createLamp(4.f, { 0.5f, 0.5f, 0.5f}, { 0.2f, 0.2f, 0.2f});
 
     //-----------------------------------------------------------------------------
 
@@ -249,10 +251,8 @@ int main() try {
         make_translation( { -2.f, 2.f, 2.f } ) * make_rotation_x( PI / 2.f ) );
     GLuint bowl_vao = create_vao( bowl );
     std::size_t vertexCount = bowl.positions.size();
-
-
     // -----------------------------------------------------------------------------
-    auto last = Clock::now();
+
     // RAIL
     auto rail = make_rail( 100, { 0.f, 0.f, 0.f }, make_scaling(2.f,1.75f, 2.f) );
     GLuint railVAO = create_vao( rail );
@@ -275,6 +275,11 @@ int main() try {
     size_t skateboardVertexCount = skateboardMesh.positions.size();
     Mat44f flippedSBModel = make_translation({14.65f, 1.24f, 3.f})  * make_rotation_x( kPi_ ) * make_rotation_z(  3.2 * kPi_/2 ); 
 
+    // ANIMATION VARIABLES
+    auto last = Clock::now();
+    float inc = 0.008;
+    float angle = 0;    
+    float y, z = 0;
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -325,7 +330,10 @@ int main() try {
 
             ImGui::ColorEdit3("Light 5 colour", (float*)&l5.lightColor);
 
-            ImGui::ColorEdit3("Light 5 colour", (float*)&l6.lightColor);
+            ImGui::ColorEdit3("Light 6 colour", (float*)&l6.lightColor);
+
+            ImGui::ColorEdit3("Central light colour", (float*)&l7.lightColor);
+
 
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -344,6 +352,33 @@ int main() try {
 
         Mat44f baseMVP = projection * view;
 
+        // UPDATE ANIMATION STATE
+        
+        z = (10.f * -angle);
+        y = sqrt( 50 - pow( z, 2 ) ) / 2 - 3.7;
+        Mat44f bowlAnimationModel = make_translation({0.f, -y, z }) * make_rotation_x( angle );
+
+        
+        auto const now = Clock::now();
+        float dt = std::chrono::duration_cast<Secondsf>( now - last ).count();
+        last = now;
+        Mat44f animationTranslation = skateboardAimation(animationTime, lengthOfAnimation);
+
+        if (startAni){
+            animationTime += dt;
+
+            if (angle > 0.5) {
+                angle = 0.5;
+                inc = -inc;
+            }
+            if (angle < -0.5) {
+                angle = -0.5;
+                inc = -inc;
+            }
+            angle += inc;
+        }
+
+
 
         OGL_CHECKPOINT_DEBUG();
 
@@ -361,17 +396,20 @@ int main() try {
         //------------------------------------DRAWING-NON-TEXTURED-OBJECTS---------------------------------
         glUniform1i(8, GL_FALSE);  // flag for drawing textures
 
-        
+        // LIGHTS
         l1.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f + 2.f, 0.f, -sizeOfFloor/2.f + 2.f}), prog.programId(), "light[0]." );
         l2.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f - 1.5f, 2.f, sizeOfFloor/2.f + 1.5f}), prog.programId(), "light[1]." );
+
         l3.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f + 1.5f, 2.f, sizeOfFloor/2.f + 1.5f}), prog.programId(), "light[2]." );
         l4.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f - 2.f, 0.f, -sizeOfFloor/2.f + 2.f}), prog.programId(), "light[3]." );
-        
-        l6.drawLamp(baseMVP, make_translation({-1.f, 0.f, 0.f}), prog.programId(), "light[5]." ); // center light
 
+        l5.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f + 1.5f, 2.f, sizeOfFloor/2.f + 12.5f}), prog.programId(), "light[4]." );
+        l6.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f - 1.5f, 2.f, sizeOfFloor/2.f + 12.5f}), prog.programId(), "light[5]." );
         
+        l7.drawLamp(baseMVP, make_translation({-2.f, 0.f, 0.f}), prog.programId(), "light[6]." ); // center light
 
-        
+ 
+
         setMaterialProperties("concrete");
         
         draw_bowl(
@@ -423,23 +461,16 @@ int main() try {
         p1.drawComplexRamp(textureID3, baseMVP, make_translation({-8.f,0.f,4.f}) * make_scaling(2.f,1.f,2.f));
         p1.drawBox(textureID3, baseMVP, make_translation({-8.f,0.f,4.f}) * make_scaling(2.f,1.f,2.f));
 
+
         setMaterialProperties("skateboard");
+        // flipped skateboards
         draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, flippedSBModel );
-        
-        auto const now = Clock::now();
-        float dt = std::chrono::duration_cast<Secondsf>( now - last ).count();
-        last = now;
 
-
-        //animation space
-        Mat44f animationTranslation = skateboardAimation(animationTime, lengthOfAnimation);
-
-
+        // animated skateboards
+        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({ 0.f, -0.9f, 22.f }) * bowlAnimationModel * make_rotation_y(kPi_/2) );
 
         draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({0.f,0.f,-5.f}) * animationTranslation * make_scaling(0.64f, 0.391f, 2.5f) * make_translation({0.5f,0.5f,-0.5f}) * make_rotation_y(PI/2.f ) * make_scaling(1.f/2.5f, 1.f/0.391f, 1.f/0.64f));
-        if (startAni){
-            animationTime += dt;
-        }
+        
 
 
 
