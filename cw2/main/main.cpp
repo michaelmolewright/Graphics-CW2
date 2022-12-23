@@ -318,23 +318,25 @@ int main() try {
         {
             ImGui::Begin("Control Menu");
 
-            ImGui::Text("Press the X key to take a screenshot of the current frame\n\n");
+            ImGui::Text("Press X to take a screenshot of the current frame \n\n");
 
-            ImGui::ColorEdit3("Light 1 colour", (float*)&l1.lightColor);
+            ImGui::Text("Press spacebar to play/pause the animations \n\n");
 
-            ImGui::ColorEdit3("Light 2 colour", (float*)&l2.lightColor);
+            ImGui::Text("Use the arrow keys to control the kickflip animation speed \n\n");
 
-            ImGui::ColorEdit3("Light 3 colour", (float*)&l3.lightColor);
+            ImGui::ColorEdit3("Floor light 1 colour", (float*)&l1.lightColor);
 
-            ImGui::ColorEdit3("Light 4 colour", (float*)&l4.lightColor);
+            ImGui::ColorEdit3("Floor light 2 colour", (float*)&l2.lightColor);
 
-            ImGui::ColorEdit3("Light 5 colour", (float*)&l5.lightColor);
+            ImGui::ColorEdit3("Bowl light 1 colour", (float*)&l3.lightColor);
 
-            ImGui::ColorEdit3("Light 6 colour", (float*)&l6.lightColor);
+            ImGui::ColorEdit3("Bowl light 2 colour", (float*)&l4.lightColor);
 
-            ImGui::ColorEdit3("Central light colour", (float*)&l7.lightColor);
+            ImGui::ColorEdit3("Bowl light 3 colour", (float*)&l5.lightColor);
 
+            ImGui::ColorEdit3("Bowl light 4 colour", (float*)&l6.lightColor);
 
+            ImGui::ColorEdit3("Center light colour", (float*)&l7.lightColor);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
@@ -398,15 +400,15 @@ int main() try {
 
         // LIGHTS
         l1.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f + 2.f, 0.f, -sizeOfFloor/2.f + 2.f}), prog.programId(), "light[0]." );
-        l2.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f - 1.5f, 2.f, sizeOfFloor/2.f + 1.5f}), prog.programId(), "light[1]." );
+        l2.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f - 2.f, 0.f, -sizeOfFloor/2.f + 2.f}), prog.programId(), "light[1]." );
 
+        // bowl lights
         l3.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f + 1.5f, 2.f, sizeOfFloor/2.f + 1.5f}), prog.programId(), "light[2]." );
-        l4.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f - 2.f, 0.f, -sizeOfFloor/2.f + 2.f}), prog.programId(), "light[3]." );
-
+        l4.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f - 1.5f, 2.f, sizeOfFloor/2.f + 1.5f}), prog.programId(), "light[3]." );
         l5.drawLamp(baseMVP, make_translation({-sizeOfFloor/2.f + 1.5f, 2.f, sizeOfFloor/2.f + 12.5f}), prog.programId(), "light[4]." );
         l6.drawLamp(baseMVP, make_translation({sizeOfFloor/2.f - 1.5f, 2.f, sizeOfFloor/2.f + 12.5f}), prog.programId(), "light[5]." );
         
-        l7.drawLamp(baseMVP, make_translation({-2.f, 0.f, 0.f}), prog.programId(), "light[6]." ); // center light
+        l7.drawLamp(baseMVP, make_translation({0.f, 0.f, 0.f}), prog.programId(), "light[6]." ); // center light
 
  
 
@@ -436,10 +438,10 @@ int main() try {
 
 
         setMaterialProperties("railMetal");
-        draw_rail( railVAO, baseMVP, make_translation( { -1.5f, 0.f, -8.f } )  ,
+        draw_rail( railVAO, baseMVP, make_translation( { -2.5f, 0.f, -12.f } )  ,
                    rail.positions.size() );
         // animation rail
-        draw_rail( railVAO, baseMVP, make_translation({0.32f, 0.f, -1.f}) * make_rotation_y(-PI/2.f) , rail.positions.size() );
+        draw_rail( railVAO, baseMVP, make_translation({2.32f, 0.f, -4.f}) * make_rotation_y(-PI/2.f) , rail.positions.size() );
 
 
         //-------------------------------------------------------------------------------------------------
@@ -456,8 +458,9 @@ int main() try {
 
         // complex ramps
         setMaterialProperties("wood");
-        p1.drawComplexRamp(textureID3, baseMVP, make_translation({5.f,0.f,0.f}) * make_scaling(2.f,0.5f,2.f));
-        p1.drawBox(textureID3, baseMVP, make_translation({5.f,0.f,0.f}) * make_scaling(2.f,0.5f,2.f));
+        p1.drawComplexRamp(textureID3, baseMVP, make_translation({8.f,0.f,2.f}) * make_scaling(2.f,0.5f,2.f));
+        p1.drawBox(textureID3, baseMVP, make_translation({8.f,0.f,2.f}) * make_scaling(2.f,0.5f,2.f));
+
         p1.drawComplexRamp(textureID3, baseMVP, make_translation({-8.f,0.f,4.f}) * make_scaling(2.f,1.f,2.f));
         p1.drawBox(textureID3, baseMVP, make_translation({-8.f,0.f,4.f}) * make_scaling(2.f,1.f,2.f));
 
@@ -469,7 +472,7 @@ int main() try {
         // animated skateboards
         draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({ 0.f, -0.9f, 22.f }) * bowlAnimationModel * make_rotation_y(kPi_/2) );
 
-        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({0.f,0.f,-5.f}) * animationTranslation * make_scaling(0.64f, 0.391f, 2.5f) * make_translation({0.5f,0.5f,-0.5f}) * make_rotation_y(PI/2.f ) * make_scaling(1.f/2.5f, 1.f/0.391f, 1.f/0.64f));
+        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({2.f,0.f,-9.f}) * animationTranslation * make_scaling(0.64f, 0.391f, 2.5f) * make_translation({0.5f,0.5f,-0.5f}) * make_rotation_y(PI/2.f ) * make_scaling(1.f/2.5f, 1.f/0.391f, 1.f/0.64f));
         
 
 

@@ -69,16 +69,16 @@ Mat44f skateboardAimation(float &counter, float totalTime){
         res = make_translation({0.f,1.2f,10.f}) * res;
     }
     else if (counter  <  (segment * 6)){
-        res = turnAround(1.f,  segment, counter - (segment * 5));
+        res = turnAround(1.5f,  segment, counter - (segment * 5));
         res = make_translation({0.f,0.f,12.f}) * res;
     }
     else if (counter  <  (segment * 9)){
         res = linearMotion(12.f, (segment * 3), counter - (segment * 6), {0.f,0.f,-1.f});
-        res = make_translation({-2.f,0.f,12.f}) * res * make_rotation_y(newPI);
+        res = make_translation({-3.f,0.f,12.f}) * res * make_rotation_y(newPI);
     }
     else if (counter  <  totalTime){
-        res = turnAround(-1.f,  segment, counter - (segment * 9));
-        res = make_translation({-2.f,0.f,0.f}) * res * make_rotation_y(newPI);
+        res = turnAround(-1.5f,  segment, counter - (segment * 9));
+        res = make_translation({-3.f,0.f,0.f}) * res * make_rotation_y(newPI);
     }
 
     
