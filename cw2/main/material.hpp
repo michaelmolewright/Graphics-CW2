@@ -43,7 +43,7 @@ float lamp_ambient[] = {0.1f, 0.1f, 0.1f };
 float lamp_diffuse[] = {0.1f, 0.1f, 0.1f };
 float lamp_specular[] = {0.1f, 0.1f, 0.1f};
 float lamp_shine = 100.f;
-float lamp_emmisive = 0.0001f;
+float lamp_emmisive = 0.5f;
 //---------------------------------
 
 //-----------wood-----------------
@@ -82,8 +82,8 @@ float mainlySpec_emmisive = 0.001f;
 float mainlyEmi_ambient[] = { 0.2f, 0.2f, 0.2f };
 float mainlyEmi_diffuse[] = { 0.1f, 0.1f, 0.1f };
 float mainlyEmi_specular[] = { 0.1f, 0.1f, 0.1f };
-float mainlyEmi_shine = 50.f;
-float mainlyEmi_emmisive = 0.2f;
+float mainlyEmi_shine = 5.f;
+float mainlyEmi_emmisive = 0.5f;
 //---------------------------------
 
 void setMaterialProperties(std::string material){
