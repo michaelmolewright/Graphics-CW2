@@ -26,16 +26,15 @@
 #include "../vmlib/mat44.hpp"
 
 #include "defaults.hpp"
-// TAKE OUT
 #include "cube.hpp"
 //#include "../extra/camera.hpp"
 #include "../extra/newCamera.hpp"
 #include "../extra/textures.hpp"
 #include "../extra/animation.hpp"
-#include "floor.hpp"
-#include "cylinder.hpp"
-#include "half_pipe.hpp"
-#include "lamp.hpp"
+// #include "floor.hpp"
+// #include "cylinder.hpp"
+// #include "half_pipe.hpp"
+// #include "lamp.hpp"
 #include "bowl.hpp"
 #include "rail.hpp"
 #include "tile.hpp"
@@ -325,6 +324,8 @@ int main() try {
 
             ImGui::Text("Use the arrow keys to control the kickflip animation speed \n\n");
 
+            ImGui::ColorEdit3("Center light colour", (float*)&l7.lightColor);
+
             ImGui::ColorEdit3("Floor light 1 colour", (float*)&l1.lightColor);
 
             ImGui::ColorEdit3("Floor light 2 colour", (float*)&l2.lightColor);
@@ -337,7 +338,7 @@ int main() try {
 
             ImGui::ColorEdit3("Bowl light 4 colour", (float*)&l6.lightColor);
 
-            ImGui::ColorEdit3("Center light colour", (float*)&l7.lightColor);
+            
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
