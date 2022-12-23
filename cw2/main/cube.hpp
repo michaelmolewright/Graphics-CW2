@@ -30,7 +30,7 @@ constexpr float const cubePositions[] = {
     -0.5f, -0.5f, 0.5f,   
     -0.5f, 0.5f, 0.5f,   
     -0.5f, -0.5f, -0.5f, 
-                           // Right face
+     // Right face
     0.5f, -0.5f, -0.5f,   
     0.5f, 0.5f, -0.5f,     
     0.5f, 0.5f, 0.5f,     
@@ -38,7 +38,7 @@ constexpr float const cubePositions[] = {
     0.5f, 0.5f, 0.5f,    
     0.5f, -0.5f, 0.5f,     
     0.5f, -0.5f, -0.5f,    
-                           // Bottom face
+     // Bottom face
     0.5f, -0.5f, -0.5f,    
     0.5f, -0.5f, 0.5f,    
     -0.5f, -0.5f, -0.5f,   
@@ -46,7 +46,7 @@ constexpr float const cubePositions[] = {
     -0.5f, -0.5f, 0.5f,   
     -0.5f, -0.5f, -0.5f,   
     0.5f, -0.5f, 0.5f,    
-                           // Top face
+    // Top face
     0.5f, 0.5f, 0.5f,    
     0.5f, 0.5f, -0.5f,     
     -0.5f, 0.5f, -0.5f,   

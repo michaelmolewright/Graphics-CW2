@@ -94,8 +94,6 @@ int main() try {
     glfwWindowHint( GLFW_SRGB_CAPABLE, GLFW_TRUE );
     glfwWindowHint( GLFW_DOUBLEBUFFER, GLFW_TRUE );
 
-    // glfwWindowHint( GLFW_RESIZABLE, GLFW_FALSE );
-
     glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
     glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
     glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE );
@@ -266,7 +264,7 @@ int main() try {
 
     // ANIMATION VARIABLES
     auto last = Clock::now();
-    float inc = 0;   // 0.008;
+    float inc = 0;   
     float angle = 0;
     float y, z = 0;
     bool rev = false;
@@ -566,7 +564,6 @@ int main() try {
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
     state.prog = nullptr;
-    // TODO: additional cleanup
 
     return 0;
 } catch ( std::exception const &eErr ) {
