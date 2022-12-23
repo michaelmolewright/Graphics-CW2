@@ -45,14 +45,6 @@ SimpleMeshData load_wavefront_obj( char const *aPath ) {
                 1 - result.attributes.texcoords[idx.texcoord_index * 2 + 1]
             });
 
-            // COLOURS CODE FROM EX4
-            // Always triangles, so we can find the face index by dividing the
-            // vertex index by three
-            // auto const &mat = result.materials[shape.mesh.material_ids[i / 3]];
-
-            // // Just replicate the material ambient color for each vertex...
-            // ret.colors.emplace_back(
-            //     Vec3f{ mat.ambient[0], mat.ambient[1], mat.ambient[2] } );
         }
     }
     return ret;

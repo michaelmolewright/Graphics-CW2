@@ -27,14 +27,9 @@
 
 #include "defaults.hpp"
 #include "cube.hpp"
-//#include "../extra/camera.hpp"
 #include "../extra/newCamera.hpp"
 #include "../extra/textures.hpp"
 #include "../extra/animation.hpp"
-// #include "floor.hpp"
-// #include "cylinder.hpp"
-// #include "half_pipe.hpp"
-// #include "lamp.hpp"
 #include "bowl.hpp"
 #include "rail.hpp"
 #include "tile.hpp"
@@ -174,7 +169,6 @@ int main() try {
     glEnable( GL_CULL_FACE );
     glClearColor( 0.26f, 0.75f, 0.98f, 0.0f );
     glEnable( GL_DEPTH_TEST );
-    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     glEnable( GL_BLEND );
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
@@ -195,8 +189,7 @@ int main() try {
     // Other initialization & loading
     // TODO: load shaders
     ShaderProgram prog( { { GL_VERTEX_SHADER, "assets/default.vert" },
-                          { GL_FRAGMENT_SHADER, "assets/workingThreeLights.frag" } } );
-                        //   { GL_FRAGMENT_SHADER, "assets/default.frag" } } );
+                          { GL_FRAGMENT_SHADER, "assets/multipleLights.frag" } } );
 
     state.prog = &prog;
 
@@ -265,8 +258,6 @@ int main() try {
     GLuint rampVAO = create_vao( ramp );
     Mat44f rampBoxModel =
         make_translation( { 6.f, 0.f, -10.f } ) * make_scaling( 6.f, 0.8f, 2.f );
-
-
 
     // SKATEBOARD
     auto skateboardMesh = load_wavefront_obj("./assets/skateboard/skateboard.obj");
@@ -368,12 +359,10 @@ int main() try {
             if (angle > 0.5) {
                 angle = 0.5;
                 rev = true;
-                //inc = -inc;
             }
             if (angle < -0.5) {
                 rev = false;
                 angle = -0.5;
-                //inc = -inc;
             }
 
             if (rev)

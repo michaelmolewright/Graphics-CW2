@@ -16,24 +16,19 @@ SimpleMeshData make_rail( std::size_t aSubdivs, Vec3f aColor,
     std::vector<Vec3f> pos;
 
     auto leg1 = make_cylinder( true, aSubdivs, { 1.f, 0.f, 0.f },
-                               // kIdentity44f
                                make_translation( { .5f, 0.f, 0.f } ) *
                                    make_rotation_z( pi / 2 ) * legs_scaling );
     auto leg2 = make_cylinder( true, aSubdivs, { 1.f, 0.f, 0.f },
-                               // kIdentity44f
                                make_translation( { 1.5f, 0.f, 0.f } ) *
                                    make_rotation_z( pi / 2 ) * legs_scaling );
     auto leg3 = make_cylinder( true, aSubdivs, { 1.f, 0.f, 0.f },
-                               // kIdentity44f
                                make_translation( { 2.5f, 0.f, 0.f } ) *
                                    make_rotation_z( pi / 2 ) * legs_scaling );
 
     auto main = make_cylinder( true, aSubdivs, { 1.f, 0.f, 0.f },
-                               // kIdentity44f
                                make_translation( { 0.f, 0.3f, 0.f } ) *
                                    make_scaling( 3.f, 0.05f, 0.05f ) );
 
-    // auto xarrow = concatenate( std::move( xcyl ), xcone );
     auto legs = concatenate( std::move( leg1 ), std::move( leg2 ) );
     legs = concatenate( std::move( legs ), std::move( leg3 ) );
 
@@ -58,18 +53,12 @@ SimpleMeshData make_rail( std::size_t aSubdivs, Vec3f aColor,
 void draw_rail( GLuint vao, Mat44f baseMVP, Mat44f model, size_t vertexCount ) {
 
     Mat44f railMVP = baseMVP * model;
-    // LAMPPOST
-    // glUniform3fv( 6, 1, railAmb );    // amb
-    // glUniform3fv( 7, 1, railDiff );   // diff
-    // glUniform3fv( 8, 1, railSpec );   // spec
-    // glUniform1f( 9, railShin );      // shin
+
 
     glBindVertexArray( vao );
     glUniformMatrix4fv( 0, 1, GL_TRUE, railMVP.v );
     glUniformMatrix4fv( 1, 1, GL_TRUE, model.v );
 
-    // float const railColor [] = { 0.2f, 0.2f, 0.2f };
-    // glUniform3fv( 5, 1, railColor );    // object color
     glDrawArrays( GL_TRIANGLES, 0, vertexCount );
 
 }

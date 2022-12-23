@@ -7,53 +7,53 @@
 
 // vertices and normals
 constexpr float const cubePositions[] = {
-    0.5f, 0.5f, -0.5f,     // 0.0f,  0.0f, -1.0f,
-    0.5f, -0.5f, -0.5f,    // 0.0f,  0.0f, -1.0f,
-    -0.5f, -0.5f, -0.5f,   //  0.0f,  0.0f, -1.0f,
+    0.5f, 0.5f, -0.5f,     
+    0.5f, -0.5f, -0.5f,  
+    -0.5f, -0.5f, -0.5f,   
 
-    -0.5f, -0.5f, -0.5f,   //  0.0f,  0.0f, -1.0f,
-    -0.5f, 0.5f, -0.5f,    // 0.0f,  0.0f, -1.0f,
-    0.5f, 0.5f, -0.5f,     // 0.0f,  0.0f, -1.0f,
-                           // Front face
-    0.5f, -0.5f, 0.5f,     //  0.0f,  0.0f, 1.0f,
-    0.5f, 0.5f, 0.5f,      //  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f, 0.5f,    //  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  
+    -0.5f, 0.5f, -0.5f,    
+    0.5f, 0.5f, -0.5f,     
+     // Front face
+    0.5f, -0.5f, 0.5f,   
+    0.5f, 0.5f, 0.5f,     
+    -0.5f, -0.5f, 0.5f,    
 
-    -0.5f, 0.5f, 0.5f,    //  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f, 0.5f,   //  0.0f,  0.0f, 1.0f,
-    0.5f, 0.5f, 0.5f,     //  0.0f,  0.0f, 1.0f,
+    -0.5f, 0.5f, 0.5f,  
+    -0.5f, -0.5f, 0.5f,  
+    0.5f, 0.5f, 0.5f,   
     // Left face
-    -0.5f, 0.5f, -0.5f,    //  -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f,   //  -1.0f,  0.0f,  0.0f,
-    -0.5f, 0.5f, 0.5f,     //  -1.0f,  0.0f,  0.0f,
+    -0.5f, 0.5f, -0.5f,   
+    -0.5f, -0.5f, -0.5f,   
+    -0.5f, 0.5f, 0.5f,    
 
-    -0.5f, -0.5f, 0.5f,    // -1.0f,  0.0f,  0.0f,
-    -0.5f, 0.5f, 0.5f,     //  -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f,   // -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, 0.5f,   
+    -0.5f, 0.5f, 0.5f,   
+    -0.5f, -0.5f, -0.5f, 
                            // Right face
-    0.5f, -0.5f, -0.5f,    //  1.0f,  0.0f,  0.0f,
-    0.5f, 0.5f, -0.5f,     //  1.0f,  0.0f,  0.0f,
-    0.5f, 0.5f, 0.5f,      //  1.0f,  0.0f,  0.0f,
+    0.5f, -0.5f, -0.5f,   
+    0.5f, 0.5f, -0.5f,     
+    0.5f, 0.5f, 0.5f,     
 
-    0.5f, 0.5f, 0.5f,      //  1.0f,  0.0f,  0.0f,
-    0.5f, -0.5f, 0.5f,     //  1.0f,  0.0f,  0.0f,
-    0.5f, -0.5f, -0.5f,    //   1.0f,  0.0f,  0.0f,
+    0.5f, 0.5f, 0.5f,    
+    0.5f, -0.5f, 0.5f,     
+    0.5f, -0.5f, -0.5f,    
                            // Bottom face
-    0.5f, -0.5f, -0.5f,    //   0.0f, -1.0f,  0.0f,
-    0.5f, -0.5f, 0.5f,     //  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f,   //  0.0f, -1.0f,  0.0f,
+    0.5f, -0.5f, -0.5f,    
+    0.5f, -0.5f, 0.5f,    
+    -0.5f, -0.5f, -0.5f,   
 
-    -0.5f, -0.5f, 0.5f,    //  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f,   //  0.0f, -1.0f,  0.0f,
-    0.5f, -0.5f, 0.5f,     //  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, 0.5f,   
+    -0.5f, -0.5f, -0.5f,   
+    0.5f, -0.5f, 0.5f,    
                            // Top face
-    0.5f, 0.5f, 0.5f,      //  0.0f,  1.0f,  0.0f,
-    0.5f, 0.5f, -0.5f,     //  0.0f,  1.0f,  0.0f,
-    -0.5f, 0.5f, -0.5f,    // 0.0f,  1.0f,  0.0f,
+    0.5f, 0.5f, 0.5f,    
+    0.5f, 0.5f, -0.5f,     
+    -0.5f, 0.5f, -0.5f,   
 
-    -0.5f, 0.5f, -0.5f,   //  0.0f,  1.0f,  0.0f,
-    -0.5f, 0.5f, 0.5f,    //  0.0f,  1.0f,  0.0f,
-    0.5f, 0.5f, 0.5f,     //   0.0f,  1.0f,  0.0f,
+    -0.5f, 0.5f, -0.5f,   
+    -0.5f, 0.5f, 0.5f,   
+    0.5f, 0.5f, 0.5f,     
 };
 
 // CUBE 1 material colour data
@@ -94,14 +94,6 @@ void draw_cube( GLuint vao, Mat44f baseMVP, Mat44f model ) {
     glUniformMatrix4fv( 0, 1, GL_TRUE, cubeMVP.v );
     glUniformMatrix4fv( 1, 1, GL_TRUE, model.v );   // model matrix
 
-    // // material props
-    // glUniform3fv( 6, 1, cubeAmb );    // amb
-    // glUniform3fv( 7, 1, cubeDiff );   // diff
-    // glUniform3fv( 8, 1, cubeSpec );   // spec
-    // glUniform1f( 9, cubeShin );      // shin
-
-    // glUniform3fv( 5, 1, cubeDiff );   // object color
-    // glUniform1f( 7, cubeShin );
 
     glBindVertexArray( vao );
     glDrawArrays( GL_TRIANGLES, 0, 6 * 2 * 3 );

@@ -30,14 +30,7 @@ SimpleMeshData createSphere(Mat44f preTransform){
 
 
 SimpleMeshData createQuarterSphere(){
-    
-    
-    //outward facing sphere
-    /*tri triangle;
-    triangle1.a = Vec3f{1.f, 0.f, 0.f};
-    triangle1.b = Vec3f{0.f, 1.f, 0.f};
-    triangle1.c = Vec3f{0.f, 0.f, 1.f};*/
-    
+        
     //inward faciung sphere
     tri triangle1;
     triangle1.a = Vec3f{1.f, 0.f, 0.f};
@@ -98,7 +91,6 @@ std::vector<Vec3f> transformNormals(std::vector<Vec3f> input, Mat44f transform){
         t /= t.w;
 
         p = Vec3f{ t.x, t.y, t.z };
-        //p = normalize(p);
     }
     return input;
 };
@@ -373,10 +365,6 @@ SimpleMeshData createFinalForm(Mat44f preTransform){
 }
 
 void draw_bowl(std::size_t size, GLuint vao, Mat44f MVP, Mat44f transform){
-    //glUniform3fv( 6, 1, bowlAmb );    // amb
-    //glUniform3fv( 7, 1, bowlDiff );   // diff
-    //glUniform3fv( 8, 1, bowlSpec );   // spec
-    //glUniform1f( 9, bowlShin );      // shin
 
     Mat44f newMVP = MVP * transform;
 

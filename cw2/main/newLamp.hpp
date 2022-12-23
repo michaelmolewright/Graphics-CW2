@@ -63,12 +63,6 @@ void lamp::drawLamp(Mat44f MVP, Mat44f transform, int ID, std::string a){
     loc = glGetUniformLocation(ID, input.c_str());
     glUniform3fv(loc, 1, new_lightColor);
 
-    
-    //glUniform3fv(11,1, new_lightPosition );    
-    //glUniform3fv(12,1, new_lightAmbient ); 
-    //glUniform3fv( 13, 1, new_lightDiffuse );
-    //glUniform3fv(14,1, new_lightSpecular);
-    
     //draw sphere light
     setMaterialProperties("lampMaterial");
     glBindVertexArray( sphereVAO );
