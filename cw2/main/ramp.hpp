@@ -1,7 +1,8 @@
 #include "simple_mesh.hpp"
 
 // vertices - normals calculated from simplemeshdata create_vao
-constexpr float const rampPositions[] = {
+const std::vector<float> rampPositions = {
+
     // side 1
     0.f, 1.f, 0.f,
     0.f, 0.f, 0.f,
@@ -33,7 +34,7 @@ constexpr float const rampPositions[] = {
 
     1.f, 0.f, 1.f,
     1.f, 1.f, 0.f,
-    0.f, 1.f, 0.f, 
+    0.f, 1.f, 0.f
 };
 
 // material data
@@ -46,12 +47,14 @@ SimpleMeshData make_ramp( Mat44f aPreTransform ) {
 
     std::vector<Vec3f> pos;
 
-    // add each triangle from cube positions to pos
-    for ( size_t i = 0; i <= sizeof( rampPositions ); i += 3 ) {
+    size_t i = 0;
+    while( i != rampPositions.size() ) {
         Vec3f tri = { rampPositions[i], rampPositions[i + 1],
                       rampPositions[i + 2] };
 
         pos.emplace_back( tri );
+
+        i += 3;
     }
 
     // pre transform each point
