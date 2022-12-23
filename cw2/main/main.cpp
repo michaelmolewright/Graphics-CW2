@@ -452,7 +452,7 @@ int main() try {
                    rail.positions.size() );
         // animation rail
         draw_rail( railVAO, baseMVP,
-                   make_translation( { 2.32f, 0.f, -4.f } ) *
+                   make_translation( { 2.32f, 0.f, -4.8f } ) *
                        make_rotation_y( -PI / 2.f ),
                    rail.positions.size() );
 
