@@ -277,9 +277,10 @@ int main() try {
 
     // ANIMATION VARIABLES
     auto last = Clock::now();
-    float inc = 0.008;
+    float inc = 0; //0.008;
     float angle = 0;    
     float y, z = 0;
+    bool rev = false;
 
     OGL_CHECKPOINT_ALWAYS();
 
@@ -355,32 +356,36 @@ int main() try {
         Mat44f baseMVP = projection * view;
 
         // UPDATE ANIMATION STATE
-        
-        z = (10.f * -angle);
-        y = sqrt( 50 - pow( z, 2 ) ) / 2 - 3.7;
-        Mat44f bowlAnimationModel = make_translation({0.f, -y, z }) * make_rotation_x( angle );
-
-        
         auto const now = Clock::now();
         float dt = std::chrono::duration_cast<Secondsf>( now - last ).count();
         last = now;
-        Mat44f animationTranslation = skateboardAimation(animationTime, lengthOfAnimation);
-
+        
+        inc = dt / 2;
         if (startAni){
             animationTime += dt;
 
             if (angle > 0.5) {
                 angle = 0.5;
-                inc = -inc;
+                rev = true;
+                //inc = -inc;
             }
             if (angle < -0.5) {
+                rev = false;
                 angle = -0.5;
-                inc = -inc;
+                //inc = -inc;
             }
-            angle += inc;
+
+            if (rev)
+                angle -= inc;
+            else    
+                angle += inc;
         }
 
+        z = (10.f * -angle);
+        y = sqrt( 50 - pow( z, 2 ) ) / 2 - 3.7;
+        Mat44f bowlAnimationTranslation = make_translation({0.f, -y, z }) * make_rotation_x( angle );
 
+        Mat44f kickFlipAnimationTranslation = skateboardAimation(animationTime, lengthOfAnimation);
 
         OGL_CHECKPOINT_DEBUG();
 
@@ -470,9 +475,9 @@ int main() try {
         draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, flippedSBModel );
 
         // animated skateboards
-        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({ 0.f, -0.9f, 22.f }) * bowlAnimationModel * make_rotation_y(kPi_/2) );
+        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({ 0.f, -0.9f, 22.f }) * bowlAnimationTranslation * make_rotation_y(kPi_/2) );
 
-        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({2.f,0.f,-9.f}) * animationTranslation * make_scaling(0.64f, 0.391f, 2.5f) * make_translation({0.5f,0.5f,-0.5f}) * make_rotation_y(PI/2.f ) * make_scaling(1.f/2.5f, 1.f/0.391f, 1.f/0.64f));
+        draw_skateboard( textureID4, skateboardVertexCount, skateboardVAO, baseMVP, make_translation({2.f,0.f,-9.f}) * kickFlipAnimationTranslation * make_scaling(0.64f, 0.391f, 2.5f) * make_translation({0.5f,0.5f,-0.5f}) * make_rotation_y(PI/2.f ) * make_scaling(1.f/2.5f, 1.f/0.391f, 1.f/0.64f));
         
 
 
